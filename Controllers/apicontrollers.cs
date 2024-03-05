@@ -4,6 +4,7 @@ using ImageGPT;
 using System.Text;
 using Newtonsoft.Json;
 using System.IO;
+using System.Text.Json.Serialization;
 
 
 namespace ImageGPT.Controllers
@@ -29,18 +30,33 @@ namespace ImageGPT.Controllers
             try
             {
                 string prompt = userPrompt?.Prompt;
+                string apiUrl = "http://193.161.193.99:61464/sdapi/v1/txt2img";
 
                 string jsonPayload = @"
                 {
                     ""prompt"": """ + prompt + @""",
-                    ""steps"": 30,
+                    ""steps"": 15,
                     ""width"": 512,
                     ""height"": 512,
                     ""restore_faces"": true,
                     ""save_images"": false
                 }";
 
-                return Ok();
+                using(var httpClient = new HttpClient()) 
+                {
+                    httpClient.DefaultRequestHeaders.Add("txt2img header", "application/json");
+                    var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                    var response = await httpClient.PostAsync(apiUrl, content);
+                    if(response.IsSuccessStatusCode)
+                    {
+                        string responseData = await response.Content.ReadAsStringAsync();
+                        var jsonResponse = JsonConvert.DeserializeObject<dynamic>(responseData);
+                        string base64Image = jsonResponse.images[0];
+                        return Ok();
+                    }
+                    _logger.LogInformation("Ok");
+                    return Ok();
+                }
             }
             catch (Exception ex)
             {
