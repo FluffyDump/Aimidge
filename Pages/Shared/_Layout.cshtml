@@ -7,29 +7,44 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Aimidge.styles.css" asp-append-version="true" />
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">Aimidge</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+    <nav class="sidebar">
+        <div class="sidebar-inner">
+            <header class="sidebar-header">
+                <button type="button" class="sidebar-burger" onclick="toggleSidebar()">
+                    <i class ='bx bx-menu'></i>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
+                <img src="logo.png" alt="" class="sidebar-logo">
+                <span class="sidebar-name-logo">AIMIDGE</span>
+            </header>
+            <nav class="sidebar-menu">
+                <button type="button">
+                    <i class='bx bx-home' onclick="redirectToHome()"></i>
+                    <span><a asp-area="" asp-page="/Index">Home</a></span>
+                </button>
+                <button type="button">
+                    <i class='bx bx-info-circle' onclick="redirectToAbout()"></i>
+                    <span><a asp-area="" asp-page="/Privacy">About</a></span>
+                </button>
+            </nav>
+        </div>
+    </nav>
+    <script type="text/javascript">
+        const toggleSidebar = () => document.body.classList.toggle("open");
+    </script>
+    <script>
+        function redirectToAbout() {
+        window.location.href = "/Privacy";
+        }
+    </script>
+        <script>
+        function redirectToHome() {
+        window.location.href = "/Index";
+        }
+    </script>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
