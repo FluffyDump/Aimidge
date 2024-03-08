@@ -10,7 +10,7 @@ using System.Text.Json.Serialization;
 namespace ImageGPT.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class ApiController : ControllerBase
     {
         private readonly ILogger<ApiController> _logger;
@@ -44,7 +44,7 @@ namespace ImageGPT.Controllers
 
                 using(var httpClient = new HttpClient()) 
                 {
-                    httpClient.DefaultRequestHeaders.Add("txt2img header", "application/json");
+                    httpClient.DefaultRequestHeaders.Add("txt2img", "application/json");
                     var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
                     var response = await httpClient.PostAsync(apiUrl, content);
                     if(response.IsSuccessStatusCode)
@@ -52,7 +52,7 @@ namespace ImageGPT.Controllers
                         string responseData = await response.Content.ReadAsStringAsync();
                         var jsonResponse = JsonConvert.DeserializeObject<dynamic>(responseData);
                         string base64Image = jsonResponse.images[0];
-                        return Ok();
+                        return Ok(new { image = base64Image });
                     }
                     _logger.LogInformation("Ok");
                     return Ok();

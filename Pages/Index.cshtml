@@ -1,13 +1,43 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+	ViewData["Title"] = "Home page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome to AIMIDGE!</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <label for="prompt">Enter your prompt!</label><br />
-    <input type="text" id="prompt" name="prompt" /><br />
-    <button id="submitButton" type="button">Submit</button>
+	<h1 class="display-4">Welcome to AIMIDGE!</h1>
+	<label for="prompt">Enter your prompt!</label><br />
+	<input type="text" id="prompt" name="prompt" /><br />
+	<button id="submitButton" type="button">Submit</button>
+
+	<div id="promptImage"></div>
+
+	<script>
+		document.getElementById('submitButton').addEventListener('click', function () {
+			document.getElementById('promptImage').innerHTML = '';
+			const promptText = document.getElementById('prompt').value;
+
+			const response = fetch('api/GetPrompt', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ prompt: promptText })
+			});
+
+			response.then(res => {
+				if (res.ok) {
+					res.json().then(data => {
+						const img = document.createElement('img');
+						img.src = 'data:image/jpg;base64,' + data.image;
+						document.getElementById('promptImage').appendChild(img);
+					})
+				} else {
+					console.error(res.statusText);
+				}
+			}).catch(error => {
+				console.error(error);
+			});
+		});
+	</script>
 </div>
