@@ -5,6 +5,7 @@ using System.Text;
 using Newtonsoft.Json;
 using System.IO;
 using System.Text.Json.Serialization;
+using Aimidge.Services;
 
 
 namespace ImageGPT.Controllers
@@ -14,9 +15,12 @@ namespace ImageGPT.Controllers
     public class ApiController : ControllerBase
     {
         private readonly ILogger<ApiController> _logger;
-        public ApiController(ILogger<ApiController> logger)
+        private readonly CookieService _cookieService;
+
+        public ApiController(ILogger<ApiController> logger, CookieService cookieService)
         {
             _logger = logger;
+            _cookieService = cookieService;
         }
 
         public class PromptModel
@@ -62,6 +66,39 @@ namespace ImageGPT.Controllers
             {
                 _logger.LogInformation(ex.ToString());
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("SetUpdatedCookie")]
+        public async Task<IActionResult> SetUpdatedCookie()
+        {
+            try
+            {
+                await _cookieService.SetCookie();
+                return Ok("Cookie set succesfully!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
+
+        [HttpGet("GetCookie")]
+        public async Task<IActionResult> GetCookie()
+        {
+            try 
+            {
+                var cookie = await _cookieService.ParseCookie("Cookie");
+                Console.WriteLine(cookie);
+                if(!string.IsNullOrEmpty(cookie))
+                {
+                    return Ok(cookie);
+                }
+                return Ok();
+            }
+            catch(Exception ex) 
+            {
+                return StatusCode(500, ex.Message);
             }
         }
     }

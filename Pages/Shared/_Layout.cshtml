@@ -1,66 +1,92 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Aimidge</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Aimidge.styles.css" asp-append-version="true" />
-    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - Aimidge</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/Aimidge.styles.css" asp-append-version="true" />
+	<script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+	<script>
+		document.addEventListener("DOMContentLoaded", async function () {
+			try {
+				await useCookies();
+			}
+			catch {
+				console.log("Unable to use cookies!");
+			}
+
+			async function useCookies() {
+				const existingCookie = await fetch('api/GetCookie', {
+					method: 'GET'
+				});
+
+				if (!existingCookie.ok || await existingCookie.text() == "") {
+					fetch('api/SetUpdatedCookie', {
+						method: 'POST'
+					}).then(set => {
+						if (set.ok) {
+							console.log("Received cookie!");
+						}
+					})
+				}
+			}
+		});
+	</script>
 </head>
 <body>
-    <nav class="sidebar">
-        <div class="sidebar-inner">
-            <header class="sidebar-header">
-                <button type="button" class="sidebar-burger" onclick="toggleSidebar()">
-                    <i class ='bx bx-menu'></i>
-                </button>
-                <img src="logo.png" alt="" class="sidebar-logo">
-                <span class="sidebar-name-logo">AIMIDGE</span>
-            </header>
-            <nav class="sidebar-menu">
-                <button type="button">
-                    <i class='bx bx-home' onclick="redirectToHome()"></i>
-                    <span><a asp-area="" asp-page="/Index">Home</a></span>
-                </button>
-                <button type="button">
-                    <i class='bx bx-info-circle' onclick="redirectToAbout()"></i>
-                    <span><a asp-area="" asp-page="/Privacy">About</a></span>
-                </button>
-            </nav>
-        </div>
-    </nav>
-    <script type="text/javascript">
-        const toggleSidebar = () => document.body.classList.toggle("open");
-    </script>
-    <script>
-        function redirectToAbout() {
-        window.location.href = "/Privacy";
-        }
-    </script>
-        <script>
-        function redirectToHome() {
-        window.location.href = "/Index";
-        }
-    </script>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+	<nav class="sidebar">
+		<div class="sidebar-inner">
+			<header class="sidebar-header">
+				<button type="button" class="sidebar-burger" onclick="toggleSidebar()">
+					<i class='bx bx-menu'></i>
+				</button>
+				<img src="logo.png" alt="" class="sidebar-logo">
+				<span class="sidebar-name-logo">AIMIDGE</span>
+			</header>
+			<nav class="sidebar-menu">
+				<button type="button">
+					<i class='bx bx-home' onclick="redirectToHome()"></i>
+					<span><a asp-area="" asp-page="/Index">Home</a></span>
+				</button>
+				<button type="button">
+					<i class='bx bx-info-circle' onclick="redirectToAbout()"></i>
+					<span><a asp-area="" asp-page="/Privacy">About</a></span>
+				</button>
+			</nav>
+		</div>
+	</nav>
+	<script type="text/javascript">
+		const toggleSidebar = () => document.body.classList.toggle("open");
+	</script>
+	<script>
+		function redirectToAbout() {
+			window.location.href = "/Privacy";
+		}
+	</script>
+	<script>
+		function redirectToHome() {
+			window.location.href = "/Index";
+		}
+	</script>
+	<div class="container">
+		<main role="main" class="pb-3">
+			@RenderBody()
+		</main>
+	</div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - Aimidge - <a asp-area="" asp-page="/Privacy">Privacy</a>
-        </div>
-    </footer>
+	<footer class="border-top footer text-muted">
+		<div class="container">
+			&copy; 2024 - Aimidge - <a asp-area="" asp-page="/Privacy">Privacy</a>
+		</div>
+	</footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
 
-    @await RenderSectionAsync("Scripts", required: false)
+	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
