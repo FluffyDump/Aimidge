@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Text.Json.Serialization;
 using Aimidge.Services;
+using System.Text.RegularExpressions;
 
 
 namespace ImageGPT.Controllers
@@ -26,22 +27,33 @@ namespace ImageGPT.Controllers
         public class PromptModel
         {
             public string Prompt { get; set; }
-        }
+			public string Resolution { get; set; }
+		}
 
         [HttpPost("GetPrompt")]
-        public async Task<IActionResult> GetPrompt([FromBody] PromptModel userPrompt)
+
+		public async Task<IActionResult> GetPrompt([FromBody] PromptModel userPrompt)
         {
             try
             {
                 string prompt = userPrompt?.Prompt;
-                string apiUrl = "http://193.161.193.99:61464/sdapi/v1/txt2img";
+				string resolution = userPrompt?.Resolution;
 
-                string jsonPayload = @"
+				string apiUrl = "http://193.161.193.99:61464/sdapi/v1/txt2img";
+
+				Match match = Regex.Match(resolution, @"(\d+)x(\d+)");
+
+				string width = match.Groups[1].Value;
+
+				string height = match.Groups[2].Value;
+
+
+				string jsonPayload = @"
                 {
                     ""prompt"": """ + prompt + @""",
                     ""steps"": 15,
-                    ""width"": 512,
-                    ""height"": 512,
+                    ""width"": """ + width + @""",
+                    ""height"": """ + height + @""",
                     ""restore_faces"": true,
                     ""save_images"": false
                 }";
