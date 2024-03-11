@@ -7,6 +7,9 @@ using System.IO;
 using System.Text.Json.Serialization;
 using Aimidge.Services;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Hosting.Server;
+using System.Linq;
+
 
 
 namespace ImageGPT.Controllers
@@ -27,28 +30,41 @@ namespace ImageGPT.Controllers
         public class PromptModel
         {
             public string Prompt { get; set; }
-			public string Resolution { get; set; }
-		}
+            public string Resolution { get; set; }
+        }
 
         [HttpPost("GetPrompt")]
 
-		public async Task<IActionResult> GetPrompt([FromBody] PromptModel userPrompt)
+        public async Task<IActionResult> GetPrompt([FromBody] PromptModel userPrompt)
         {
             try
             {
                 string prompt = userPrompt?.Prompt;
-				string resolution = userPrompt?.Resolution;
+                string resolution = userPrompt?.Resolution;
 
-				string apiUrl = "http://193.161.193.99:61464/sdapi/v1/txt2img";
+                //-
+                string[] prompt_parts = prompt.Split(' ');
+                string[] badWords = System.IO.File.ReadAllLines("Profanity.txt");
+                foreach (string word in prompt_parts)
+                {
+                    if (badWords.Contains(word.ToLower()))
+                    {
+                        _logger.LogInformation("Aptiktas netinkamas zodis: " + word);
+                        return BadRequest("Aptiktas netinkamas zodis");
+                    }
+                }
+                //-
 
-				Match match = Regex.Match(resolution, @"(\d+)x(\d+)");
+                string apiUrl = "http://193.161.193.99:61464/sdapi/v1/txt2img";
 
-				string width = match.Groups[1].Value;
+                Match match = Regex.Match(resolution, @"(\d+)x(\d+)");
 
-				string height = match.Groups[2].Value;
+                string width = match.Groups[1].Value;
+
+                string height = match.Groups[2].Value;
 
 
-				string jsonPayload = @"
+                string jsonPayload = @"
                 {
                     ""prompt"": """ + prompt + @""",
                     ""steps"": 15,
@@ -58,12 +74,14 @@ namespace ImageGPT.Controllers
                     ""save_images"": false
                 }";
 
-                using(var httpClient = new HttpClient()) 
+                using (var httpClient = new HttpClient())
                 {
                     httpClient.DefaultRequestHeaders.Add("txt2img", "application/json");
                     var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
                     var response = await httpClient.PostAsync(apiUrl, content);
-                    if(response.IsSuccessStatusCode)
+
+
+                    if (response.IsSuccessStatusCode)
                     {
                         string responseData = await response.Content.ReadAsStringAsync();
                         var jsonResponse = JsonConvert.DeserializeObject<dynamic>(responseData);
@@ -98,17 +116,17 @@ namespace ImageGPT.Controllers
         [HttpGet("GetCookie")]
         public async Task<IActionResult> GetCookie()
         {
-            try 
+            try
             {
                 var cookie = await _cookieService.ParseCookie("Cookie");
                 Console.WriteLine(cookie);
-                if(!string.IsNullOrEmpty(cookie))
+                if (!string.IsNullOrEmpty(cookie))
                 {
                     return Ok(cookie);
                 }
                 return Ok();
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
