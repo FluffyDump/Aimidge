@@ -24,6 +24,7 @@ The project idea is a webpage designed for users to generate unique images using
 ## Used technologies
 - Project management tool: Jira
 - Communication tool: Discord
+- Programs used to implement the project: Visual Studio, Visual Studio Code
 ## Instructions on how to run the project
 ## Instructions on how to use the project
 ## Authors
