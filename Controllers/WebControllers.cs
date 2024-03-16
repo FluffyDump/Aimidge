@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ImageGPT;
+using Aimidge;
 using System.Text;
 using Newtonsoft.Json;
 using System.IO;
@@ -10,18 +10,16 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Hosting.Server;
 using System.Linq;
 
-
-
-namespace ImageGPT.Controllers
+namespace Aimidge.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class ApiController : ControllerBase
+    [Route("api/web")]
+    public class WebControllers : ControllerBase
     {
-        private readonly ILogger<ApiController> _logger;
+        private readonly ILogger<WebControllers> _logger;
         private readonly CookieService _cookieService;
 
-        public ApiController(ILogger<ApiController> logger, CookieService cookieService)
+        public WebControllers(ILogger<WebControllers> logger, CookieService cookieService)
         {
             _logger = logger;
             _cookieService = cookieService;
@@ -34,7 +32,6 @@ namespace ImageGPT.Controllers
         }
 
         [HttpPost("GetPrompt")]
-
         public async Task<IActionResult> GetPrompt([FromBody] PromptModel userPrompt)
         {
             try
@@ -42,7 +39,6 @@ namespace ImageGPT.Controllers
                 string prompt = userPrompt?.Prompt;
                 string resolution = userPrompt?.Resolution;
 
-                //-
                 string[] prompt_parts = prompt.Split(' ');
                 string[] badWords = System.IO.File.ReadAllLines("Profanity.txt");
                 foreach (string word in prompt_parts)
@@ -53,16 +49,14 @@ namespace ImageGPT.Controllers
                         return BadRequest("Aptiktas netinkamas zodis");
                     }
                 }
-                //-
 
-                string apiUrl = "http://193.161.193.99:61464/sdapi/v1/txt2img";
+                string apiUrl = "http://193.161.193.99:61464/stable_diffusion";
 
                 Match match = Regex.Match(resolution, @"(\d+)x(\d+)");
 
                 string width = match.Groups[1].Value;
 
                 string height = match.Groups[2].Value;
-
 
                 string jsonPayload = @"
                 {
@@ -79,7 +73,6 @@ namespace ImageGPT.Controllers
                     httpClient.DefaultRequestHeaders.Add("txt2img", "application/json");
                     var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
                     var response = await httpClient.PostAsync(apiUrl, content);
-
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -99,8 +92,8 @@ namespace ImageGPT.Controllers
             }
         }
 
-        [HttpPost("SetUpdatedCookie")]
-        public async Task<IActionResult> SetUpdatedCookie()
+        [HttpPost("SetCookie")]
+        public async Task<IActionResult> SetCookie()
         {
             try
             {
@@ -113,18 +106,18 @@ namespace ImageGPT.Controllers
             }
         }
 
-        [HttpGet("GetCookie")]
+        [HttpPost("GetCookie")]
         public async Task<IActionResult> GetCookie()
         {
             try
             {
                 var cookie = await _cookieService.ParseCookie("Cookie");
-                Console.WriteLine(cookie);
                 if (!string.IsNullOrEmpty(cookie))
                 {
-                    return Ok(cookie);
+                    await _cookieService.UpdateCookie(cookie);
+                    return Ok("ok");
                 }
-                return Ok();
+                return Ok("404");
             }
             catch (Exception ex)
             {

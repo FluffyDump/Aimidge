@@ -26,14 +26,35 @@
     </div>
 
 	<script>
-		document.getElementById('submitButton').addEventListener('click', function () {
+		document.getElementById('submitButton').addEventListener('click', async function () {
 			document.getElementById('promptImage').innerHTML = '';
 			const promptText = document.getElementById('prompt').value;
-			const resolution = document.getElementById('resolution').value; // Get selected resolution
+			const resolution = document.getElementById('resolution').value;
 	
 			document.getElementById('loadingSpinner').style.display = 'block';
 
-			const response = fetch('api/GetPrompt', {
+			const existingCookie = await fetch('api/web/GetCookie', {
+				method: 'POST'
+			}).then(async resp => {
+				const respText = await resp.text();
+				if(respText === '404'){
+					await fetch('api/web/SetCookie', {
+						method: 'POST'
+					}).then(async setResp => {
+						if(setResp.ok){
+							processPrompt();
+						}
+					})
+				} else if(respText === 'ok'){
+					processPrompt();
+				} else {
+					alert("Unable to check cookies!");
+				}
+			});
+
+
+			async function processPrompt(){
+				const response = await fetch('api/web/GetPrompt', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -41,22 +62,17 @@
 				body: JSON.stringify({ prompt: promptText, resolution: resolution })
 			});
 
-			response.then(res => {
-				if (res.ok) {
-					res.json().then(data => {
-						const img = document.createElement('img');
-						img.src = 'data:image/jpg;base64,' + data.image;
-						document.getElementById('promptImage').appendChild(img);
-						document.getElementById('loadingSpinner').style.display = 'none';
-					})
-				} else {
-					console.error(res.statusText);
-					document.getElementById('loadingSpinner').style.display = 'none';
-				}
-			}).catch(error => {
-				console.error(error);
-				document.getElementById('loadingSpinner').style.display = 'none';
-			});
+			if (response.ok) {
+            	const data = await response.json();
+            	const img = document.createElement('img');
+            	img.src = 'data:image/jpg;base64,' + data.image;
+            	document.getElementById('promptImage').appendChild(img);
+            	document.getElementById('loadingSpinner').style.display = 'none';
+        	} else {
+            	console.error(response.statusText);
+            	document.getElementById('loadingSpinner').style.display = 'none';
+        		}
+			}
 		});
 	</script>
 </div>
