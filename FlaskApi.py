@@ -62,6 +62,35 @@ async def sql_add_unregistered_user():
         cursor.close()
     return jsonify({"message": "User added successfully"}), 200
 
+@app.route("/db_get", methods = ["GET"])
+async def db_get():
+    try:
+        cursor = sql_connection.cursor()
+        cursor.execute("SELECT * FROM Users")
+        users = cursor.fetchall()
+
+        user_list = []
+        for user in users:
+            user_info = {
+                'UserID': user[0],
+                'FirstName': user[1],
+                'LastName': user[2],
+                'Email': user[3],
+                'PasswordHash': user[4],
+                'RegistrationDate': user[5],
+                'HasUploadedFiles': user[6],
+                'FileFolderName': user[7],
+                'UserGuid': user[8],
+                'TokenExpiration': user[9]
+            }
+            user_list.append(user_info)
+            
+        cursor.close()
+        return jsonify({'DB Users': user_list}), 200
+    except Exception as ex:
+        return jsonify({'error': str(ex)}), 500
+
+
 def decrypt_user_data(user_data):
     key = b'O1XFeDPaQFAykYcxZZeIM76y1bnTbk92'
     iv = b'6dwejNHPVlRIWXTE'
