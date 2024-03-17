@@ -1,31 +1,31 @@
 ﻿@page
-@model IndexModel
+@model Aimidge.Pages.IndexModel
 @{
-	ViewData["Title"] = "Home page";
-}
-<link rel="stylesheet" href="~/css/homepage.css">
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+										ViewData["Title"] = "Home page";
+									}
+									<link rel="stylesheet" href="~/css/homepage.css">
+									<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
-<body>
-	<header>
-		<nav class="navbar">
-			<div class="logo"><a href="#">[LOGO]</a></div>
-			<ul class="menu">
-				<li><a asp-area="" asp-page="/Homepage">Home</a></li>
-				<li><a asp-area="" asp-page="/AboutOutside">About</a></li>
-				<li><a asp-area="" asp-page="/Generator">[Temp shorcut to image generation page]</a></li>
-			</ul>
-		</nav>
-		<div class="text-content">
-			<h2>Welcome to<br>
-				<div class="aimidge">AIMIDGE</div>
-			</h2>
-			<p>"Unleash Your Imagination: Let AI Bring Your Ideas to Life with Unique Images!"</p>
-		</div>
-		<br>
-		<div class="buttons">
-			<input type="button" value="Login">
-			<input type="button" value="Register">
-		</div>
-	</header>
-</body>
+									<body>
+										<header>
+											<nav class="navbar">
+												<div class="logo"><a href="#">[LOGO]</a></div>
+												<ul class="menu">
+													<li><a asp-area="" asp-page="/Homepage">Home</a></li>
+													<li><a asp-area="" asp-page="/AboutOutside">About</a></li>
+													<li><a asp-area="" asp-page="/Generator">[Temp shorcut to image generation page]</a></li>
+												</ul>
+											</nav>
+											<div class="text-content">
+												<h2>Welcome to<br>
+													<div class="aimidge">AIMIDGE</div>
+												</h2>
+												<p>"Unleash Your Imagination: Let AI Bring Your Ideas to Life with Unique Images!"</p>
+											</div>
+											<br>
+											<div class="buttons">
+												<input type="button" value="Login">
+												<input type="button" value="Register">
+											</div>
+										</header>
+									</body>
