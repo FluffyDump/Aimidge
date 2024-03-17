@@ -1,0 +1,55 @@
+﻿@page
+@model AboutInsideModel
+@{
+    ViewData["Title"] = "About";
+}
+<h1>@ViewData["Title"]</h1>
+<link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
+<script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-inner">
+            <header class="sidebar-header">
+                <button type="button" class="sidebar-burger" onclick="toggleSidebar()">
+                    <i class='bx bx-menu'></i>
+                </button>
+                <img src="logo.png" alt="" class="sidebar-logo">
+                <span class="sidebar-name-logo">AIMIDGE</span>
+            </header>
+            <nav class="sidebar-menu">
+                <button type="button">
+                    <i class='bx bx-home' onclick="redirectToHome()"></i>
+                    <span><a asp-area="" asp-page="/Index">Home</a></span>
+                </button>
+                <button type="button">
+                    <i class='bx bx-info-circle' onclick="redirectToAbout()"></i>
+                    <span><a asp-area="" asp-page="/Privacy">About</a></span>
+                </button>
+            </nav>
+        </div>
+    </nav>
+    <script type="text/javascript">
+        const toggleSidebar = () => document.body.classList.toggle("open");
+    </script>
+    <script>
+        function redirectToAbout() {
+            window.location.href = "/Privacy";
+        }
+    </script>
+    <script>
+        function redirectToHome() {
+            window.location.href = "/Index";
+        }
+    </script>
+    </br>
+    <p>Site authors:</p>
+    <ul>
+        <li>Tomas Petrauskas</li>
+        <li>Domas Gladkauskas</li>
+        <li>Aurelija Vaitkutė</li>
+        <li>Tomas Kundrotas</li>
+    </ul>
+</body>

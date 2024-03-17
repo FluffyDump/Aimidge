@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Aimidge.Pages
 {
-    public class PrivacyModel : PageModel
+    public class AboutInsideModel : PageModel
     {
-        private readonly ILogger<PrivacyModel> _logger;
+        private readonly ILogger<AboutInsideModel> _logger;
 
-        public PrivacyModel(ILogger<PrivacyModel> logger)
+        public AboutInsideModel(ILogger<AboutInsideModel> logger)
         {
             _logger = logger;
         }

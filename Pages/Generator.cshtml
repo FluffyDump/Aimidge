@@ -1,0 +1,128 @@
+@page
+@model GeneratorModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
+<script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-inner">
+            <header class="sidebar-header">
+                <button type="button" class="sidebar-burger" onclick="toggleSidebar()">
+                    <i class='bx bx-menu'></i>
+                </button>
+                <img src="logo.png" alt="" class="sidebar-logo">
+                <span class="sidebar-name-logo">AIMIDGE</span>
+            </header>
+            <nav class="sidebar-menu">
+                <button type="button">
+                    <i class='bx bx-home' onclick="redirectToHome()"></i>
+                    <span><a asp-area="" asp-page="/Index">Home</a></span>
+                </button>
+                <button type="button">
+                    <i class='bx bx-info-circle' onclick="redirectToAbout()"></i>
+                    <span><a asp-area="" asp-page="/AboutInside">About</a></span>
+                </button>
+            </nav>
+        </div>
+    </nav>
+    <script type="text/javascript">
+        const toggleSidebar = () => document.body.classList.toggle("open");
+    </script>
+    <script>
+        function redirectToAbout() {
+            window.location.href = "/AboutInside";
+        }
+    </script>
+    <script>
+        function redirectToHome() {
+            window.location.href = "/Index";
+        }
+    </script>
+
+    <div class="text-center">
+        <h1 class="display-4">Welcome to AIMIDGE!</h1>
+        <label for="prompt">Enter your prompt!</label><br />
+        <input type="text" id="prompt" name="prompt" /><br />
+
+        <label for="resolution">Select resolution:</label><br />
+        <select id="resolution" name="resolution">
+            <option value="100x100">100x100</option>
+            <option value="150x150">150x150</option>
+            <option value="320x240">320x240</option>
+            <option value="400x300">400x300</option>
+            <option value="512x512">512x512</option>
+        </select><br />
+        <button id="submitButton" type="button">Submit</button>
+
+        <div id="promptImage"></div>
+
+        <div id="loadingSpinner" style="display: none;">
+            <img src="/loading.gif" alt="Loading..." />
+        </div>
+
+        <script>
+            document.getElementById('submitButton').addEventListener('click', async function () {
+                document.getElementById('promptImage').innerHTML = '';
+                const promptText = document.getElementById('prompt').value;
+                const resolution = document.getElementById('resolution').value;
+
+                document.getElementById('loadingSpinner').style.display = 'block';
+
+                const existingCookie = await fetch('api/web/GetCookie', {
+                    method: 'POST'
+                }).then(async resp => {
+                    const respText = await resp.text();
+                    if (respText === '404') {
+                        await fetch('api/web/SetCookie', {
+                            method: 'POST'
+                        }).then(async setResp => {
+                            if (setResp.ok) {
+                                processPrompt();
+                            }
+                        })
+                    } else if (respText === 'ok') {
+                        processPrompt();
+                    } else {
+                        alert("Unable to check cookies!");
+                    }
+                });
+
+
+                async function processPrompt() {
+                    const response = await fetch('api/web/GetPrompt', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ prompt: promptText, resolution: resolution })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        const img = document.createElement('img');
+                        img.src = 'data:image/jpg;base64,' + data.image;
+                        document.getElementById('promptImage').appendChild(img);
+                        document.getElementById('loadingSpinner').style.display = 'none';
+                    } else {
+                        console.error(response.statusText);
+                        document.getElementById('loadingSpinner').style.display = 'none';
+                    }
+                }
+            });
+        </script>
+    </div>
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - Aimidge - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
