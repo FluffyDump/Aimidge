@@ -28,19 +28,27 @@ sql_insert_unregistered = """
 
 
 app = Flask(__name__)
+
 @app.route("/stable_diffusion", methods=["POST"])
 async def stable_diffusion():
     json_content = request.get_json()
+    print(json_content['prompt'])
     response = await asyncio.to_thread(requests.post, sd_link, json=json_content)
     return jsonify(response.json())
 
+@app.route("/sd_progress", methods=["GET"])
+async def sd_progress():
+    result = requests.get(f"http://127.0.0.1:7861/sdapi/v1/progress?skip_current_image=false")
+    percentage = result.json()['progress'] * 100
+    return jsonify(percentage)
+
 @app.route("/db_post_unregistered", methods = ["POST"])
 async def sql_add_unregistered_user():
-    json_content =  request.get_json()
+    json_content = request.get_json()
     cursor = sql_connection.cursor()
     try:
-        FileFolderName = decrypt_user_data(json_content['UserGuid'])
-        cursor.execute("SELECT * FROM Users WHERE FileFolderName = ?", (FileFolderName,))
+        user_guid = decrypt_user_data(json_content['UserGuid'])
+        cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (user_guid,))
         existing_user = cursor.fetchone()
         if(existing_user):
             if(existing_user[7] == decrypt_user_data(json_content['UserGuid'])):
@@ -61,6 +69,13 @@ async def sql_add_unregistered_user():
     finally:
         cursor.close()
     return jsonify({"message": "User added successfully"}), 200
+
+@app.route("/db_post_registered", methods = ["POST"])
+async def sql_add_registered_user():
+    json_content = request.get_json()
+    cursor = sql_connection.cursor()
+    return ""
+
 
 @app.route("/db_get", methods = ["GET"])
 async def db_get():
@@ -84,7 +99,7 @@ async def db_get():
                 'TokenExpiration': user[9]
             }
             user_list.append(user_info)
-            
+
         cursor.close()
         return jsonify({'DB Users': user_list}), 200
     except Exception as ex:

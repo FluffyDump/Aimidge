@@ -92,6 +92,27 @@ namespace Aimidge.Controllers
             }
         }
 
+        [HttpGet("GetProgress")]
+        public async Task<IActionResult> GetProgress()
+        {
+            try
+            {
+                string apiUrl = "http://193.161.193.99:61464/sd_progress";
+
+                using(var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.Add("progress", "application/json");
+                    var response = await httpClient.GetAsync(apiUrl);
+                    return Ok(await response.Content.ReadAsStringAsync());
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Get progress error: {ex.Message}");
+                return NotFound();
+            }
+        }
+
         [HttpPost("SetCookie")]
         public async Task<IActionResult> SetCookie()
         {

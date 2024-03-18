@@ -60,13 +60,13 @@
         <button id="submitButton" type="button">Submit</button>
 
         <button id="clearButton" type="button">Clear</button>
+
+
         <div id="promptImages"></div>
-
-       
-
         <div id="loadingSpinner" style="display: none;">
             <img src="/loading.gif" alt="Loading..." />
         </div>
+        <div id="progress"></div>
 
         <script>
             document.getElementById('submitButton').addEventListener('click', async function () {
@@ -74,6 +74,8 @@
                 const resolution = document.getElementById('resolution').value;
 
                 document.getElementById('loadingSpinner').style.display = 'block';
+                getBar();
+                refreshInterval = setInterval(getBar, 200);
 
                 const existingCookie = await fetch('api/web/GetCookie', {
                     method: 'POST'
@@ -109,11 +111,27 @@
                         const img = document.createElement('img');
                         img.src = 'data:image/jpg;base64,' + data.image;
                         img.style.margin = '10px';
+                        document.getElementById('progress').style.display = 'none';
                         document.getElementById('promptImages').appendChild(img);
                         document.getElementById('loadingSpinner').style.display = 'none';
+                        clearInterval(refreshInterval);
                     } else {
+                        document.getElementById('progress').style.display = 'none';
                         console.error(response.statusText);
                         document.getElementById('loadingSpinner').style.display = 'none';
+                        clearInterval(refreshInterval);
+                    }
+                }
+
+                async function getBar(){
+                    const response = await fetch('api/web/GetProgress', {
+                        method: 'GET'
+                    });
+
+                    if(response.ok) {
+                        const percentage = parseInt(await response.text());
+                        const processPercentage = document.getElementById('progress');
+                        processPercentage.textContent = percentage + '%';
                     }
                 }
             });
