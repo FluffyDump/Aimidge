@@ -59,7 +59,10 @@
         </select><br />
         <button id="submitButton" type="button">Submit</button>
 
-        <div id="promptImage"></div>
+        <button id="clearButton" type="button">Clear</button>
+        <div id="promptImages"></div>
+
+       
 
         <div id="loadingSpinner" style="display: none;">
             <img src="/loading.gif" alt="Loading..." />
@@ -67,7 +70,6 @@
 
         <script>
             document.getElementById('submitButton').addEventListener('click', async function () {
-                document.getElementById('promptImage').innerHTML = '';
                 const promptText = document.getElementById('prompt').value;
                 const resolution = document.getElementById('resolution').value;
 
@@ -106,12 +108,20 @@
                         const data = await response.json();
                         const img = document.createElement('img');
                         img.src = 'data:image/jpg;base64,' + data.image;
-                        document.getElementById('promptImage').appendChild(img);
+                        img.style.margin = '10px';
+                        document.getElementById('promptImages').appendChild(img);
                         document.getElementById('loadingSpinner').style.display = 'none';
                     } else {
                         console.error(response.statusText);
                         document.getElementById('loadingSpinner').style.display = 'none';
                     }
+                }
+            });
+            document.getElementById('clearButton').addEventListener('click', function () {
+                const promptImages = document.getElementById('promptImages');
+
+                while (promptImages.firstChild) {
+                    promptImages.removeChild(promptImages.firstChild);
                 }
             });
         </script>
