@@ -37,53 +37,32 @@ namespace Aimidge.Controllers
             try
             {
                 string prompt = userPrompt?.Prompt;
-                string resolution = userPrompt?.Resolution;
 
-                string[] prompt_parts = prompt.Split(' ');
-                string[] badWords = System.IO.File.ReadAllLines("Profanity.txt");
-                foreach (string word in prompt_parts)
+                string badword = ValidationService.CheckProfanity(prompt);
+                if ( !badword.Equals("ok") )
                 {
-                    if (badWords.Contains(word.ToLower()))
-                    {
-                        _logger.LogInformation("Aptiktas netinkamas zodis: " + word);
-                        return BadRequest("Aptiktas netinkamas zodis");
-                    }
+                    _logger.LogInformation("Aptiktas netinkamas zodis: " + badword);
+                    return BadRequest("Aptiktas netinkamas zodis");
                 }
 
-                string apiUrl = "http://193.161.193.99:61464/stable_diffusion";
 
+                string resolution = userPrompt?.Resolution;
                 Match match = Regex.Match(resolution, @"(\d+)x(\d+)");
-
                 string width = match.Groups[1].Value;
-
                 string height = match.Groups[2].Value;
 
-                string jsonPayload = @"
-                {
-                    ""prompt"": """ + prompt + @""",
-                    ""steps"": 15,
-                    ""width"": """ + width + @""",
-                    ""height"": """ + height + @""",
-                    ""restore_faces"": true,
-                    ""save_images"": false
-                }";
 
-                using (var httpClient = new HttpClient())
-                {
-                    httpClient.DefaultRequestHeaders.Add("txt2img", "application/json");
-                    var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-                    var response = await httpClient.PostAsync(apiUrl, content);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string responseData = await response.Content.ReadAsStringAsync();
-                        var jsonResponse = JsonConvert.DeserializeObject<dynamic>(responseData);
-                        string base64Image = jsonResponse.images[0];
-                        return Ok(new { image = base64Image });
-                    }
-                    _logger.LogInformation("Ok");
-                    return Ok();
+                Task<string> base64Image = SDService.PostToAPIAsync(SDService.GetJsonPayLoad(prompt, width, height));
+                if (!base64Image.Equals("BadRequest")) 
+                { 
+                    return Ok(new { image = base64Image.Result });
                 }
+
+
+                _logger.LogInformation("Ok");
+                return Ok();
+
+
             }
             catch (Exception ex)
             {
