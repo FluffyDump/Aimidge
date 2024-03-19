@@ -29,18 +29,28 @@ sql_insert_unregistered = """
 
 app = Flask(__name__)
 
-@app.route("/stable_diffusion", methods=["POST"])
+@app.route("/stable_diffusion", methods = ["POST"])
 async def stable_diffusion():
     json_content = request.get_json()
     print(json_content['prompt'])
     response = await asyncio.to_thread(requests.post, sd_link, json=json_content)
     return jsonify(response.json())
 
-@app.route("/sd_progress", methods=["GET"])
+@app.route("/sd_progress", methods = ["GET"])
 async def sd_progress():
     result = requests.get(f"http://127.0.0.1:7861/sdapi/v1/progress?skip_current_image=false")
     percentage = result.json()['progress'] * 100
     return jsonify(percentage)
+
+@app.route("/sd_api_endpoints", methods = ["GET"])
+async def sd_api_endpoints():
+    response = requests.get(f"http://127.0.0.1:7861/docs#/")
+    return response.content
+
+@app.route("/openapi.json", methods = ["GET"])
+async def openApi():
+    response = requests.get(f"http://127.0.0.1:7861/openapi.json")
+    return response.content
 
 @app.route("/db_post_unregistered", methods = ["POST"])
 async def sql_add_unregistered_user():
@@ -69,13 +79,6 @@ async def sql_add_unregistered_user():
     finally:
         cursor.close()
     return jsonify({"message": "User added successfully"}), 200
-
-@app.route("/db_post_registered", methods = ["POST"])
-async def sql_add_registered_user():
-    json_content = request.get_json()
-    cursor = sql_connection.cursor()
-    return ""
-
 
 @app.route("/db_get", methods = ["GET"])
 async def db_get():
