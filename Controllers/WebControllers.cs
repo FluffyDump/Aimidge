@@ -45,24 +45,18 @@ namespace Aimidge.Controllers
                     return BadRequest("Aptiktas netinkamas zodis");
                 }
 
-
                 string resolution = userPrompt?.Resolution;
                 Match match = Regex.Match(resolution, @"(\d+)x(\d+)");
                 string width = match.Groups[1].Value;
                 string height = match.Groups[2].Value;
-
 
                 Task<string> base64Image = SDService.PostToAPIAsync(SDService.GetJsonPayLoad(prompt, width, height));
                 if (!base64Image.Equals("BadRequest")) 
                 { 
                     return Ok(new { image = base64Image.Result });
                 }
-
-
                 _logger.LogInformation("Ok");
                 return Ok();
-
-
             }
             catch (Exception ex)
             {

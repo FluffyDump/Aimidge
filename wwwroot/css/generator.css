@@ -1,0 +1,321 @@
+body {
+  background-image: radial-gradient(circle, #7FC7D9 10%, #365486 100%);
+  overflow: hidden;
+}
+#loadingPercentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #000;
+  font-weight: bold;
+  font-size: 12px;
+}
+#loadingSpinner {
+  width: 100%;
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+#progress {
+  width: 0%;
+  height: 100%;
+  background-color: #4caf50;
+  border-radius: 5px;
+  transition: width 0.3s ease-in-out;
+}
+.area{
+  max-width: 20rem;
+  max-height: 4rem;
+  font-size: 14px;
+}
+.selector{
+  height: 20px;
+  width:100px;
+  font-size: 12px;
+}
+#generatedPicturesContainer{
+    overflow-x:hidden;
+    overflow-y: scroll;
+    max-width: 40rem;
+    max-height: 25rem;
+    scrollbar-color: rgb(72, 93, 109) rgba(0, 0, 0, 0);
+}
+#promptImages{
+    width: 38rem;
+    height: 38rem;
+    max-width: 38rem;
+    max-height: 38rem;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+}
+#loadingSpinner{
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-0%, -100%);
+}
+.try-it{
+    text-align: center;
+    width: 100rem;
+    height: 50rem;
+    padding-bottom: 23px;
+    padding-top: 43px;
+    color: #0F1035;
+    font-size: 2.5rem;
+}
+.buttons{
+    outline: none;
+    color: #f2f2f2;
+    font-size: 1.5rem;
+    font-weight: 500;
+    border-radius: 12px;
+    padding: 6px 15px;
+    border: none;
+    margin: 0 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #365486;
+}
+.buttons input:hover{
+    transform: scale(0.97);
+    color: #0F1035;
+}
+.model-card{
+    backdrop-filter: blur(24px);
+    border-radius: 32px;
+    margin: auto;
+    margin-bottom: 30px;
+    width: 85rem;
+    max-width: 86rem;
+    height: 50rem;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0;
+
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(5px);
+    border-radius: 25px;
+}
+.model-card-container{
+    display: flex;
+    flex-direction: row;
+    width: 80rem;
+    max-width: 81rem;
+    justify-content: center;
+    padding: 20px;
+    margin-left: 20px;
+}
+.model-card-col{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 60rem;
+    height: 45rem;
+    max-width: 61rem;
+    justify-content: center;
+    min-width: 270px;
+    padding: 0px 20px 0px 20px;
+    border: solid rgba(255, 255, 255, 0.25);
+    border-radius: 25px;
+    justify-content: center;
+    align-items: center;
+}
+.model-input-col{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+#prompt{
+    width: 20rem;
+    height: 4rem;
+}
+.outline-try-it{
+    display: flex;
+    flex-direction: row;
+}
+.edit-buttons-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.image-models-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+  }
+  
+  a {
+    color: #0077cc;
+  }
+  
+  .btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+  }
+  
+  .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+  }
+  
+  .border-top {
+    border-top: 1px solid #e5e5e5;
+  }
+  .border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+  }
+  
+  .box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+  }
+  
+  button.accept-policy {
+    font-size: 1rem;
+    line-height: inherit;
+  }
+  
+  .footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+  }
+  button{
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  .sidebar{
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    width: 75px;
+    height: 100%;
+    background:  #365486;
+    transition: all 0.4s;
+  }
+  body.open .sidebar{
+    width:170px;
+  
+  }
+  .sidebar-inner{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width:300px;
+  }
+  .sidebar-header{
+    display:flex;
+    align-items: center;
+    height: 68px;
+    padding: 0 1.25rem 0 0;
+    background: rgba(54, 84, 134 0.1);
+    border-left: 3px solid transparent;
+    transition: all 0.4s;
+  }
+  .sidebar-header:hover{
+    border-left: 3px solid #bdbdbd;
+  }
+  .sidebar-burger{
+    width: 70px;
+    height: 70px;
+    display: grid;
+    place-items: center;
+  }
+  .sidebar-burger > i, body.open .sidebar-burger > i{
+    font-size: 25px;
+    color:#f9f9f9;
+    transition: all 0.4s;
+  }
+  .sidebar-burger:hover > i, body.open .sidebar-burger:hover > i{
+    color:#bdbdbd;
+  }
+  .sidebar-logo{
+    height:30px;
+    opacity: 0;
+    transition: all 0.4s;
+  }
+  body.open .sidebar-logo{
+    opacity: 1;
+    transition: all 0.4s;
+  }
+  .sidebar-menu{
+    display: grid;
+  }
+  .sidebar-menu > button{
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    height: 55px;
+    font-family: "Ubuntu";
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    line-height: 1;
+    padding: 0 22px;
+    border-left: 3px solid transparent;
+    transition: all 0.4s;
+  }
+  .sidebar-menu > button:hover{
+    border-left: 3px solid #f9f9f9;
+  }
+  .sidebar-menu > button.has-border{
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    margin-bottom: 1rem;
+  }
+  .sidebar-menu > button > i{
+    font-size: 20px;
+    color: #f9f9f9;
+    transition: all 0.4s;
+  }
+  .sidebar-menu > button:hover > i, .sidebar-menu > button:hover > span{
+    color: #bdbdbd;
+  }
+  .sidebar-menu > button > span{
+    color: #f9f9f9;
+    opacity: 0;
+    transition: all 0.4s;
+  }
+  body.open .sidebar-menu > button > span{
+    opacity: 1;
+    transition: all 0.4s;
+  }
+  .sidebar-name-logo
+  {
+    font-size: 20px;
+    color: #f9f9f9;
+    transition: all 0.4s;
+    padding-left:2px;
+  }
+  .a-remover{
+    text-decoration: none;
+    color: inherit;
+  }
+  .a-remover:hover{
+    text-decoration: none;
+    color:inherit;
+  }

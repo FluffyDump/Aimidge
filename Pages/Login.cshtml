@@ -17,19 +17,19 @@
         <div class="form-container sign-up">
             <form>
                 <h1>Create Account</h1>
-                <input type="text" placeholder="Name">
-                <input type="text" placeholder="Username">
-                <input type="email" placeholder="Email">
-                <input type="password" placeholder="Password">
-                <input type="submit" value="Signup" class="button">
+                <input type="text" id="name" placeholder="Name">
+                <input type="text" id="username" placeholder="Username">
+                <input type="email" id="email" placeholder="Email">
+                <input type="password" id="password" placeholder="Password">
+                <input type="submit" value="Signup" id="signUpButton" class="button">
             </form>
         </div>
         <div class="form-container sign-in">
             <form method="post">
                 <h1>Sign In</h1>
-                <input type="email" placeholder="Email">
-                <input type="password" placeholder="Password">
-                <input type="submit" value="Login" class="button">
+                <input type="email" id="logEmail" placeholder="Email">
+                <input type="password" id="logPass" placeholder="Password">
+                <input type="submit" value="Login" id="logInButton" class="button">
             </form>
         </div>
         <div class="toggle-container">
@@ -46,5 +46,94 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", async function() {
+            document.getElementById('signUpButton').addEventListener('click', async function (event) {
+                event.preventDefault();
+                const formData = {
+                    Name: document.getElementById('name').value,
+                    Username: document.getElementById('username').value,
+                    Email: document.getElementById('email').value,
+                    PasswordHash: document.getElementById('password').value
+                }
+
+                if(!isValidName(document.getElementById('name').value)) {
+                    alert("Name should be at least 3 symbols long!")
+                } else if(!isValidUsername(document.getElementById('username').value)) {
+                    alert("Username must be at least 4 symbols long!")
+                } else if(!isValidEmail(document.getElementById('email').value)){
+                    alert("Email is invalid!");
+                } else if(!isValidPassword(document.getElementById('password').value)){
+                    alert("Password must be at least 8 symbols long with at least one uppercase letter and one character or number!")
+                } else {
+                    const response = await fetch('api/accounts/Add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                    });
+
+                    if (response.ok) {
+                        const result = await response.text();
+                        if (result === "ok") {
+                            window.location.href = "/Generator";
+                        } else if (result === "UserExists") {
+                            alert("User with this email address already exists!");
+                        }
+                    } else {
+                        alert("Internal server error occured!");
+                    }
+                }
+
+                function isValidName(name){
+                    return /^[A-Za-z]{2,}$/.test(name);
+                }
+                function isValidUsername(username){
+                    return username.length >= 4;
+                }
+            });
+
+            document.getElementById('logInButton').addEventListener('click', async function (event) {
+                event.preventDefault();
+                const formData = {
+                    Email: document.getElementById('logEmail').value,
+                    PasswordHash: document.getElementById('logPass').value
+                }
+
+                if(!isValidEmail(document.getElementById('logEmail').value)){
+                    alert("Email is invalid!");
+                } else if(!isValidPassword(document.getElementById('logPass').value)){
+                    alert("Password must be at least 8 symbols long with at least one uppercase letter and one character or number!")
+                } else {
+                    const response = await fetch('api/accounts/Auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                    });
+
+                    if (response.ok) {
+                        const result = await response.text();
+                        if (result === "ok") {
+                            window.location.href = "/Generator";
+                        } else if (result === "IncorrectValues") {
+                            alert("Incorrect email or password!");
+                        }
+                    } else {
+                        alert("Internal server error occured!");
+                    }
+                }
+
+            });
+            function isValidEmail(email){
+                return email.length >= 12;
+            }
+            function isValidPassword(password){
+                return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password);
+            }
+        });
+    </script>
     <script src="~/js/script.js"></script>
 </body>

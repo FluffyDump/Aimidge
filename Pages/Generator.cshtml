@@ -3,10 +3,13 @@
 @{
     ViewData["Title"] = "Home page";
 }
-<link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="~/css/generator.css">
 <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<title>Document</title>
 
 <body>
     <nav class="sidebar">
@@ -21,11 +24,11 @@
             <nav class="sidebar-menu">
                 <button type="button">
                     <i class='bx bx-home' onclick="redirectToHome()"></i>
-                    <span><a asp-area="" asp-page="/Index">Home</a></span>
+                    <span><a asp-area="" asp-page="/Generator" class="a-remover">Home</a></span>
                 </button>
                 <button type="button">
                     <i class='bx bx-info-circle' onclick="redirectToAbout()"></i>
-                    <span><a asp-area="" asp-page="/AboutInside">About</a></span>
+                    <span><a asp-area="" asp-page="/AboutInside" class="a-remover">About</a></span>
                 </button>
             </nav>
         </div>
@@ -40,42 +43,66 @@
     </script>
     <script>
         function redirectToHome() {
-            window.location.href = "/Index";
+            window.location.href = "/Generator";
         }
     </script>
+    <div class="try-it">
+        <div class="model-card">
+            <div class="model-card-container">
+                <div class="model-card-col">
 
-    <div class="text-center">
-        <h1 class="display-4">Welcome to AIMIDGE!</h1>
-        <label for="prompt">Enter your prompt!</label><br />
-        <input type="text" id="prompt" name="prompt" /><br />
+                    <div class="outline-try-it">
+                        <label for="prompt">Enter your prompt!</label><br />
+                    </div>
 
-        <label for="resolution">Select resolution:</label><br />
-        <select id="resolution" name="resolution">
-            <option value="100x100">100x100</option>
-            <option value="150x150">150x150</option>
-            <option value="320x240">320x240</option>
-            <option value="400x300">400x300</option>
-            <option value="512x512">512x512</option>
-        </select><br />
-        <button id="submitButton" type="button">Submit</button>
+                    <span class="model-input-col">
+                        <textarea type="text" id="prompt" name="prompt" placeholder="Enter your prompt"
+                            spellcheck="false" class="area"></textarea>
+                    </span>
 
-        <button id="clearButton" type="button">Clear</button>
+                    <div class="outline-try-it">
+                        <label for="resolution">Select resolution:</label><br />
+                    </div>
+                    <div class="image-models-container">
+                        <select class="selector" id="resolution" name="resolution">
+                            <option value="100x100">100x100</option>
+                            <option value="150x150">150x150</option>
+                            <option value="320x240">320x240</option>
+                            <option value="400x300">400x300</option>
+                            <option value="512x512">512x512</option>
+                        </select><br />
+                    </div>
 
 
-        <div id="promptImages"></div>
-        <div id="loadingSpinner" style="display: none;">
-            <img src="/loading.gif" alt="Loading..." />
-        </div>
-        <div id="progress"></div>
+                    <div class="edit-buttons-container">
+                        <button id="submitButton" type="button" class="buttons">Submit</button><br />
+                        <button id="clearButton" type="button" class="buttons">Clear</button>
+                    </div>
+                    <div id="generatedPicturesContainer"></div>
+                </div>
+                <div class="model-card-col">
 
+                    <div id="promptImages"></div>
+
+                    <div id="loadingSpinner" style="display: none;">
+                        <div id="progress">
+                            <div id="loadingPercentage"></div>
+                        </div>
+                    </div>
+
+                    <div class="edit-buttons-container">
+                        <button id="download-model-image" class="buttons">Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>=
         <script>
+            let refreshInterval;
             document.getElementById('submitButton').addEventListener('click', async function () {
                 const promptText = document.getElementById('prompt').value;
                 const resolution = document.getElementById('resolution').value;
 
                 document.getElementById('loadingSpinner').style.display = 'block';
-                getBar();
-                refreshInterval = setInterval(getBar, 200);
 
                 const existingCookie = await fetch('api/web/GetCookie', {
                     method: 'POST'
@@ -98,6 +125,7 @@
 
 
                 async function processPrompt() {
+                    refreshInterval = setInterval(getBar, 700);
                     const response = await fetch('api/web/GetPrompt', {
                         method: 'POST',
                         headers: {
@@ -111,45 +139,84 @@
                         const img = document.createElement('img');
                         img.src = 'data:image/jpg;base64,' + data.image;
                         img.style.margin = '10px';
-                        document.getElementById('progress').style.display = 'none';
-                        document.getElementById('promptImages').appendChild(img);
+
+                        if (document.getElementById('promptImages').hasChildNodes) {
+                            const promptImages = document.getElementById('promptImages');
+                            while (promptImages.firstChild) {
+                                promptImages.removeChild(promptImages.firstChild);
+                            }
+                        }
+
+                        document.getElementById('promptImages').appendChild(img.cloneNode(true));
+                        document.getElementById('generatedPicturesContainer').appendChild(img);
                         document.getElementById('loadingSpinner').style.display = 'none';
-                        clearInterval(refreshInterval);
                     } else {
-                        document.getElementById('progress').style.display = 'none';
                         console.error(response.statusText);
                         document.getElementById('loadingSpinner').style.display = 'none';
-                        clearInterval(refreshInterval);
                     }
                 }
 
-                async function getBar(){
+                async function getBar(percentage, progress) {
                     const response = await fetch('api/web/GetProgress', {
                         method: 'GET'
                     });
 
-                    if(response.ok) {
+                    if (response.ok) {
                         const percentage = parseInt(await response.text());
-                        const processPercentage = document.getElementById('progress');
-                        processPercentage.textContent = percentage + '%';
+                        const progress = document.getElementById('progress');
+
+                        progress.style.width = percentage + '%';
+                        loadingPercentage.textContent = percentage + '%';
+
+                        if (percentage >= 85) {
+                            clearInterval(refreshInterval);
+                            progress.style.width = 100 + '%';
+                            loadingPercentage.textContent = 100 + '%';
+                            setTimeout(function() {
+                                progress.style.width = 0 + '%';
+                                loadingPercentage.textContent = 0 + '%';
+                            }, 100000);
+                        }
                     }
                 }
             });
+
+            document.getElementById('download-model-image').addEventListener('click', async function () {
+                var imageElement = document.getElementById("promptImages").firstChild;
+
+                var canvas = document.createElement("canvas");
+                canvas.width = imageElement.width;
+                canvas.height = imageElement.height;
+
+                var ctx = canvas.getContext("2d");
+                ctx.drawImage(imageElement, 0, 0);
+
+                var anchor = document.createElement("a");
+                anchor.href = canvas.toDataURL("image/jpeg");
+                anchor.download = "Image.jpg";
+                anchor.click();
+            });
+
             document.getElementById('clearButton').addEventListener('click', function () {
                 const promptImages = document.getElementById('promptImages');
 
                 while (promptImages.firstChild) {
                     promptImages.removeChild(promptImages.firstChild);
                 }
+
+                const promptImagesTwo = document.getElementById('generatedPicturesContainer');
+                
+                while (promptImagesTwo.firstChild) {
+                    promptImagesTwo.removeChild(promptImagesTwo.firstChild);
+                }
             });
         </script>
     </div>
-    <footer class="border-top footer text-muted">
+    <!--   <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2024 - Aimidge - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
-    </footer>
-
+    </footer> -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

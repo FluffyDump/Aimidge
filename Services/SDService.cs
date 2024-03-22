@@ -8,7 +8,6 @@ namespace Aimidge.Services
 
         public static string GetJsonPayLoad(string prompt, string width, string height)
         {
-
             string jsonPayload = @"
                 {
                     ""prompt"": """ + prompt + @""",
@@ -23,7 +22,6 @@ namespace Aimidge.Services
 
         public static async Task<string> PostToAPIAsync(string jsonPayload)
         {
-
             string apiUrl = "http://193.161.193.99:61464/stable_diffusion";
 
             using (var httpClient = new HttpClient())
@@ -38,12 +36,9 @@ namespace Aimidge.Services
                     var jsonResponse = JsonConvert.DeserializeObject<dynamic>(responseData);
                     string base64Image = jsonResponse.images[0];
                     return base64Image ;
-                }                
+                }
             }
-            return "BadRequest";
-
+            return String.Empty;
         }
-
-
     }
 }

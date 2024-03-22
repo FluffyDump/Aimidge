@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using Aimidge.Services;
+using System.Web;
 
 namespace Aimidge.Services
 {
@@ -38,6 +39,29 @@ namespace Aimidge.Services
 			}
 		}
 
+		public async Task SetRegisteredCookie(string uid)
+		{
+			string key = "Cookie";
+			string value = uid;
+
+			var option = new CookieOptions();
+
+			option.Expires = DateTime.Now.AddMinutes(20);
+			option.Secure = true;
+			option.HttpOnly = true;
+			option.SameSite = SameSiteMode.Strict;
+
+			try
+			{
+				await Task.Run(() => _httpContextAccessor.HttpContext.Response.Cookies.Append(key, value, option));
+				await _databaseService.AddUnregisteredUser(value);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Error occured while adding cookie or adding user: " + ex.Message);
+			}
+		}
+
 		public async Task UpdateCookie(string cookie)
 		{
 			string key = "Cookie";
@@ -48,6 +72,7 @@ namespace Aimidge.Services
 				option.Expires = DateTime.Now.AddMinutes(20);
 				try
 				{
+					Console.WriteLine(ParseCookieUID("Cookie"));
 					await Task.Run(() => _httpContextAccessor.HttpContext.Response.Cookies.Append(key, cookie, option));
 					await _databaseService.AddUnregisteredUser(cookie);
 				}
@@ -61,6 +86,11 @@ namespace Aimidge.Services
 		public async Task<string> ParseCookie(string key)
 		{
 			return await Task.FromResult(_httpContextAccessor.HttpContext.Request.Cookies[key]);
+		}
+
+		public string ParseCookieUID(string key)
+		{
+			return HttpUtility.UrlDecode(_httpContextAccessor.HttpContext.Request.Cookies[key]);
 		}
 
 		public void RemoveCookie(string key)
