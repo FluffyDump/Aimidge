@@ -13,6 +13,11 @@
 <title>"Document"</title>
 
 <body>
+    <footer class="footer">
+        <div>
+            &copy; 2024 - Aimidge - <a asp-area="" asp-page="/AboutInside">About</a>
+        </div>
+    </footer>
     <nav class="sidebar">
         <div class="sidebar-inner">
             <header class="sidebar-header">
@@ -20,12 +25,12 @@
                     <i class='bx bx-menu'></i>
                 </button>
                 <img src="logo.png" alt="" class="sidebar-logo">
-                <span class="sidebar-name-logo">AIMIDGE</span>
+                <span class="sidebar-name-logo"><a asp-area="" asp-page="/Index" class="a-remover">AIMIDGE</a></span>
             </header>
             <nav class="sidebar-menu">
                 <button type="button">
                     <i class='bx bx-home' id="generator" onclick="redirectToHome()"></i>
-                    <span><a asp-area="" asp-page="/Generator" class="a-remover">@localizer["home"]</a></span>
+                    <span><a asp-area="" asp-page="/Generator" class="a-remover">@localizer["generator"]</a></span>
                 </button>
                 <button type="button">
                     <i class='bx bx-info-circle' id="about" onclick="redirectToAbout()"></i>
@@ -98,17 +103,17 @@
             </div>
         </div>
         <script>
-            document.getElementById("generator").addEventListener("click", function() {
+            document.getElementById("generator").addEventListener("click", function () {
                 getLanguage("Generator");
             });
 
-            document.getElementById("about").addEventListener("click", function() {
+            document.getElementById("about").addEventListener("click", function () {
                 getLanguage("AboutInside");
             });
 
             function getLanguage(value) {
                 var selectedLanguage = localStorage.getItem('selectedLanguage');
-                if(selectedLanguage){
+                if (selectedLanguage) {
                     window.location.href = 'http://localhost:5007/' + value + "?culture=" + selectedLanguage;
                 }
             }
@@ -188,7 +193,7 @@
                             clearInterval(refreshInterval);
                             progress.style.width = 99 + '%';
                             loadingPercentage.textContent = 99 + '%';
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 progress.style.width = 0 + '%';
                                 loadingPercentage.textContent = 0 + '%';
                             }, 100000);
@@ -221,18 +226,13 @@
                 }
 
                 const promptImagesTwo = document.getElementById('generatedPicturesContainer');
-                
+
                 while (promptImagesTwo.firstChild) {
                     promptImagesTwo.removeChild(promptImagesTwo.firstChild);
                 }
             });
         </script>
     </div>
-    <!--   <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - Aimidge - <a asp-area="" asp-page="/Privacy">Privacy</a>
-        </div>
-    </footer> -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

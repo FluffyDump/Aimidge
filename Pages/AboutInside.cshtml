@@ -5,12 +5,18 @@
     ViewData["Title"] = @localizer["about"];
 }
 <h1>@ViewData["Title"]</h1>
-<link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="~/css/about.css" asp-append-version="true" />
 <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
 <body>
+    <footer class="footer">
+        <div>
+            &copy; 2024 - Aimidge - <a asp-area="" asp-page="/AboutInside">About</a>
+        </div>
+    </footer>
     <nav class="sidebar">
         <div class="sidebar-inner">
             <header class="sidebar-header">
@@ -18,16 +24,16 @@
                     <i class='bx bx-menu'></i>
                 </button>
                 <img src="logo.png" alt="" class="sidebar-logo">
-                <span class="sidebar-name-logo">AIMIDGE</span>
+                <span class="sidebar-name-logo"><a a asp-area="" asp-page="/Index" class="a-remover">AIMIDGE</a></span>
             </header>
             <nav class="sidebar-menu">
                 <button type="button">
                     <i class='bx bx-home' onclick="redirectToHome()"></i>
-                    <span><a asp-area="" asp-page="/Index">@localizer["home"]</a></span>
+                    <span><a asp-area="" asp-page="/Generator" class="a-remover">@localizer["generator"]</a></span>
                 </button>
                 <button type="button">
                     <i class='bx bx-info-circle' onclick="redirectToAbout()"></i>
-                    <span><a asp-area="" asp-page="/Privacy">@localizer["about"]</a></span>
+                    <span><a asp-area="" asp-page="/Privacy" class="a-remover">@localizer["about"]</a></span>
                 </button>
             </nav>
         </div>
@@ -42,7 +48,7 @@
     </script>
     <script>
         function redirectToHome() {
-            window.location.href = "/Index";
+            window.location.href = "/Generator";
         }
     </script>
     </br>

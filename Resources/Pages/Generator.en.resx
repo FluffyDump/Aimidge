@@ -129,8 +129,8 @@
   <data name="enterPrompt" xml:space="preserve">
     <value>Enter your prompt</value>
   </data>
-  <data name="home" xml:space="preserve">
-    <value>Home</value>
+  <data name="generator" xml:space="preserve">
+    <value>Generator</value>
   </data>
   <data name="promptEntering" xml:space="preserve">
     <value>Enter your promt!</value>

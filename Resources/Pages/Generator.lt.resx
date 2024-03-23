@@ -129,8 +129,8 @@
   <data name="enterPrompt" xml:space="preserve">
     <value>Įveskite savo aprašymą</value>
   </data>
-  <data name="home" xml:space="preserve">
-    <value>Pradžia</value>
+  <data name="generator" xml:space="preserve">
+    <value>Generatorius</value>
   </data>
   <data name="promptEntering" xml:space="preserve">
     <value>Įveskite savo aprašymą</value>
