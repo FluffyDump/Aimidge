@@ -1,8 +1,10 @@
 ﻿@page
 @model Aimidge.Pages.IndexModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @{
 	ViewData["Title"] = "Home page";
 }
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="~/css/homepage.css">
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
@@ -11,9 +13,13 @@
 		<nav class="navbar">
 			<div class="logo"><a href="#">[LOGO]</a></div>
 			<ul class="menu">
-				<li><a asp-area="" asp-page="/Homepage">Home</a></li>
-				<li><a asp-area="" asp-page="/AboutOutside">About</a></li>
-				<li><a asp-area="" asp-page="/Generator">[Temp shorcut to image generation page]</a></li>
+				<select id="languageDropdown">
+        			<option value="en">English</option>
+        			<option value="lt">Lietuvių</option>
+    			</select>
+				<li><a asp-area="" asp-page="/Homepage">@localizer["home"]</a></li>
+				<li><a asp-area="" asp-page="/AboutOutside">@localizer["about"]</a></li>
+				<li><a asp-area="" asp-page="/Generator" class="guest">@localizer["generator"]</a></li>
 			</ul>
 		</nav>
 		<div class="text-content">
@@ -25,11 +31,26 @@
 		<br>
 		<div class="buttons">
 			<a asp-area="" asp-page="/Login">
-				<input type="button" value="Login">
+				<input type="button" value=@localizer["login"]>
 			</a>
 			<a asp-area="" asp-page="/Login">
-				<input type="button" value="Signup">
+				<input type="button" value=@localizer["register"]>
 			</a>
 		</div>
+		<script>
+		function switchLanguage() {
+            var selectedLanguage = document.getElementById("languageDropdown").value;
+            localStorage.setItem('selectedLanguage', selectedLanguage);
+			window.location.href = 'http://localhost:5007/' + "?culture=" + selectedLanguage;
+        }
+		var selectedLanguage = localStorage.getItem('selectedLanguage');
+    		if (selectedLanguage) {
+        		document.getElementById("languageDropdown").value = selectedLanguage;
+				if (!window.location.search.includes('culture=')) {
+            		window.location.href = 'http://localhost:5007/' + "?culture=" + selectedLanguage;
+        		}
+    		}
+        document.getElementById("languageDropdown").addEventListener("change", switchLanguage);
+		</script>
 	</header>
 </body>

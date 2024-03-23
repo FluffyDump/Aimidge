@@ -1,4 +1,5 @@
 @page
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @model Aimidge.Pages.GeneratorModel
 @{
     ViewData["Title"] = "Home page";
@@ -9,7 +10,7 @@
 <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-<title>Document</title>
+<title>"Document"</title>
 
 <body>
     <nav class="sidebar">
@@ -23,11 +24,11 @@
             </header>
             <nav class="sidebar-menu">
                 <button type="button">
-                    <i class='bx bx-home' onclick="redirectToHome()"></i>
+                    <i class='bx bx-home' id="generator" onclick="redirectToHome()"></i>
                     <span><a asp-area="" asp-page="/Generator" class="a-remover">Home</a></span>
                 </button>
                 <button type="button">
-                    <i class='bx bx-info-circle' onclick="redirectToAbout()"></i>
+                    <i class='bx bx-info-circle' id="about" onclick="redirectToAbout()"></i>
                     <span><a asp-area="" asp-page="/AboutInside" class="a-remover">About</a></span>
                 </button>
             </nav>
@@ -52,7 +53,7 @@
                 <div class="model-card-col">
 
                     <div class="outline-try-it">
-                        <label for="prompt">Enter your prompt!</label><br />
+                        <label for="prompt">@localizer["promptEntering"]</label><br />
                     </div>
 
                     <span class="model-input-col">
@@ -61,7 +62,7 @@
                     </span>
 
                     <div class="outline-try-it">
-                        <label for="resolution">Select resolution:</label><br />
+                        <label for="resolution">@localizer["resolutionSelection"]</label><br />
                     </div>
                     <div class="image-models-container">
                         <select class="selector" id="resolution" name="resolution">
@@ -75,8 +76,8 @@
 
 
                     <div class="edit-buttons-container">
-                        <button id="submitButton" type="button" class="buttons">Submit</button><br />
-                        <button id="clearButton" type="button" class="buttons">Clear</button>
+                        <button id="submitButton" type="button" class="buttons">@localizer["submit"]</button><br />
+                        <button id="clearButton" type="button" class="buttons">@localizer["clear"]</button>
                     </div>
                     <div id="generatedPicturesContainer"></div>
                 </div>
@@ -91,12 +92,27 @@
                     </div>
 
                     <div class="edit-buttons-container">
-                        <button id="download-model-image" class="buttons">Download</button>
+                        <button id="download-model-image" class="buttons">@localizer["download"]</button>
                     </div>
                 </div>
             </div>
-        </div>=
+        </div>
         <script>
+            document.getElementById("generator").addEventListener("click", function() {
+                getLanguage("Generator");
+            });
+
+            document.getElementById("about").addEventListener("click", function() {
+                getLanguage("AboutInside");
+            });
+
+            function getLanguage(value) {
+                var selectedLanguage = localStorage.getItem('selectedLanguage');
+                if(selectedLanguage){
+                    window.location.href = 'http://localhost:5007/' + value + "?culture=" + selectedLanguage;
+                }
+            }
+
             let refreshInterval;
             document.getElementById('submitButton').addEventListener('click', async function () {
                 const promptText = document.getElementById('prompt').value;
@@ -170,8 +186,8 @@
 
                         if (percentage >= 85) {
                             clearInterval(refreshInterval);
-                            progress.style.width = 100 + '%';
-                            loadingPercentage.textContent = 100 + '%';
+                            progress.style.width = 99 + '%';
+                            loadingPercentage.textContent = 99 + '%';
                             setTimeout(function() {
                                 progress.style.width = 0 + '%';
                                 loadingPercentage.textContent = 0 + '%';

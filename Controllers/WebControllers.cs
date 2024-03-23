@@ -1,14 +1,14 @@
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using Aimidge;
+using Aimidge.Services;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Aimidge;
-using System.Text;
 using Newtonsoft.Json;
-using System.IO;
-using System.Text.Json.Serialization;
-using Aimidge.Services;
-using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Hosting.Server;
-using System.Linq;
 
 namespace Aimidge.Controllers
 {
@@ -39,7 +39,7 @@ namespace Aimidge.Controllers
                 string prompt = userPrompt?.Prompt;
 
                 string badword = ValidationService.CheckProfanity(prompt);
-                if ( !badword.Equals("ok") )
+                if (!badword.Equals("ok"))
                 {
                     _logger.LogInformation("Aptiktas netinkamas zodis: " + badword);
                     return BadRequest("Aptiktas netinkamas zodis");
@@ -50,9 +50,11 @@ namespace Aimidge.Controllers
                 string width = match.Groups[1].Value;
                 string height = match.Groups[2].Value;
 
-                Task<string> base64Image = SDService.PostToAPIAsync(SDService.GetJsonPayLoad(prompt, width, height));
-                if (!base64Image.Equals("BadRequest")) 
-                { 
+                Task<string> base64Image = SDService.PostToAPIAsync(
+                    SDService.GetJsonPayLoad(prompt, width, height)
+                );
+                if (!base64Image.Equals("BadRequest"))
+                {
                     return Ok(new { image = base64Image.Result });
                 }
                 _logger.LogInformation("Ok");
@@ -72,7 +74,7 @@ namespace Aimidge.Controllers
             {
                 string apiUrl = "http://193.161.193.99:61464/sd_progress";
 
-                using(var httpClient = new HttpClient())
+                using (var httpClient = new HttpClient())
                 {
                     httpClient.DefaultRequestHeaders.Add("progress", "application/json");
                     var response = await httpClient.GetAsync(apiUrl);

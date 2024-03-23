@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+
 
 <head>
 	<meta charset="utf-8" />
@@ -9,11 +9,23 @@
 	<script>
 		document.addEventListener("DOMContentLoaded", async function () {
 			try {
+				var selectedLanguage = localStorage.getItem('selectedLanguage');
+            	if (selectedLanguage) {
+					var links = document.querySelectorAll('a');
+					links.forEach(function(link) {
+                    	var href = link.getAttribute('href');
+                    	if (href) {
+                        	var separator = href.indexOf('?') === -1 ? '?' : '&';
+                        	link.setAttribute('href', href + separator + 'culture=' + selectedLanguage);
+                    	}
+                	});
+				}
+
 				const existingCookie = await fetch('api/web/GetCookie', {
 					method: 'POST'
 				});
-			} catch {
-				alert("Internal server error occured!");
+			} catch (error) {
+				alert("Internal server error occurred: " + error.message);
 			}
 		});
 	</script>
