@@ -25,11 +25,11 @@
             <nav class="sidebar-menu">
                 <button type="button">
                     <i class='bx bx-home' id="generator" onclick="redirectToHome()"></i>
-                    <span><a asp-area="" asp-page="/Generator" class="a-remover">Home</a></span>
+                    <span><a asp-area="" asp-page="/Generator" class="a-remover">@localizer["home"]</a></span>
                 </button>
                 <button type="button">
                     <i class='bx bx-info-circle' id="about" onclick="redirectToAbout()"></i>
-                    <span><a asp-area="" asp-page="/AboutInside" class="a-remover">About</a></span>
+                    <span><a asp-area="" asp-page="/AboutInside" class="a-remover">@localizer["about"]</a></span>
                 </button>
             </nav>
         </div>
@@ -57,7 +57,7 @@
                     </div>
 
                     <span class="model-input-col">
-                        <textarea type="text" id="prompt" name="prompt" placeholder="Enter your prompt"
+                        <textarea type="text" id="prompt" name="prompt" placeholder=@localizer["enterPrompt"]
                             spellcheck="false" class="area"></textarea>
                     </span>
 

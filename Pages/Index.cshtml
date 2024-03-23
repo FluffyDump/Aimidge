@@ -14,8 +14,8 @@
 			<div class="logo"><a href="#">[LOGO]</a></div>
 			<ul class="menu">
 				<select id="languageDropdown">
-        			<option value="en">English</option>
-        			<option value="lt">Lietuvių</option>
+        			<option value="en">En</option>
+        			<option value="lt">Lt</option>
     			</select>
 				<li><a asp-area="" asp-page="/Homepage">@localizer["home"]</a></li>
 				<li><a asp-area="" asp-page="/AboutOutside">@localizer["about"]</a></li>
@@ -23,10 +23,10 @@
 			</ul>
 		</nav>
 		<div class="text-content">
-			<h2>Welcome to<br>
+			<h2>@localizer["welcome"]<br>
 				<div class="aimidge">AIMIDGE</div>
 			</h2>
-			<p>"Unleash Your Imagination: Let AI Bring Your Ideas to Life with Unique Images!"</p>
+			<p>@localizer["firstLine"]</p>
 		</div>
 		<br>
 		<div class="buttons">

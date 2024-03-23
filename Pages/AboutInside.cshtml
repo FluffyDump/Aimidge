@@ -1,7 +1,8 @@
 ﻿@page
 @model Aimidge.Pages.AboutInsideModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @{
-    ViewData["Title"] = "About";
+    ViewData["Title"] = @localizer["about"];
 }
 <h1>@ViewData["Title"]</h1>
 <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
@@ -22,11 +23,11 @@
             <nav class="sidebar-menu">
                 <button type="button">
                     <i class='bx bx-home' onclick="redirectToHome()"></i>
-                    <span><a asp-area="" asp-page="/Index">Home</a></span>
+                    <span><a asp-area="" asp-page="/Index">@localizer["home"]</a></span>
                 </button>
                 <button type="button">
                     <i class='bx bx-info-circle' onclick="redirectToAbout()"></i>
-                    <span><a asp-area="" asp-page="/Privacy">About</a></span>
+                    <span><a asp-area="" asp-page="/Privacy">@localizer["about"]</a></span>
                 </button>
             </nav>
         </div>
@@ -45,7 +46,7 @@
         }
     </script>
     </br>
-    <p>Site authors:</p>
+    <p>@localizer["siteAuthors"]</p>
     <ul>
         <li>Tomas Petrauskas</li>
         <li>Domas Gladkauskas</li>

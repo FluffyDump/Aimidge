@@ -118,24 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="about" xml:space="preserve">
-    <value>Apie</value>
+    <value>About</value>
   </data>
-  <data name="firstLine" xml:space="preserve">
-    <value>Atskleiskite savo vaizduotę: Leiskite DI įgyvendinti jūsų idėjas su unikaliais vaizdais!</value>
-  </data>
-  <data name="generator" xml:space="preserve">
-    <value>Tęsti kaip svečias</value>
-  </data>
-  <data name="home" xml:space="preserve">
-    <value>Pradžia</value>
-  </data>
-  <data name="login" xml:space="preserve">
-    <value>Prisijungti</value>
-  </data>
-  <data name="register" xml:space="preserve">
-    <value>Registruotis</value>
-  </data>
-  <data name="welcome" xml:space="preserve">
-    <value>Sveiki atvykę į</value>
+  <data name="siteAuthors" xml:space="preserve">
+    <value>Site authors:</value>
   </data>
 </root>

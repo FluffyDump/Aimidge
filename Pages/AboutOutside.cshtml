@@ -1,7 +1,8 @@
 @page
 @model Aimidge.Pages.AboutOutsideModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @{
-    ViewData["Title"] = "About";
+    ViewData["Title"] = @localizer["about"];
 }
 <h1>@ViewData["Title"]</h1>
 <link rel="stylesheet" href="~/css/empty.css" asp-append-version="true" />
@@ -9,7 +10,7 @@
 
 <body>
     </br>
-    <p>Site authors:</p>
+    <p>@localizer["siteAuthors"]</p>
     <ul>
         <li>Tomas Petrauskas</li>
         <li>Domas Gladkauskas</li>
