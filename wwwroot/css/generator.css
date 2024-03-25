@@ -23,7 +23,7 @@ body {
   height: 100%;
   background-color: #4caf50;
   border-radius: 5px;
-  transition: width 0.3s ease-in-out;
+  transition: width 0.2s ease-in-out;
 }
 .area {
     max-width: 20vw;
@@ -85,7 +85,7 @@ body {
 .model-card {
     backdrop-filter: blur(24px);
     margin: auto;
-    width: 72vw;
+    width: 71vw;
     height: 90vh;
     justify-content: center;
     align-items: center;
@@ -96,12 +96,11 @@ body {
     border-left: 1px solid rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(5px);
     border-radius: 25px;
-    min-width: 600px;
 }
 .model-card-container {
     display: flex;
     flex-direction: row;
-    width: 71vw;
+    width: 70vw;
     justify-content: center;
     padding: 1.5vw;
 }
@@ -109,14 +108,14 @@ body {
     margin-top: 2vh;
     display: flex;
     flex-direction: column;
-    width: 71vw;
+    width: 65vw;
     height: 80vh;
     justify-content: center;
-    min-width: 270px;
     border: solid rgba(255, 255, 255, 0.25);
     border-radius: 25px;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 .model-input-col {
     display: flex;
@@ -177,7 +176,7 @@ a {
 }
 
 .box-shadow {
-    box-shadow: 0 .25vw .75vh rgba(0, 0, 0, .05);
+    box-shadow: 0 .25vw .75vw rgba(0, 0, 0, .05);
 }
   
 button.accept-policy {
