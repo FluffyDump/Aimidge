@@ -25,28 +25,26 @@ body {
   border-radius: 5px;
   transition: width 0.3s ease-in-out;
 }
-.area{
-  max-width: 20rem;
-  max-height: 4rem;
-  font-size: 14px;
+.area {
+    max-width: 20vw;
+    max-height: 20vh;
+    font-size: 1vw;
 }
-.selector{
-  height: 20px;
-  width:100px;
-  font-size: 12px;
+.selector {
+    height: 3vh;
+    width: 6vw;
+    font-size: 1vw;
 }
-#generatedPicturesContainer{
-    overflow-x:hidden;
+#generatedPicturesContainer {
+    overflow-x: hidden;
     overflow-y: scroll;
-    max-width: 40rem;
-    max-height: 25rem;
+    max-width: 40vw;
+    max-height: 25vh;
     scrollbar-color: rgb(72, 93, 109) rgba(0, 0, 0, 0);
 }
 #promptImages{
     width: 38rem;
     height: 38rem;
-    max-width: 38rem;
-    max-height: 38rem;
     margin: 0;
     justify-content: center;
     align-items: center;
@@ -60,84 +58,75 @@ body {
     left: 50%;
     transform: translate(-0%, -100%);
 }
-.try-it{
-    text-align: center;
-    width: 100rem;
-    height: 50rem;
-    padding-bottom: 23px;
-    padding-top: 43px;
+.try-it {
+    padding-bottom: 3vh;
+    padding-top: 5vh;
     color: #0F1035;
-    font-size: 2.5rem;
+    font-size: 2.5vw;
 }
-.buttons{
+.buttons {
     outline: none;
     color: #f2f2f2;
-    font-size: 1.5rem;
+    font-size: 1.2vw;
     font-weight: 500;
     border-radius: 12px;
-    padding: 6px 15px;
+    padding: 0.5vh 1vw;
     border: none;
-    margin: 0 8px;
+    margin: 0 1vw;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     background-color: #365486;
 }
 .buttons input:hover{
     transform: scale(0.97);
     color: #0F1035;
 }
-.model-card{
+.model-card {
     backdrop-filter: blur(24px);
-    border-radius: 32px;
     margin: auto;
-    margin-bottom: 30px;
-    width: 85rem;
-    max-width: 86rem;
-    height: 50rem;
+    width: 72vw;
+    height: 90vh;
     justify-content: center;
     align-items: center;
     margin-left: 0;
-
     background: rgba(255, 255, 255, 0.1);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
     border-top: 1px solid rgba(255, 255, 255, 0.5);
     border-left: 1px solid rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(5px);
     border-radius: 25px;
+    min-width: 600px;
 }
-.model-card-container{
+.model-card-container {
     display: flex;
     flex-direction: row;
-    width: 80rem;
-    max-width: 81rem;
+    width: 71vw;
     justify-content: center;
-    padding: 20px;
-    margin-left: 20px;
+    padding: 1.5vw;
 }
-.model-card-col{
-    margin-top: 20px;
+.model-card-col {
+    margin-top: 2vh;
     display: flex;
     flex-direction: column;
-    width: 60rem;
-    height: 45rem;
-    max-width: 61rem;
+    width: 71vw;
+    height: 80vh;
     justify-content: center;
     min-width: 270px;
-    padding: 0px 20px 0px 20px;
     border: solid rgba(255, 255, 255, 0.25);
     border-radius: 25px;
     justify-content: center;
     align-items: center;
 }
-.model-input-col{
+.model-input-col {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    height: 6vh;
 }
 #prompt{
-    width: 20rem;
-    height: 4rem;
+    width: 20vw;
+    height: 6vh;
 }
 .outline-try-it{
     display: flex;
@@ -185,13 +174,13 @@ a {
 .border-bottom {
     border-bottom: 1px solid #e5e5e5;
 }
-  
+
 .box-shadow {
-    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    box-shadow: 0 .25vw .75vh rgba(0, 0, 0, .05);
 }
   
 button.accept-policy {
-    font-size: 1rem;
+    font-size: 1vw;
     line-height: inherit;
 }
   
@@ -240,11 +229,11 @@ body.open .sidebar{
     width:300px;
 }
 
-.sidebar-header{
-    display:flex;
+.sidebar-header {
+    display: flex;
     align-items: center;
     height: 68px;
-    padding: 0 1.25rem 0 0;
+    padding: 0 1.25vw 0 0;
     background: rgba(54, 84, 134 0.1);
     border-left: 3px solid transparent;
     transition: all 0.4s;
@@ -304,11 +293,10 @@ body.open .sidebar-logo{
     border-left: 3px solid #f9f9f9;
 }
 
-.sidebar-menu > button.has-border{
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-    margin-bottom: 1rem;
-}
+    .sidebar-menu > button.has-border {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+        margin-bottom: 1vh;
+    }
 
 .sidebar-menu > button > i{
     font-size: 20px;
