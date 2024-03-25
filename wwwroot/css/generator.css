@@ -42,10 +42,11 @@ body {
     max-height: 25vh;
     scrollbar-color: rgb(72, 93, 109) rgba(0, 0, 0, 0);
 }
-#promptImages{
-    width: 38rem;
+#promptImages {
+    width: 38vw;
     height: 38rem;
     margin: 0;
+    display: flex;
     justify-content: center;
     align-items: center;
 }
