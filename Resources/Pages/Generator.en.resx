@@ -138,6 +138,9 @@
   <data name="resolutionSelection" xml:space="preserve">
     <value>Select resolution:</value>
   </data>
+  <data name="save online" xml:space="preserve">
+    <value>Save online</value>
+  </data>
   <data name="submit" xml:space="preserve">
     <value>Submit</value>
   </data>

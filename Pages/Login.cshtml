@@ -1,4 +1,5 @@
 @page
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @model Aimidge.Pages.LoginModel
 @{
     ViewData["Title"] = "Login page";
@@ -16,32 +17,32 @@
     <div class="container" id="container">
         <div class="form-container sign-up">
             <form>
-                <h1>Create Account</h1>
-                <input type="text" id="name" placeholder="Name">
-                <input type="text" id="username" placeholder="Username">
-                <input type="email" id="email" placeholder="Email">
-                <input type="password" id="password" placeholder="Password">
-                <input type="submit" value="Signup" id="signUpButton" class="button">
+                <h1>@localizer["account"]</h1>
+                <input type="text" id="name" placeholder="@localizer["name"]">
+                <input type="text" id="username" placeholder="@localizer["username"]">
+                <input type="email" id="email" placeholder="@localizer["email"]">
+                <input type="password" id="password" placeholder="@localizer["password"]">
+                <input type="submit" value="@localizer["signup"]" id="signUpButton" class="button">
             </form>
         </div>
         <div class="form-container sign-in">
             <form method="post">
-                <h1>Sign In</h1>
-                <input type="email" id="logEmail" placeholder="Email">
-                <input type="password" id="logPass" placeholder="Password">
-                <input type="submit" value="Login" id="logInButton" class="button">
+                <h1>@localizer["signin"]</h1>
+                <input type="email" id="logEmail" placeholder="@localizer["email"]">
+                <input type="password" id="logPass" placeholder="@localizer["password"]">
+                <input type="submit" value="@localizer["login"]" id="logInButton" class="button">
             </form>
         </div>
         <div class="toggle-container">
             <div class="toggle">
                 <div class="toggle-panel toggle-left">
-                    <h1>Already got account?</h1>
-                    <button class="hidden" id="login">Sign In</button>
+                    <h1>@localizer["alreadygot"]</h1>
+                    <button class="hidden" id="login">@localizer["signin"]</button>
                 </div>
                 <div class="toggle-panel toggle-right">
-                    <h1>Welcome to Aimidge!</h1>
-                    <p>Register with your personal details to use all of site features</p>
-                    <button class="hidden" id="register">Sign Up</button>
+                    <h1>@localizer["welcomeTo"]</h1>
+                    <p>@localizer["registerToUse"]</p>
+                    <button class="hidden" id="register">@localizer["signup"]</button>
                 </div>
             </div>
         </div>

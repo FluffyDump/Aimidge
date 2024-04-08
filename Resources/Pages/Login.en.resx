@@ -117,31 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="about" xml:space="preserve">
-    <value>Apie</value>
+  <data name="account" xml:space="preserve">
+    <value>Account</value>
   </data>
-  <data name="clear" xml:space="preserve">
-    <value>Išvalyti</value>
+  <data name="alreadygot" xml:space="preserve">
+    <value>Already got account?</value>
   </data>
-  <data name="download" xml:space="preserve">
-    <value>Atsisiųsti</value>
+  <data name="createAccount" xml:space="preserve">
+    <value>Create Account</value>
   </data>
-  <data name="enterPrompt" xml:space="preserve">
-    <value>Įveskite savo aprašymą</value>
+  <data name="email" xml:space="preserve">
+    <value>Email</value>
   </data>
-  <data name="generator" xml:space="preserve">
-    <value>Generatorius</value>
+  <data name="login" xml:space="preserve">
+    <value>Login</value>
   </data>
-  <data name="promptEntering" xml:space="preserve">
-    <value>Įveskite savo aprašymą</value>
+  <data name="name" xml:space="preserve">
+    <value>Name</value>
   </data>
-  <data name="resolutionSelection" xml:space="preserve">
-    <value>Pasirinkite rezoliuciją:</value>
+  <data name="password" xml:space="preserve">
+    <value>Password</value>
   </data>
-  <data name="save online" xml:space="preserve">
-    <value>Išsaugoti internete</value>
+  <data name="registerToUse" xml:space="preserve">
+    <value>Register with your personal details to use all of site features</value>
   </data>
-  <data name="submit" xml:space="preserve">
-    <value>Pateikti</value>
+  <data name="signin" xml:space="preserve">
+    <value>Sign In</value>
+  </data>
+  <data name="signup" xml:space="preserve">
+    <value>Sign Up</value>
+  </data>
+  <data name="username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="welcomeTo" xml:space="preserve">
+    <value>Welcome to Aimidge!</value>
   </data>
 </root>
