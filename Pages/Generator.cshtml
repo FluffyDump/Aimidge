@@ -29,20 +29,38 @@
                 <img src="logo.png" alt="" class="sidebar-logo">
                 <span class="sidebar-name-logo"><a asp-area="" asp-page="/Index" class="a-remover">AIMIDGE</a></span>
             </header>
-            <nav class="sidebar-menu">
-                <button type="button">
-                    <i class='bx bx-home' id="generator" onclick="redirectToHome()"></i>
-                    <span><a asp-area="" asp-page="/Generator" class="a-remover">@localizer["generator"]</a></span>
-                </button>
-                <button type="button">
-                    <i class='bx bx-info-circle' id="about" onclick="redirectToAbout()"></i>
-                    <span><a asp-area="" asp-page="/AboutInside" class="a-remover">@localizer["about"]</a></span>
-                </button>
-            </nav>
+            <div class="sidebar-buttons">
+                <nav class="sidebar-menu">
+                    <button type="button">
+                        <i class='bx bx-home' id="generator" onclick="redirectToHome()"></i>
+                        <span><a asp-area="" asp-page="/Generator" class="a-remover">@localizer["generator"]</a></span>
+                    </button>
+                    <button type="button">
+                        <i class='bx bx-info-circle' id="about" onclick="redirectToAbout()"></i>
+                        <span><a asp-area="" asp-page="/AboutInside" class="a-remover">@localizer["about"]</a></span>
+                    </button>
+                </nav>
+
+                <div class="profile-div">
+                    <div class="profile">
+                        <div class="profile-photo">
+                            <img src="~/css/profilis.png" class="photo">
+                        </div>
+                        <button type="button">
+                            <a asp-area="" asp-page="/UserProfile" class="a-remover">@localizer["Profile"]</a>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
     <script type="text/javascript">
         const toggleSidebar = () => document.body.classList.toggle("open");
+    </script>
+    <script>
+        function redirectToUserProfile() {
+            window.location.href = "/UserProfile";
+        }
     </script>
     <script>
         function redirectToAbout() {

@@ -1,3 +1,29 @@
+.profile{
+    padding: 10px;
+    background:#365486;
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 70vh;
+    width:100%;
+    height: 55px;
+    align-items:center;
+
+}
+.profile-div{
+    color:#f9f9f9;
+    width:100%;
+    height: 55px;
+}
+.profile-div button{
+    color:#f9f9f9;
+    margin-left: 30px;
+    font-size: 20px;
+}
+.profile-photo .photo{
+    width: 50px;
+    height: 50px;
+}
 .sidebar{
     position: absolute;
     overflow: hidden;
@@ -9,9 +35,63 @@
     transition: all 0.4s;
  }
 
+ .last{
+    gap: 12px;
+    align-items: center;
+    height: 55px;
+    font-family: "Ubuntu";
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    line-height: 1;
+    padding: 0 22px;
+    border-left: 3px solid transparent;
+    transition: all 0.4s;
+
+    margin-top: 20vh;
+    margin-left: 0 auto;
+    width:15vh;
+    padding-left: 0 auto;
+ }
+
+.last:hover {
+    border-left: 3px solid #f9f9f9;
+}
+
+.last.has-border {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    margin-bottom: 1vh;
+}
+
+.last > i {
+    font-size: 20px;
+    color: #f9f9f9;
+    transition: all 0.4s;
+}
+
+.last:hover > i,
+.last:hover > span {
+    color: #bdbdbd;
+}
+
+.last > span {
+    color: #f9f9f9;
+    opacity: 0;
+    transition: all 0.4s;
+}
+
+body.open .last > span {
+    opacity: 1;
+    transition: all 0.4s;
+}
+
+.sidebar-buttons {
+    display: flex;
+    flex-direction: column;
+}
+
 body.open .sidebar{
     width:170px;
-  
 }
 .sidebar-inner{
     position: absolute;
