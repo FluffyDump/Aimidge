@@ -1,0 +1,35 @@
+body {
+    background-image: radial-gradient(circle, #7FC7D9 10%, #365486 100%);
+    overflow: hidden;
+  }
+.try-it {
+    margin-left: 100px;
+    padding-bottom: 3vh;
+    padding-top: 5vh;
+    color: #0F1035;
+    font-size: 2.5vw;
+    align-content: center;
+    justify-content: center;
+}
+.model-card {
+    backdrop-filter: blur(24px);
+    margin: auto;
+    width: 71vw;
+    height: 90vh;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0;
+    margin-right: 0;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(5px);
+    border-radius: 25px;
+}
+.form-group{
+    font-size: 16px !important;
+}
+.btn .btn-primary{
+    background:#0F1035 !important;
+}
