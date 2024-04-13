@@ -1,15 +1,22 @@
-﻿@page
-@model Aimidge.Pages.AboutInsideModel
+@page
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@model Aimidge.Pages.AlbumModel
 @{
-    ViewData["Title"] = @localizer["about"];
+    ViewData["Title"] = "Album";
 }
-<h1>@ViewData["Title"]</h1>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="~/css/about.css" asp-append-version="true" asp-append-version="true" />
-<script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="~/css/generator.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/sidebar.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/history-loading.css" asp-append-version="true">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css'>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true">
+</head>
 
 <body>
     <footer class="footer">
@@ -71,11 +78,6 @@
         }
     </script>
     <script>
-        function redirectToHome() {
-            window.location.href = "/Generator";
-        }
-    </script>
-    <script>
         function redirectToUserProfile() {
             window.location.href = "/UserProfile";
         }
@@ -85,12 +87,41 @@
             window.location.href = "/AboutInside";
         }
     </script>
-    </br>
-    <p>@localizer["siteAuthors"]</p>
-    <ul>
-        <li>Tomas Petrauskas</li>
-        <li>Domas Gladkauskas</li>
-        <li>Aurelija Vaitkutė</li>
-        <li>Tomas Kundrotas</li>
-    </ul>
+    <script>
+        function redirectToHome() {
+            window.location.href = "/Generator";
+        }
+    </script>
+    <section class="home-section">
+        <div class="try-it">
+            <div class="model-card">
+                <div class="model-card-container">
+                    <div class="model-card-col">
+                        <div id="generatedPicturesContainer"></div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                document.getElementById("generator").addEventListener("click", function () {
+                    getLanguage("Generator");
+                });
+
+                document.getElementById("about").addEventListener("click", function () {
+                    getLanguage("AboutInside");
+                });
+
+                function getLanguage(value) {
+                    var selectedLanguage = localStorage.getItem('selectedLanguage');
+                    if (selectedLanguage) {
+                        window.location.href = 'http://localhost:5007/' + value + "?culture=" + selectedLanguage;
+                    }
+                }
+            </script>
+        </div>
+    </section>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
+
+</html>
