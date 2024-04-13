@@ -129,7 +129,7 @@
   <data name="enterPrompt" xml:space="preserve">
     <value>Įveskite savo aprašymą</value>
   </data>
-  <data name="generator" xml:space="preserve">
+  <data name="Generator" xml:space="preserve">
     <value>Generatorius</value>
   </data>
   <data name="promptEntering" xml:space="preserve">

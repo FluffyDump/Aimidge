@@ -6,10 +6,10 @@
 }
 <h1>@ViewData["Title"]</h1>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="~/css/about.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/about.css" asp-append-version="true" asp-append-version="true" />
 <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
 
 <body>
     <footer class="footer">
@@ -17,38 +17,72 @@
             &copy; 2024 - Aimidge - <a asp-area="" asp-page="/AboutInside">About</a>
         </div>
     </footer>
-    <nav class="sidebar">
-        <div class="sidebar-inner">
-            <header class="sidebar-header">
-                <button type="button" class="sidebar-burger" onclick="toggleSidebar()">
-                    <i class='bx bx-menu'></i>
-                </button>
-                <img src="logo.png" alt="" class="sidebar-logo">
-                <span class="sidebar-name-logo"><a a asp-area="" asp-page="/Index" class="a-remover">AIMIDGE</a></span>
-            </header>
-            <nav class="sidebar-menu">
-                <button type="button">
-                    <i class='bx bx-home' onclick="redirectToHome()"></i>
-                    <span><a asp-area="" asp-page="/Generator" class="a-remover">@localizer["generator"]</a></span>
-                </button>
-                <button type="button">
-                    <i class='bx bx-info-circle' onclick="redirectToAbout()"></i>
-                    <span><a asp-area="" asp-page="/Privacy" class="a-remover">@localizer["about"]</a></span>
-                </button>
-            </nav>
+    <div class="sidebar">
+        <div class="logo-details">
+            <img src="~/Logo1white.png" alt="Description of the image" width="50" height="50">
+            <div class="logo_name">AIMIDGE</div>
+            <i class='bx bx-menu' id="btn"></i>
         </div>
-    </nav>
-    <script type="text/javascript">
-        const toggleSidebar = () => document.body.classList.toggle("open");
-    </script>
+        <ul class="nav-list">
+            <li>
+                <a asp-area="" asp-page="/Generator">
+                    <i class='bx bx-grid-alt'></i>
+                    <span class="links_name">@localizer["Generator"]</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bx-heart'></i>
+                    <span class="links_name">Saved</span>
+                </a>
+                <span class="tooltip">Saved</span>
+            </li>
+            <li class="profile">
+                <div class="profile-details">
+                    <img src="profile.jpg" alt="profileImg">
+                    <div class="name_job">
+                        <div class="name">
+                            <a asp-area="" asp-page="/UserProfile" class="name">Vardenis</a>
+                        </div>
+                    </div>
+                </div>
+                <i class='bx bx-log-out' id="log_out"></i>
+            </li>
+        </ul>
+    </div>
     <script>
-        function redirectToAbout() {
-            window.location.href = "/Privacy";
+        let sidebar = document.querySelector(".sidebar");
+        let closeBtn = document.querySelector("#btn");
+        let searchBtn = document.querySelector(".bx-search");
+        closeBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("open");
+            menuBtnChange();
+        });
+        searchBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("open");
+            menuBtnChange();
+        });
+        function menuBtnChange() {
+            if (sidebar.classList.contains("open")) {
+                closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+            } else {
+                closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+            }
         }
     </script>
     <script>
         function redirectToHome() {
             window.location.href = "/Generator";
+        }
+    </script>
+    <script>
+        function redirectToUserProfile() {
+            window.location.href = "/UserProfile";
+        }
+    </script>
+    <script>
+        function redirectToAbout() {
+            window.location.href = "/AboutInside";
         }
     </script>
     </br>

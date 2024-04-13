@@ -1,199 +1,227 @@
-.profile{
-    padding: 10px;
-    background:#365486;
-    display: flex;
-    align-items: flex-start;
-    width: 100%;
-    margin-top: 70vh;
-    width:100%;
-    height: 55px;
-    align-items:center;
-
-}
-.profile-div{
-    color:#f9f9f9;
-    width:100%;
-    height: 55px;
-}
-.profile-div button{
-    color:#f9f9f9;
-    margin-left: 30px;
-    font-size: 20px;
-}
-.profile-photo .photo{
-    width: 50px;
-    height: 50px;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins" , sans-serif;
 }
 .sidebar{
-    position: absolute;
-    overflow: hidden;
-    top: 0;
-    left: 0;
-    width: 74px;
-    height: 100%;
-    background:  #365486;
-    transition: all 0.4s;
- }
-
- .last{
-    gap: 12px;
-    align-items: center;
-    height: 55px;
-    font-family: "Ubuntu";
-    font-size: 16px;
-    font-weight: 400;
-    letter-spacing: 2px;
-    line-height: 1;
-    padding: 0 22px;
-    border-left: 3px solid transparent;
-    transition: all 0.4s;
-
-    margin-top: 20vh;
-    margin-left: 0 auto;
-    width:15vh;
-    padding-left: 0 auto;
- }
-
-.last:hover {
-    border-left: 3px solid #f9f9f9;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 78px;
+  background: #365486;
+  padding: 6px 14px;
+  z-index: 99;
+  transition: all 0.4s ease;
+  border-radius: 25px;
 }
-
-.last.has-border {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-    margin-bottom: 1vh;
+.sidebar.open{
+  width: 240px;
 }
-
-.last > i {
-    font-size: 20px;
-    color: #f9f9f9;
-    transition: all 0.4s;
+.sidebar .logo-details{
+  height: 60px;
+  display: flex;
+  align-items: center;
+  position: relative;
 }
-
-.last:hover > i,
-.last:hover > span {
-    color: #bdbdbd;
+.sidebar .logo-details img{
+  opacity: 0;
+  transition: all 0.4s ease;
 }
-
-.last > span {
-    color: #f9f9f9;
-    opacity: 0;
-    transition: all 0.4s;
+.sidebar .logo-details .logo_name{
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  opacity: 0;
+  margin-left: 10px;
+  transition: all 0.4s ease;
 }
-
-body.open .last > span {
-    opacity: 1;
-    transition: all 0.4s;
+.sidebar.open .logo-details img,
+.sidebar.open .logo-details .logo_name{
+  opacity: 1;
 }
-
-.sidebar-buttons {
-    display: flex;
-    flex-direction: column;
+.sidebar .logo-details #btn{
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  font-size: 22px;
+  transition: all 0.4s ease;
+  font-size: 23px;
+  text-align: center;
+  cursor: pointer;
 }
-
-body.open .sidebar{
-    width:170px;
+.sidebar.open .logo-details #btn{
+  text-align: right;
 }
-.sidebar-inner{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width:300px;
+.sidebar i{
+  color: #fff;
+  height: 60px;
+  min-width: 50px;
+  font-size: 28px;
+  text-align: center;
+  line-height: 60px;
 }
-
-.sidebar-header {
-    display: flex;
-    align-items: center;
-    height: 68px;
-    padding: 0 1.25vw 0 0;
-    background: rgba(54, 84, 134 0.1);
-    border-left: 3px solid transparent;
-    transition: all 0.4s;
+.sidebar .logo-details img{
+  opacity:0;
 }
-
-.sidebar-header:hover{
-    border-left: 3px solid #bdbdbd;
+.sidebar .nav-list{
+  margin-top: 20px;
+  height: 100%;
+  padding-left: 0;
+  justify-content: center;
+  align-items: center;
 }
-
-.sidebar-burger{
-    width: 70px;
-    height: 70px;
-    display: grid;
-    place-items: center;
+.sidebar li{
+  position: relative;
+  margin: 8px 0;
+  list-style: none;
 }
-
-.sidebar-burger > i, body.open .sidebar-burger > i{
-    font-size: 25px;
-    color:#f9f9f9;
-    transition: all 0.4s;
+.sidebar li .tooltip{
+  position: absolute;
+  top: -20px;
+  left: calc(100% + 15px);
+  z-index: 3;
+  background: #fff;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 400;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: 0s;
 }
-
-.sidebar-burger:hover > i, body.open .sidebar-burger:hover > i{
-    color:#bdbdbd;
+.sidebar li:hover .tooltip{
+  opacity: 1;
+  pointer-events: auto;
+  transition: all 0.4s ease;
+  top: 50%;
+  transform: translateY(-50%);
 }
-.sidebar-logo{
-    height:30px;
-    opacity: 0;
-    transition: all 0.4s;
+.sidebar.open li .tooltip{
+  display: none;
 }
-
-body.open .sidebar-logo{
-    opacity: 1;
-    transition: all 0.4s;
+.sidebar input{
+  font-size: 15px;
+  color: #FFF;
+  font-weight: 400;
+  outline: none;
+  height: 50px;
+  width: 100%;
+  width: 50px;
+  border: none;
+  border-radius: 12px;
+  transition: all 0.4s ease;
+  background: #365486;
 }
-
-.sidebar-menu{
-    display: grid;
+.sidebar.open input{
+  padding: 0 20px 0 50px;
+  width: 100%;
 }
-
-.sidebar-menu > button{
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    height: 55px;
-    font-family: "Ubuntu";
-    font-size: 16px;
-    font-weight: 400;
-    letter-spacing: 2px;
-    line-height: 1;
-    padding: 0 22px;
-    border-left: 3px solid transparent;
-    transition: all 0.4s;
+.sidebar li a{
+  display: flex;
+  height: 100%;
+  width: 100%;
+  border-radius: 12px;
+  align-items: center;
+  text-decoration: none;
+  transition: all 0.4s ease;
+  background: #365486;
 }
-
-.sidebar-menu > button:hover{
-    border-left: 3px solid #f9f9f9;
+.sidebar li a:hover{
+  background: #FFF;
 }
-
-    .sidebar-menu > button.has-border {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-        margin-bottom: 1vh;
-    }
-
-.sidebar-menu > button > i{
-    font-size: 20px;
-    color: #f9f9f9;
-    transition: all 0.4s;
+.sidebar li a .links_name{
+  color: #fff;
+  font-size: 15px;
+  font-weight: 400;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.4s;
 }
-
-.sidebar-menu > button:hover > i, .sidebar-menu > button:hover > span{
-    color: #bdbdbd;
+.sidebar.open li a .links_name{
+  opacity: 1;
+  pointer-events: auto;
 }
-
-.sidebar-menu > button > span{
-    color: #f9f9f9;
-    opacity: 0;
-    transition: all 0.4s;
+.sidebar li a:hover .links_name,
+.sidebar li a:hover i{
+  transition: all 0.4s ease;
+  color: #365486;
 }
-
-body.open .sidebar-menu > button > span{
-    opacity: 1;
-    transition: all 0.4s;
+.sidebar li i{
+  height: 50px;
+  line-height: 50px;
+  font-size: 18px;
+  border-radius: 12px;
 }
-
-.sidebar-name-logo
-{
-    font-size: 20px;
-    color: #f9f9f9;
-    transition: all 0.4s;
-    padding-left:2px;
+.sidebar li.profile{
+  position: fixed;
+  height: 60px;
+  width: 78px;
+  left: 0;
+  bottom: -8px;
+  padding: 10px 14px;
+  background: #0F1035;
+  transition: all 0.4s ease;
+  overflow: hidden;
+}
+.sidebar.open li.profile{
+  width: 240px;
+}
+.sidebar li .profile-details{
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+.sidebar li img{
+  height: 45px;
+  width: 45px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-right: 10px;
+}
+.sidebar li.profile .name,
+.sidebar li.profile{
+  font-size: 15px;
+  font-weight: 400;
+  color: #fff;
+  white-space: nowrap;
+}
+.sidebar .profile #log_out{
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  background: #365486;
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  border-radius: 0px;
+  transition: all 0.4s ease;
+}
+.sidebar .profile .name a{
+  background: #0F1035;
+}
+.home-section{
+  align-items: center;
+  justify-content: center;
+  width:fit-content;
+}
+.sidebar.open .profile #log_out{
+  width: 50px;
+  background: none;
+}
+.sidebar.open ~ .home-section{
+  left: 240px;
+  width: calc(100% - 250px);
+}
+@media (max-width: 420px) {
+  .sidebar li .tooltip{
+    display: none;
+  }
 }

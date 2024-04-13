@@ -5,14 +5,18 @@
     ViewData["Title"] = "Home page";
 }
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="~/css/generator.css">
-<link rel="stylesheet" href="~/css/sidebar.css">
-<link rel="stylesheet" href="~/css/history-loading.css">
-<script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-<title>"Document"</title>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="~/css/generator.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/sidebar.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/history-loading.css" asp-append-version="true">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css'>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true">
+</head>
 
 <body>
     <footer class="footer">
@@ -20,42 +24,59 @@
             &copy; 2024 - Aimidge - <a asp-area="" asp-page="/AboutInside">About</a>
         </div>
     </footer>
-    <nav class="sidebar">
-        <div class="sidebar-inner">
-            <header class="sidebar-header">
-                <button type="button" class="sidebar-burger" onclick="toggleSidebar()">
-                    <i class='bx bx-menu'></i>
-                </button>
-                <img src="logo.png" alt="" class="sidebar-logo">
-                <span class="sidebar-name-logo"><a asp-area="" asp-page="/Index" class="a-remover">AIMIDGE</a></span>
-            </header>
-            <div class="sidebar-buttons">
-                <nav class="sidebar-menu">
-                    <button type="button">
-                        <i class='bx bx-home' id="generator" onclick="redirectToHome()"></i>
-                        <span><a asp-area="" asp-page="/Generator" class="a-remover">@localizer["generator"]</a></span>
-                    </button>
-                    <button type="button">
-                        <i class='bx bx-info-circle' id="about" onclick="redirectToAbout()"></i>
-                        <span><a asp-area="" asp-page="/AboutInside" class="a-remover">@localizer["about"]</a></span>
-                    </button>
-                </nav>
-
-                <div class="profile-div">
-                    <div class="profile">
-                        <div class="profile-photo">
-                            <img src="~/css/profilis.png" class="photo">
+    <div class="sidebar">
+        <div class="logo-details">
+            <img src="~/Logo1white.png" alt="Description of the image" width="50" height="50">
+            <div class="logo_name">AIMIDGE</div>
+            <i class='bx bx-menu' id="btn"></i>
+        </div>
+        <ul class="nav-list">
+            <li>
+                <a asp-area="" asp-page="/Generator">
+                    <i class='bx bx-grid-alt'></i>
+                    <span class="links_name">@localizer["Generator"]</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bx-heart'></i>
+                    <span class="links_name">Saved</span>
+                </a>
+                <span class="tooltip">Saved</span>
+            </li>
+            <li class="profile">
+                <div class="profile-details">
+                    <img src="profile.jpg" alt="profileImg">
+                    <div class="name_job">
+                        <div class="name">
+                            <a asp-area="" asp-page="/UserProfile" class="name">Vardenis</a>
                         </div>
-                        <button type="button">
-                            <a asp-area="" asp-page="/UserProfile" class="a-remover">@localizer["Profile"]</a>
-                        </button>
                     </div>
                 </div>
-            </div>
-        </div>
-    </nav>
-    <script type="text/javascript">
-        const toggleSidebar = () => document.body.classList.toggle("open");
+                <i class='bx bx-log-out' id="log_out"></i>
+            </li>
+        </ul>
+    </div>
+    <script>
+        let sidebar = document.querySelector(".sidebar");
+        let closeBtn = document.querySelector("#btn");
+        let searchBtn = document.querySelector(".bx-search");
+        closeBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("open");
+            menuBtnChange();//calling the function(optional)
+        });
+        searchBtn.addEventListener("click", () => { // Sidebar open when you click on the search iocn
+            sidebar.classList.toggle("open");
+            menuBtnChange(); //calling the function(optional)
+        });
+        // following are the code to change sidebar button(optional)
+        function menuBtnChange() {
+            if (sidebar.classList.contains("open")) {
+                closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");//replacing the iocns class
+            } else {
+                closeBtn.classList.replace("bx-menu-alt-right", "bx-menu");//replacing the iocns class
+            }
+        }
     </script>
     <script>
         function redirectToUserProfile() {
@@ -72,189 +93,193 @@
             window.location.href = "/Generator";
         }
     </script>
-    <div class="try-it">
-        <div class="model-card">
-            <div class="model-card-container">
-                <div class="model-card-col">
+    <section class="home-section">
+        <div class="try-it">
+            <div class="model-card">
+                <div class="model-card-container">
+                    <div class="model-card-col">
 
-                    <div class="outline-try-it">
-                        <label for="prompt">@localizer["promptEntering"]</label><br />
-                    </div>
-
-                    <span class="model-input-col">
-                        <textarea type="text" id="prompt" name="prompt" placeholder=@localizer["enterPrompt"]
-                            spellcheck="false" class="area"></textarea>
-                    </span>
-
-                    <div class="outline-try-it">
-                        <label for="resolution">@localizer["resolutionSelection"]</label><br />
-                    </div>
-                    <div class="image-models-container">
-                        <select class="selector" id="resolution" name="resolution">
-                            <option value="100x100">100x100</option>
-                            <option value="150x150">150x150</option>
-                            <option value="320x240">320x240</option>
-                            <option value="400x300">400x300</option>
-                            <option value="512x512">512x512</option>
-                        </select><br />
-                    </div>
-
-
-                    <div class="edit-buttons-container">
-                        <button id="submitButton" type="button" class="buttons">@localizer["submit"]</button><br />
-                        <button id="clearButton" type="button" class="buttons">@localizer["clear"]</button>
-                        <button id="clearButton" type="button" class="buttons">@localizer["save online"]</button>
-                    </div>
-                    <div id="generatedPicturesContainer"></div>
-                </div>
-                <div class="model-card-col">
-
-                    <div id="promptImages"></div>
-
-                    <div id="loadingSpinner" style="display: none;">
-                        <div id="progress">
-                            <div id="loadingPercentage"></div>
+                        <div class="outline-try-it">
+                            <label for="prompt">@localizer["promptEntering"]</label><br />
                         </div>
-                    </div>
 
-                    <div class="edit-buttons-container">
-                        <button id="download-model-image" class="buttons">@localizer["download"]</button>
+                        <span class="model-input-col">
+                            <textarea type="text" id="prompt" name="prompt" placeholder=@localizer["enterPrompt"]
+                                spellcheck="false" class="area"></textarea>
+                        </span>
+
+                        <div class="outline-try-it">
+                            <label for="resolution">@localizer["resolutionSelection"]</label><br />
+                        </div>
+                        <div class="image-models-container">
+                            <select class="selector" id="resolution" name="resolution">
+                                <option value="100x100">100x100</option>
+                                <option value="150x150">150x150</option>
+                                <option value="320x240">320x240</option>
+                                <option value="400x300">400x300</option>
+                                <option value="512x512">512x512</option>
+                            </select><br />
+                        </div>
+
+
+                        <div class="edit-buttons-container">
+                            <button id="submitButton" type="button" class="buttons">@localizer["submit"]</button><br />
+                            <button id="clearButton" type="button" class="buttons">@localizer["clear"]</button>
+                            <button id="clearButton" type="button" class="buttons">@localizer["save online"]</button>
+                        </div>
+                        <div id="generatedPicturesContainer"></div>
+                    </div>
+                    <div class="model-card-col">
+
+                        <div id="promptImages"></div>
+
+                        <div id="loadingSpinner" style="display: none;">
+                            <div id="progress">
+                                <div id="loadingPercentage"></div>
+                            </div>
+                        </div>
+
+                        <div class="edit-buttons-container">
+                            <button id="download-model-image" class="buttons">@localizer["download"]</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <script>
-            document.getElementById("generator").addEventListener("click", function () {
-                getLanguage("Generator");
-            });
+            <script>
+                document.getElementById("generator").addEventListener("click", function () {
+                    getLanguage("Generator");
+                });
 
-            document.getElementById("about").addEventListener("click", function () {
-                getLanguage("AboutInside");
-            });
+                document.getElementById("about").addEventListener("click", function () {
+                    getLanguage("AboutInside");
+                });
 
-            function getLanguage(value) {
-                var selectedLanguage = localStorage.getItem('selectedLanguage');
-                if (selectedLanguage) {
-                    window.location.href = 'http://localhost:5007/' + value + "?culture=" + selectedLanguage;
+                function getLanguage(value) {
+                    var selectedLanguage = localStorage.getItem('selectedLanguage');
+                    if (selectedLanguage) {
+                        window.location.href = 'http://localhost:5007/' + value + "?culture=" + selectedLanguage;
+                    }
                 }
-            }
 
-            let refreshInterval;
-            document.getElementById('submitButton').addEventListener('click', async function () {
-                const promptText = document.getElementById('prompt').value;
-                const resolution = document.getElementById('resolution').value;
+                let refreshInterval;
+                document.getElementById('submitButton').addEventListener('click', async function () {
+                    const promptText = document.getElementById('prompt').value;
+                    const resolution = document.getElementById('resolution').value;
 
-                document.getElementById('loadingSpinner').style.display = 'block';
+                    document.getElementById('loadingSpinner').style.display = 'block';
 
-                const existingCookie = await fetch('api/web/GetCookie', {
-                    method: 'POST'
-                }).then(async resp => {
-                    const respText = await resp.text();
-                    if (respText === '404') {
-                        await fetch('api/web/SetCookie', {
-                            method: 'POST'
-                        }).then(async setResp => {
-                            if (setResp.ok) {
-                                processPrompt();
+                    const existingCookie = await fetch('api/web/GetCookie', {
+                        method: 'POST'
+                    }).then(async resp => {
+                        const respText = await resp.text();
+                        if (respText === '404') {
+                            await fetch('api/web/SetCookie', {
+                                method: 'POST'
+                            }).then(async setResp => {
+                                if (setResp.ok) {
+                                    processPrompt();
+                                }
+                            })
+                        } else if (respText === 'ok') {
+                            processPrompt();
+                        } else {
+                            alert("Unable to check cookies!");
+                        }
+                    });
+
+
+                    async function processPrompt() {
+                        refreshInterval = setInterval(getBar, 700);
+                        const response = await fetch('api/web/GetPrompt', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ prompt: promptText, resolution: resolution })
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            const img = document.createElement('img');
+                            img.src = 'data:image/jpg;base64,' + data.image;
+                            img.style.margin = '10px';
+
+                            if (document.getElementById('promptImages').hasChildNodes) {
+                                const promptImages = document.getElementById('promptImages');
+                                while (promptImages.firstChild) {
+                                    promptImages.removeChild(promptImages.firstChild);
+                                }
                             }
-                        })
-                    } else if (respText === 'ok') {
-                        processPrompt();
-                    } else {
-                        alert("Unable to check cookies!");
+
+                            document.getElementById('promptImages').appendChild(img.cloneNode(true));
+                            document.getElementById('generatedPicturesContainer').appendChild(img);
+                            document.getElementById('loadingSpinner').style.display = 'none';
+                        } else {
+                            console.error(response.statusText);
+                            document.getElementById('loadingSpinner').style.display = 'none';
+                        }
+                    }
+
+                    async function getBar(percentage, progress) {
+                        const response = await fetch('api/web/GetProgress', {
+                            method: 'GET'
+                        });
+
+                        if (response.ok) {
+                            const percentage = parseInt(await response.text());
+                            const progress = document.getElementById('progress');
+
+                            progress.style.width = percentage + '%';
+                            loadingPercentage.textContent = percentage + '%';
+
+                            if (percentage >= 85) {
+                                clearInterval(refreshInterval);
+                                progress.style.width = 99 + '%';
+                                loadingPercentage.textContent = 99 + '%';
+                                setTimeout(function () {
+                                    progress.style.width = 0 + '%';
+                                    loadingPercentage.textContent = 0 + '%';
+                                }, 100000);
+                            }
+                        }
                     }
                 });
 
+                document.getElementById('download-model-image').addEventListener('click', async function () {
+                    var imageElement = document.getElementById("promptImages").firstChild;
 
-                async function processPrompt() {
-                    refreshInterval = setInterval(getBar, 700);
-                    const response = await fetch('api/web/GetPrompt', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ prompt: promptText, resolution: resolution })
-                    });
+                    var canvas = document.createElement("canvas");
+                    canvas.width = imageElement.width;
+                    canvas.height = imageElement.height;
 
-                    if (response.ok) {
-                        const data = await response.json();
-                        const img = document.createElement('img');
-                        img.src = 'data:image/jpg;base64,' + data.image;
-                        img.style.margin = '10px';
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(imageElement, 0, 0);
 
-                        if (document.getElementById('promptImages').hasChildNodes) {
-                            const promptImages = document.getElementById('promptImages');
-                            while (promptImages.firstChild) {
-                                promptImages.removeChild(promptImages.firstChild);
-                            }
-                        }
+                    var anchor = document.createElement("a");
+                    anchor.href = canvas.toDataURL("image/jpeg");
+                    anchor.download = "Image.jpg";
+                    anchor.click();
+                });
 
-                        document.getElementById('promptImages').appendChild(img.cloneNode(true));
-                        document.getElementById('generatedPicturesContainer').appendChild(img);
-                        document.getElementById('loadingSpinner').style.display = 'none';
-                    } else {
-                        console.error(response.statusText);
-                        document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('clearButton').addEventListener('click', function () {
+                    const promptImages = document.getElementById('promptImages');
+
+                    while (promptImages.firstChild) {
+                        promptImages.removeChild(promptImages.firstChild);
                     }
-                }
 
-                async function getBar(percentage, progress) {
-                    const response = await fetch('api/web/GetProgress', {
-                        method: 'GET'
-                    });
+                    const promptImagesTwo = document.getElementById('generatedPicturesContainer');
 
-                    if (response.ok) {
-                        const percentage = parseInt(await response.text());
-                        const progress = document.getElementById('progress');
-
-                        progress.style.width = percentage + '%';
-                        loadingPercentage.textContent = percentage + '%';
-
-                        if (percentage >= 85) {
-                            clearInterval(refreshInterval);
-                            progress.style.width = 99 + '%';
-                            loadingPercentage.textContent = 99 + '%';
-                            setTimeout(function () {
-                                progress.style.width = 0 + '%';
-                                loadingPercentage.textContent = 0 + '%';
-                            }, 100000);
-                        }
+                    while (promptImagesTwo.firstChild) {
+                        promptImagesTwo.removeChild(promptImagesTwo.firstChild);
                     }
-                }
-            });
-
-            document.getElementById('download-model-image').addEventListener('click', async function () {
-                var imageElement = document.getElementById("promptImages").firstChild;
-
-                var canvas = document.createElement("canvas");
-                canvas.width = imageElement.width;
-                canvas.height = imageElement.height;
-
-                var ctx = canvas.getContext("2d");
-                ctx.drawImage(imageElement, 0, 0);
-
-                var anchor = document.createElement("a");
-                anchor.href = canvas.toDataURL("image/jpeg");
-                anchor.download = "Image.jpg";
-                anchor.click();
-            });
-
-            document.getElementById('clearButton').addEventListener('click', function () {
-                const promptImages = document.getElementById('promptImages');
-
-                while (promptImages.firstChild) {
-                    promptImages.removeChild(promptImages.firstChild);
-                }
-
-                const promptImagesTwo = document.getElementById('generatedPicturesContainer');
-
-                while (promptImagesTwo.firstChild) {
-                    promptImagesTwo.removeChild(promptImagesTwo.firstChild);
-                }
-            });
-        </script>
-    </div>
+                });
+            </script>
+        </div>
+    </section>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
+
+</html>
