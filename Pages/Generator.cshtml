@@ -10,7 +10,6 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="UTF-8">
     <link rel="stylesheet" href="~/css/generator.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/sidebar.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/history-loading.css" asp-append-version="true">
@@ -88,7 +87,7 @@
     </script>
     <script>
         function redirectToHome() {
-            window.location.href = "/Generator";
+            window.location.href = "/generator";
         }
     </script>
     <section class="home-section">
@@ -117,25 +116,20 @@
                                 <option value="512x512">512x512</option>
                             </select><br />
                         </div>
-
-
                         <div class="edit-buttons-container">
                             <button id="submitButton" type="button" class="buttons">@localizer["submit"]</button><br />
                             <button id="clearButton" type="button" class="buttons">@localizer["clear"]</button>
-                            <button id="clearButton" type="button" class="buttons">@localizer["save online"]</button>
+                            <button id="saveButton" type="button" class="buttons">@localizer["save online"]</button>
                         </div>
                         <div id="generatedPicturesContainer"></div>
                     </div>
                     <div class="model-card-col">
-
                         <div id="promptImages"></div>
-
                         <div id="loadingSpinner" style="display: none;">
                             <div id="progress">
                                 <div id="loadingPercentage"></div>
                             </div>
                         </div>
-
                         <div class="edit-buttons-container">
                             <button id="download-model-image" class="buttons">@localizer["download"]</button>
                         </div>
@@ -143,7 +137,7 @@
                 </div>
             </div>
             <script>
-                document.getElementById("generator").addEventListener("click", function () {
+                document.getElementById("Generator").addEventListener("click", function () {
                     getLanguage("Generator");
                 });
 
