@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
-import requests, asyncio, base64, uuid
+import requests, asyncio, base64, uuid, time, threading
 import pypyodbc as odbc
+import schedule as scheduler
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 from datetime import datetime, timedelta
@@ -211,6 +212,26 @@ def db_unique_file_folder(cursor):
         existing_folder = cursor.fetchone()
         if not existing_folder:
             return FileFolderName
+        
+def db_cleanup():
+    cursor = sql_connection.cursor()
+    cursor.execute("SELECT * FROM Users WHERE TokenExpiration < GETDATE() and RegistrationDate IS NULL")
+    expired_users = cursor.fetchall()
+
+    for expired_user in expired_users:
+        folder_name = expired_user[6]
+        cursor.execute("DELETE From Users WHERE FileFolderName = ?", (folder_name,))
+        sql_connection.commit()
+
+def run_flask():
+    app.run(debug=True, host='0.0.0.0', port=5000, use_reloader=False)
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.start()
+
+    scheduler.every(3).minutes.do(db_cleanup)
+
+    while True:
+        scheduler.run_pending()
+        time.sleep(60)
