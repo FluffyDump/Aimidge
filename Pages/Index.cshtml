@@ -5,8 +5,8 @@
 	ViewData["Title"] = "Home page";
 }
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="~/css/homepage.css">
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/homepage.css" asp-append-version="true">
+<link rel=" stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
 
 <body>
 	<header>
@@ -16,12 +16,11 @@
 			</div>
 			<ul class="menu">
 				<select id="languageDropdown">
-        			<option value="en">En</option>
-        			<option value="lt">Lt</option>
-    			</select>
+					<option value="en">En</option>
+					<option value="lt">Lt</option>
+				</select>
 				<li><a asp-area="" asp-page="/Homepage">@localizer["home"]</a></li>
 				<li><a asp-area="" asp-page="/AboutOutside">@localizer["about"]</a></li>
-				<li><a asp-area="" asp-page="/Generator" class="guest">@localizer["generator"]</a></li>
 			</ul>
 		</nav>
 		<div class="text-content">
@@ -30,29 +29,28 @@
 			</h2>
 			<p>@localizer["firstLine"]</p>
 		</div>
-		<br>
 		<div class="buttons">
 			<a asp-area="" asp-page="/Login">
 				<input type="button" value=@localizer["login"]>
 			</a>
-			<a asp-area="" asp-page="/Login">
-				<input type="button" value=@localizer["register"]>
+			<a asp-area="" asp-page="/generator" class="guest">
+				<input type="button" value="@localizer["generator"]">
 			</a>
 		</div>
 		<script>
-		function switchLanguage() {
-            var selectedLanguage = document.getElementById("languageDropdown").value;
-            localStorage.setItem('selectedLanguage', selectedLanguage);
-			window.location.href = 'http://localhost:5007/' + "?culture=" + selectedLanguage;
-        }
-		var selectedLanguage = localStorage.getItem('selectedLanguage');
-    		if (selectedLanguage) {
-        		document.getElementById("languageDropdown").value = selectedLanguage;
+			function switchLanguage() {
+				var selectedLanguage = document.getElementById("languageDropdown").value;
+				localStorage.setItem('selectedLanguage', selectedLanguage);
+				window.location.href = 'http://localhost:5007/' + "?culture=" + selectedLanguage;
+			}
+			var selectedLanguage = localStorage.getItem('selectedLanguage');
+			if (selectedLanguage) {
+				document.getElementById("languageDropdown").value = selectedLanguage;
 				if (!window.location.search.includes('culture=')) {
-            		window.location.href = 'http://localhost:5007/' + "?culture=" + selectedLanguage;
-        		}
-    		}
-        document.getElementById("languageDropdown").addEventListener("change", switchLanguage);
+					window.location.href = 'http://localhost:5007/' + "?culture=" + selectedLanguage;
+				}
+			}
+			document.getElementById("languageDropdown").addEventListener("change", switchLanguage);
 		</script>
 	</header>
 </body>

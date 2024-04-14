@@ -92,6 +92,11 @@ header .navbar{
   bottom: 20px;
   right: 20px;
 }
+.guest-option{
+  top: 10px;
+  width:fit-content;
+  height:fit-content;
+}
 .buttons input{
   outline: none;
   color: #f2f2f2;
