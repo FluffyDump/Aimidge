@@ -1,12 +1,15 @@
 from flask import Flask, request, jsonify
-import requests, asyncio, base64, uuid, time, threading
+import requests, asyncio, base64, uuid, time, threading, os, shutil, base64, io
 import pypyodbc as odbc
 import schedule as scheduler
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 from datetime import datetime, timedelta
+from PIL import Image
 
 sd_link = 'http://127.0.0.1:7861/sdapi/v1/txt2img'
+db_cleanup_period = 3
+base_storage_path = r'C:\Users\Tomas\Desktop\Aimidge\Storage'
 
 DRIVER_NAME = 'SQL SERVER'
 SERVER_NAME = 'DESKTOP-L0HRE5L\\SQLEXPRESS'
@@ -37,11 +40,30 @@ sql_insert_registration = """
 
 app = Flask(__name__)
 
-@app.route("/stable_diffusion", methods = ["POST"])
+@app.route("/stable_diffusion", methods=["POST"])
 async def stable_diffusion():
     json_content = request.get_json()
+    uid = json_content['uid']
+
     response = await asyncio.to_thread(requests.post, sd_link, json=json_content)
-    return jsonify(response.json())
+    try:
+        image_data_list = response.json().get('images', [])
+        if image_data_list:
+            save_directory = os.path.join(base_storage_path, decrypt_user_data(uid), "temp")
+            for image_data_base64 in image_data_list:
+                try:
+                    image_data_binary = base64.b64decode(image_data_base64)
+
+                    image_filename = os.path.join(save_directory, f"img.jpg")
+                    with open(image_filename, 'wb') as image_file:
+                        image_file.write(image_data_binary)
+                except Exception as e:
+                    return jsonify((f"Error saving image: {str(e)}"))
+            return jsonify(response.json())
+        else:
+            return jsonify({"error": "No image data found"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Error saving images: {str(e)}"}), 500
 
 @app.route("/sd_progress", methods = ["GET"])
 async def sd_progress():
@@ -64,22 +86,20 @@ async def sql_add_unregistered_user():
     json_content = request.get_json()
     cursor = sql_connection.cursor()
     try:
-        user_guid = decrypt_user_data(json_content['UserGuid'])
-        cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (user_guid,))
+        user_folder = decrypt_user_data(json_content['UserGuid'])
+        cursor.execute("SELECT * FROM Users WHERE FileFolderName = ?", (user_folder,))
         existing_user = cursor.fetchone()
         if(existing_user):
-            if(existing_user[7] == decrypt_user_data(json_content['UserGuid'])):
-                if(json_content['HasUploadedFiles'] == True):
-                    cursor.execute("UPDATE Users SET HasUploadedFiles = ?, TokenExpiration = ? WHERE UserGuid = ?", (json_content['HasUploadedFiles'], json_content['TokenExpiration'], json_content['UserGuid']))
-                    sql_connection.commit()
-                else:
-                    cursor.execute("UPDATE Users SET TokenExpiration = ? WHERE UserGuid = ?", (json_content['TokenExpiration'], json_content['UserGuid']))
-                    sql_connection.commit()
+            if(json_content['HasUploadedFiles'] == True):
+                cursor.execute("UPDATE Users SET HasUploadedFiles = ?, TokenExpiration = ? WHERE UserGuid = ?", (json_content['HasUploadedFiles'], json_content['TokenExpiration'], json_content['UserGuid']))
+                sql_connection.commit()
             else:
-                return jsonify({"error": "UserGuid mismatch with FileFolderName!" }), 400
+                cursor.execute("UPDATE Users SET TokenExpiration = ? WHERE UserGuid = ?", (json_content['TokenExpiration'], json_content['UserGuid']))
+                sql_connection.commit()
         else:
-            cursor.execute(sql_insert_unregistered, (json_content['HasUploadedFiles'], decrypt_user_data(json_content['UserGuid']), json_content['UserGuid'], json_content['TokenExpiration']))
+            cursor.execute(sql_insert_unregistered, (json_content['HasUploadedFiles'], user_folder, json_content['UserGuid'], json_content['TokenExpiration']))
             sql_connection.commit()
+            create_folder(user_folder)
     except Exception as ex:
         sql_connection.rollback()
         return jsonify({"error": str(ex)}), 500
@@ -159,7 +179,6 @@ async def db_get():
         cursor = sql_connection.cursor()
         cursor.execute("SELECT * FROM Users")
         users = cursor.fetchall()
-
         user_list = []
         for user in users:
             user_info = {
@@ -174,7 +193,6 @@ async def db_get():
                 'TokenExpiration': user[8]
             }
             user_list.append(user_info)
-
         cursor.close()
         return jsonify({'DB Users': user_list}), 200
     except Exception as ex:
@@ -201,7 +219,32 @@ def decrypt_user_data(user_data):
     decrypted_user_data_str = decrypted_user_data.decode('utf-8')
     return decrypted_user_data_str
 
-def db_user_uid(cursor):
+def create_folder(FileFolderName):
+    folder_path = os.path.join(base_storage_path, FileFolderName)
+    temp_path = os.path.join(folder_path, "temp")
+    try:
+        os.makedirs(folder_path)
+        os.makedirs(temp_path)
+        return True
+    except Exception as ex:
+        return False
+    
+def remove_folder(FileFolderName):
+    folder_path = os.path.join(base_storage_path, FileFolderName)
+    try:
+        shutil.rmtree(folder_path)
+        return True
+    except Exception as ex:
+        return False;
+
+async def save_temp_img(img_data, path):
+    binary_data = base64.b64decode(img_data)
+    stream = io.BytesIO(binary_data)
+    img = Image.open(stream)
+    img = img.convert("RGBA")
+    img.save(path, format="PNG")
+
+def db_user_unique_uid(cursor):
     folder_name = str(db_unique_file_folder(cursor))
     return encrypt_user_data(folder_name)
 
@@ -230,7 +273,7 @@ if __name__ == "__main__":
     flask_thread = threading.Thread(target=run_flask)
     flask_thread.start()
 
-    scheduler.every(3).minutes.do(db_cleanup)
+    scheduler.every(db_cleanup_period).minutes.do(db_cleanup)
 
     while True:
         scheduler.run_pending()
