@@ -4,6 +4,8 @@
 @{
     ViewData["Title"] = "Login page";
 }
+<!DOCTYPE html>
+<html>
 
 <head>
     <meta charset="UTF-8">
@@ -20,17 +22,19 @@
                 <h1>@localizer["account"]</h1>
                 <input type="text" id="name" placeholder="@localizer["name"]">
                 <input type="text" id="username" placeholder="@localizer["username"]">
-                <input type="email" id="email" placeholder="@localizer["email"]">
+                <input type="email" id="email" placeholder="@localizer["email"]" required>
                 <input type="password" id="password" placeholder="@localizer["password"]">
                 <input type="submit" value="@localizer["signup"]" id="signUpButton" class="button">
+                <div id="signup-error" style="color:red;"></div>
             </form>
         </div>
         <div class="form-container sign-in">
             <form method="post">
                 <h1>@localizer["signin"]</h1>
-                <input type="email" id="logEmail" placeholder="@localizer["email"]">
+                <input type="email" id="logEmail" placeholder="@localizer["email"]" required>
                 <input type="password" id="logPass" placeholder="@localizer["password"]">
                 <input type="submit" value="@localizer["login"]" id="logInButton" class="button">
+                <div id="login-error" style="color:red;"></div>
             </form>
         </div>
         <div class="toggle-container">
@@ -48,9 +52,8 @@
         </div>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", async function() {
+        document.addEventListener("DOMContentLoaded", async function () {
             document.getElementById('signUpButton').addEventListener('click', async function (event) {
-                event.preventDefault();
                 const formData = {
                     Name: document.getElementById('name').value,
                     Username: document.getElementById('username').value,
@@ -58,21 +61,23 @@
                     PasswordHash: document.getElementById('password').value
                 }
 
-                if(!isValidName(document.getElementById('name').value)) {
-                    alert("Name should be at least 3 symbols long!")
-                } else if(!isValidUsername(document.getElementById('username').value)) {
-                    alert("Username must be at least 4 symbols long!")
-                } else if(!isValidEmail(document.getElementById('email').value)){
-                    alert("Email is invalid!");
-                } else if(!isValidPassword(document.getElementById('password').value)){
-                    alert("Password must be at least 8 symbols long with at least one uppercase letter and one character or number!")
+                const errorSignup = document.getElementById('signup-error')
+                let messagesSignup = []
+                if (!isValidName(document.getElementById('name').value)) {
+                    messagesSignup.push('*Name should be at least 3 symbols long!')
+                } else if (!isValidUsername(document.getElementById('username').value)) {
+                    messagesSignup.push('*Username must be at least 4 symbols long!')
+                } else if (!isValidEmail(document.getElementById('email').value)) {
+                    messagesSignup.push('*Email is invalid!')
+                } else if (!isValidPassword(document.getElementById('password').value)) {
+                    messagesSignup.push('*Password must be at least 8 symbols long with at least one uppercase letter and one character or number!')
                 } else {
                     const response = await fetch('api/accounts/Add', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
                     });
 
                     if (response.ok) {
@@ -80,39 +85,44 @@
                         if (result === "ok") {
                             window.location.href = "/Generator";
                         } else if (result === "UserExists") {
-                            alert("User with this email address already exists!");
+                            messagesSignup.push('*User with this email address already exists!')
                         }
                     } else {
                         alert("Internal server error occured!");
                     }
                 }
 
-                function isValidName(name){
+                if (messagesSignup.length > 0) {
+                    event.preventDefault();
+                    errorSignup.innerText = messagesSignup.join(', ')
+                }
+                function isValidName(name) {
                     return /^[A-Za-z]{2,}$/.test(name);
                 }
-                function isValidUsername(username){
+                function isValidUsername(username) {
                     return username.length >= 4;
                 }
             });
 
             document.getElementById('logInButton').addEventListener('click', async function (event) {
-                event.preventDefault();
                 const formData = {
                     Email: document.getElementById('logEmail').value,
                     PasswordHash: document.getElementById('logPass').value
                 }
 
-                if(!isValidEmail(document.getElementById('logEmail').value)){
-                    alert("Email is invalid!");
-                } else if(!isValidPassword(document.getElementById('logPass').value)){
-                    alert("Password must be at least 8 symbols long with at least one uppercase letter and one character or number!")
+                const errorLogin = document.getElementById('login-error')
+                let messagesLogin = []
+                if (!isValidEmail(document.getElementById('logEmail').value)) {
+                    messagesLogin.push('*Email is invalid!')
+                } else if (!isValidPassword(document.getElementById('logPass').value)) {
+                    messagesLogin.push('*Password must be at least 8 symbols long with at least one uppercase letter and one character or number!')
                 } else {
                     const response = await fetch('api/accounts/Auth', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
                     });
 
                     if (response.ok) {
@@ -120,21 +130,26 @@
                         if (result === "ok") {
                             window.location.href = "/Generator";
                         } else if (result === "IncorrectValues") {
-                            alert("Incorrect email or password!");
+                            messagesLogin.push('*Incorrect email or password!')
                         }
                     } else {
                         alert("Internal server error occured!");
                     }
                 }
-
+                if (messagesLogin.values.length > 0) {
+                    event.preventDefault();
+                    errorLogin.innerText = messagesLogin.join(', ')
+                }
+                function isValidEmail(email) {
+                    return email.length >= 12;
+                }
+                function isValidPassword(password) {
+                    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password);
+                }
             });
-            function isValidEmail(email){
-                return email.length >= 12;
-            }
-            function isValidPassword(password){
-                return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password);
-            }
         });
     </script>
     <script src="~/js/script.js"></script>
 </body>
+
+</html>
