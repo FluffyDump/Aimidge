@@ -6,10 +6,11 @@ namespace Aimidge.Services
     public class SDService
     {
 
-        public static string GetJsonPayLoad(string prompt, string width, string height)
+        private static string GetJsonPayLoad(string prompt, string width, string height, string uid)
         {
             string jsonPayload = @"
                 {
+                    ""uid"": """ + uid + @""",
                     ""prompt"": """ + prompt + @""",
                     ""steps"": 15,
                     ""width"": """ + width + @""",
@@ -20,14 +21,16 @@ namespace Aimidge.Services
             return jsonPayload;
         }
 
-        public static async Task<string> PostToAPIAsync(string jsonPayload)
+        public static async Task<string> PostToAPIAsync(string prompt, string width, string height, string uid)
         {
             string apiUrl = "http://193.161.193.99:61464/stable_diffusion";
+
+            string json = GetJsonPayLoad(prompt, width, height, uid);
 
             using (var httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Add("txt2img", "application/json");
-                var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = await httpClient.PostAsync(apiUrl, content);
 
                 if (response.IsSuccessStatusCode)

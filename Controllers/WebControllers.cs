@@ -50,9 +50,7 @@ namespace Aimidge.Controllers
                 string width = match.Groups[1].Value;
                 string height = match.Groups[2].Value;
 
-                Task<string> base64Image = SDService.PostToAPIAsync(
-                    SDService.GetJsonPayLoad(prompt, width, height)
-                );
+                Task<string> base64Image = SDService.PostToAPIAsync(prompt, width, height, _cookieService.ParseCookieUID("Cookie"));
                 if (!base64Image.Equals("BadRequest"))
                 {
                     return Ok(new { image = base64Image.Result });
