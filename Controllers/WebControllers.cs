@@ -66,6 +66,41 @@ namespace Aimidge.Controllers
             }
         }
 
+        [HttpGet("GetGallery/{index}")]
+        public async Task<IActionResult> GetGallery(int index)
+        {
+            try
+            {
+                string base64Image = await SDService.GetImg(_cookieService.ParseCookieUID("Cookie"), index);
+                if (!string.IsNullOrEmpty(base64Image))
+                {
+                    return Ok(new { image = base64Image });
+                }
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Get gallery error: {ex.Message}");
+                return NotFound($"{ex.Message}");
+            }
+        }
+
+        [HttpGet("GetGalleryCount")]
+        public async Task<IActionResult> GetGalleryCount()
+        {
+            try
+            {
+                string count = await SDService.GetImgCount(_cookieService.ParseCookieUID("Cookie"));
+                int imgCount = int.Parse(count);
+                return Ok(new { count = imgCount });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Get gallery count error: {ex.Message}");
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("GetProgress")]
         public async Task<IActionResult> GetProgress()
         {

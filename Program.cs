@@ -23,6 +23,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<CookieService>();
 builder.Services.AddScoped<CryptoService>();
 builder.Services.AddScoped<DatabaseService>();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

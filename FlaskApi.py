@@ -53,7 +53,6 @@ async def stable_diffusion():
             for image_data_base64 in image_data_list:
                 try:
                     image_data_binary = base64.b64decode(image_data_base64)
-
                     image_filename = os.path.join(save_directory, f"img.jpg")
                     with open(image_filename, 'wb') as image_file:
                         image_file.write(image_data_binary)
@@ -81,15 +80,48 @@ async def save_img():
     destination = os.path.join(base_storage_path, folder_name, "gallery")
 
     source_file = os.path.join(source, "img.jpg")
-    destination_file = os.path.join(destination, "img.jpg")
+
+    file_count = len(os.listdir(destination))
+    destination_file = os.path.join(destination, f"img{file_count + 1}.jpg")
 
     try:
         shutil.move(source_file, destination_file)
         return "", 200
     except Exception as ex:
         return str(ex), 500
+    
+@app.route("/get_gallery", methods = ["POST"])
+async def get_gallery():
+    json_content = request.get_json()
+    uid = json_content['uid']
+    index = json_content.get('index', 1)
+    folder_name = decrypt_user_data(uid)
 
+    file_folder = os.path.join(base_storage_path, folder_name, "gallery")
 
+    try:
+        img_name = f"img{index}.jpg"
+        file_path = os.path.join(file_folder, img_name)
+        if (os.path.exists(file_path)):
+            with open(file_path, "rb") as file:
+                image_data = file.read()
+                encoded_image = base64.b64encode(image_data).decode("utf-8")
+                return jsonify(encoded_image), 200
+    except Exception as ex:
+        return str(ex), 500
+    
+@app.route("/get_gallery_count", methods = ["POST"])
+async def get_gallery_count():
+    json_content = request.get_json()
+    uid = json_content['uid']
+    folder_name = decrypt_user_data(uid)
+    file_folder = os.path.join(base_storage_path, folder_name, "gallery")
+
+    try:
+        file_count = len(os.listdir(file_folder))
+        return jsonify({'count': file_count}),200
+    except Exception as ex:
+        return str(ex), 500
 
 @app.route("/sd_api_endpoints", methods = ["GET"])
 async def sd_api_endpoints():
@@ -157,7 +189,6 @@ async def db_registration():
         cursor.execute(sql_insert_registration, (first_name, last_name, email, password_hash, registration_date, 0, existing_folder_str, user_guid_str, token_expiration))
         sql_connection.commit()
         cursor.close()
-        print(user_guid_str)
         return jsonify(user_guid_str), 200
     except Exception as ex:
         print(str(ex))
@@ -187,7 +218,6 @@ async def db_log_in():
                 return jsonify(user_guid_str), 200
             else:
                 return "BadPassword", 401
-
         return "NotFound", 200
     except Exception as ex:
         print(str(ex))

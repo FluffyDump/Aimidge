@@ -65,5 +65,54 @@ namespace Aimidge.Services
                 }
             }
         }
+
+        public static async Task<string> GetImg(string uid, int index)
+        {
+            string apiUrl = "http://193.161.193.99:61464/get_gallery";
+            string json = @"
+                { 
+                    ""uid"": """ + uid + @""",
+                    ""index"": """ + index + @"""
+                }";
+
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Add("getImg", "application/json");
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await httpClient.PostAsync(apiUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseData = await response.Content.ReadAsStringAsync();
+                    var jsonResponse = JsonConvert.DeserializeObject<dynamic>(responseData);
+                    string base64Image = jsonResponse;
+                    return base64Image ?? String.Empty ;
+                }
+            }
+            return String.Empty;
+        }
+
+        public static async Task<string> GetImgCount(string uid)
+        {
+            string apiUrl = "http://193.161.193.99:61464/get_gallery_count";
+            string json = @"
+                { ""uid"": """ + uid + @""" }";
+
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Add("getImgCount", "application/json");
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await httpClient.PostAsync(apiUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseData = await response.Content.ReadAsStringAsync();
+                    var jsonResponse = JsonConvert.DeserializeObject<dynamic>(responseData);
+                    string count = jsonResponse.count;
+                    return count;
+                }
+            }
+            return String.Empty;
+        }
     }
 }

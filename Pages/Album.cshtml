@@ -56,7 +56,7 @@
             </li>
         </ul>
     </div>
-    </section>
+        </section>
     <script>
         let sidebar = document.querySelector(".sidebar");
         let closeBtn = document.querySelector("#btn");
@@ -104,17 +104,53 @@
                     </div>
                 </div>
             </div>
-            <script>
-                function getLanguage(value) {
-                    var selectedLanguage = localStorage.getItem('selectedLanguage');
-                    if (selectedLanguage) {
-                        window.location.href = 'http://localhost:5007/' + value + "?culture=" + selectedLanguage;
-                    }
+
+<script>
+    async function fetchAndDisplayImages(index) {
+        try {
+            const response = await fetch(`/api/web/GetGallery/${index}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                const container = document.getElementById('generatedPicturesContainer');
+                const img = document.createElement('img');
+                img.src = 'data:image/jpg;base64,' + data.image;
+                img.style.margin = '20px';
+                img.width = 180;
+                img.height = 180;
+                container.appendChild(img);
+            } else {
+                console.error('Failed to fetch image:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching image:', error);
+        }
+    }
+
+    async function getGalleryCountAndDisplayImages() {
+        try {
+            const countResponse = await fetch(`/api/web/GetGalleryCount`);
+            if (countResponse.ok) {
+                const countData = await countResponse.json();
+                const imageCount = parseInt(countData.count);
+                for (let i = 1; i <= imageCount; i++) {
+                    await fetchAndDisplayImages(i);
                 }
-            </script>
+            } else {
+                console.error('Failed to fetch image count:', countResponse.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching image count:', error);
+        }
+    }
+
+    getGalleryCountAndDisplayImages();
+</script>
             <script src="~/lib/jquery/dist/jquery.min.js"></script>
             <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
             <script src="~/js/site.js" asp-append-version="true"></script>
+        </div>
+    </section>
 </body>
 
 </html>
