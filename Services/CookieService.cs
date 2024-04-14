@@ -72,7 +72,6 @@ namespace Aimidge.Services
 				option.Expires = DateTime.Now.AddMinutes(20);
 				try
 				{
-					Console.WriteLine(ParseCookieUID("Cookie"));
 					await Task.Run(() => _httpContextAccessor.HttpContext.Response.Cookies.Append(key, cookie, option));
 					await _databaseService.AddUnregisteredUser(cookie);
 				}
@@ -90,7 +89,7 @@ namespace Aimidge.Services
 
 		public string ParseCookieUID(string key)
 		{
-			return HttpUtility.UrlDecode(_httpContextAccessor.HttpContext.Request.Cookies[key]);
+			return _httpContextAccessor.HttpContext.Request.Cookies[key];
 		}
 
 		public void RemoveCookie(string key)
