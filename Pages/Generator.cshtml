@@ -140,6 +140,8 @@
                 }
             </script>
             <script>
+                document.getElementById('saveButton').style.display = 'none'
+                document.getElementById('clearButton').style.display = 'none'
                 function getLanguage(value) {
                     var selectedLanguage = localStorage.getItem('selectedLanguage');
                     if (selectedLanguage) {
@@ -197,6 +199,9 @@
                                 }
                             }
 
+                            document.getElementById('saveButton').style.display = 'block'
+                            document.getElementById('clearButton').style.display = 'block'
+
                             document.getElementById('promptImages').appendChild(img.cloneNode(true));
                             document.getElementById('generatedPicturesContainer').appendChild(img);
                             document.getElementById('loadingSpinner').style.display = 'none';
@@ -250,6 +255,9 @@
                 document.getElementById('clearButton').addEventListener('click', function () {
                     const promptImages = document.getElementById('promptImages');
 
+                    document.getElementById('saveButton').style.display = 'none'
+                    document.getElementById('clearButton').style.display = 'none'
+
                     while (promptImages.firstChild) {
                         promptImages.removeChild(promptImages.firstChild);
                     }
@@ -260,6 +268,20 @@
                         promptImagesTwo.removeChild(promptImagesTwo.firstChild);
                     }
                 });
+
+                document.getElementById('saveButton').addEventListener('click', async function () {
+                    
+                    const response = await fetch('api/web/SaveImage', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (response.ok) {
+                        document.getElementById('saveButton').style.display = 'none'
+                    } 
+                });
+                
             </script>
         </div>
     </section>

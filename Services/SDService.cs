@@ -43,5 +43,27 @@ namespace Aimidge.Services
             }
             return String.Empty;
         }
+
+        public static async Task<bool> SaveImg(string uid)
+        {
+            string apiUrl = "http://193.161.193.99:61464/save_img";
+
+            string json = @"{ ""uid"": """ + uid + @""" }";
+
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Add("saveimg", "application/json");
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await httpClient.PostAsync(apiUrl, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
     }
 }

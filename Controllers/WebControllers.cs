@@ -8,6 +8,7 @@ using Aimidge.Services;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 
 namespace Aimidge.Controllers
@@ -82,6 +83,28 @@ namespace Aimidge.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Get progress error: {ex.Message}");
+                return NotFound();
+            }
+        }
+
+        [HttpPost("SaveImage")]
+        public async Task<IActionResult> SaveImage()
+        {
+            try
+            {
+                var result = await SDService.SaveImg(_cookieService.ParseCookieUID("Cookie"));
+                if (result)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Save image error: {ex.Message}");
                 return NotFound();
             }
         }

@@ -71,6 +71,26 @@ async def sd_progress():
     percentage = result.json()['progress'] * 100
     return jsonify(percentage)
 
+@app.route("/save_img", methods = ["POST"])
+async def save_img():
+    json_content = request.get_json()
+    uid = json_content['uid']
+    folder_name = decrypt_user_data(uid)
+    
+    source = os.path.join(base_storage_path, folder_name, "temp")
+    destination = os.path.join(base_storage_path, folder_name, "gallery")
+
+    source_file = os.path.join(source, "img.jpg")
+    destination_file = os.path.join(destination, "img.jpg")
+
+    try:
+        shutil.move(source_file, destination_file)
+        return "", 200
+    except Exception as ex:
+        return str(ex), 500
+
+
+
 @app.route("/sd_api_endpoints", methods = ["GET"])
 async def sd_api_endpoints():
     response = requests.get(f"http://127.0.0.1:7861/docs#/")
@@ -222,9 +242,11 @@ def decrypt_user_data(user_data):
 def create_folder(FileFolderName):
     folder_path = os.path.join(base_storage_path, FileFolderName)
     temp_path = os.path.join(folder_path, "temp")
+    gallery_path = os.path.join(folder_path, "gallery")
     try:
         os.makedirs(folder_path)
         os.makedirs(temp_path)
+        os.makedirs(gallery_path)
         return True
     except Exception as ex:
         return False
