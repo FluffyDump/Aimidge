@@ -171,3 +171,6 @@ header .text-content h2{
     font-size: 3vw;
   }
 }
+#log_out {
+    cursor: pointer;
+}

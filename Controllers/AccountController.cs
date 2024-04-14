@@ -90,5 +90,20 @@ namespace Aimidge.Controllers
                 return BadRequest();
             }
         }
+        [HttpPost("Logout")]
+        public IActionResult Logout()
+        {
+            try
+            {
+                _cookieService.RemoveCookie("Cookie");
+
+                return Ok(); 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred during logout: {ex.Message}");
+                return StatusCode(500);
+            }
+        }
     }
 }
