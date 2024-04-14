@@ -22,7 +22,7 @@
                 <h1>@localizer["account"]</h1>
                 <input type="text" id="name" placeholder="@localizer["name"]">
                 <input type="text" id="username" placeholder="@localizer["username"]">
-                <input type="email" id="email" placeholder="@localizer["email"]" required>
+                <input type="email" id="email" placeholder="@localizer["email"]">
                 <input type="password" id="password" placeholder="@localizer["password"]">
                 <input type="submit" value="@localizer["signup"]" id="signUpButton" class="button">
                 <div id="signup-error" style="color:red;"></div>
@@ -31,7 +31,7 @@
         <div class="form-container sign-in">
             <form method="post">
                 <h1>@localizer["signin"]</h1>
-                <input type="email" id="logEmail" placeholder="@localizer["email"]" required>
+                <input type="email" id="logEmail" placeholder="@localizer["email"]">
                 <input type="password" id="logPass" placeholder="@localizer["password"]">
                 <input type="submit" value="@localizer["login"]" id="logInButton" class="button">
                 <div id="login-error" style="color:red;"></div>
@@ -64,13 +64,29 @@
                 const errorSignup = document.getElementById('signup-error')
                 let messagesSignup = []
                 if (!isValidName(document.getElementById('name').value)) {
-                    messagesSignup.push('*Name should be at least 3 symbols long!')
+                    if (window.location.search.includes('culture=en')) {
+                        messagesSignup.push('*Name should be at least 3 symbols long!')
+                    } else {
+                        messagesSignup.push('*Vardas turi būti sudarytas bent iš 3 simbolių!')
+                    }
                 } else if (!isValidUsername(document.getElementById('username').value)) {
-                    messagesSignup.push('*Username must be at least 4 symbols long!')
+                    if (window.location.search.includes('culture=en')) {
+                        messagesSignup.push('*Username must be at least 4 symbols long!')
+                    } else {
+                        messagesSignup.push('*Slaptyvardis turi būti sudarytas bent iš 4 simbolių!')
+                    }
                 } else if (!isValidEmail(document.getElementById('email').value)) {
-                    messagesSignup.push('*Email is invalid!')
+                    if (window.location.search.includes('culture=en')) {
+                        messagesSignup.push('*Email is invalid!')
+                    } else {
+                        messagesSignup.push('*Neteisingas elektroninis paštas!')
+                    }
                 } else if (!isValidPassword(document.getElementById('password').value)) {
-                    messagesSignup.push('*Password must be at least 8 symbols long with at least one uppercase letter and one character or number!')
+                    if (window.location.search.includes('culture=en')) {
+                        messagesSignup.push('*Password must be at least 8 symbols long with at least one uppercase letter and one character or number!')
+                    } else {
+                        messagesSignup.push('*Slaptažodis turi būti sudarytas bent iš 8 simbolių, turėti bent vieną didžiąją raidę ir skaičių!')
+                    }
                 } else {
                     const response = await fetch('api/accounts/Add', {
                         method: 'POST',
@@ -85,10 +101,18 @@
                         if (result === "ok") {
                             window.location.href = "/Generator";
                         } else if (result === "UserExists") {
-                            messagesSignup.push('*User with this email address already exists!')
+                            if (window.location.search.includes('culture=en')) {
+                                messagesSignup.push('*User with this email address already exists!')
+                            } else {
+                                messagesSignup.push('*Vartotojas su šiuo elektroniniu paštu jau egzistuoja!')
+                            }
                         }
                     } else {
-                        alert("Internal server error occured!");
+                        if (window.location.search.includes('culture=en')) {
+                            alert("Internal server error occurred!");
+                        } else {
+                            alert("Įvyko vidinė serverio klaida!");
+                        }
                     }
                 }
 
@@ -113,9 +137,17 @@
                 const errorLogin = document.getElementById('login-error')
                 let messagesLogin = []
                 if (!isValidEmail(document.getElementById('logEmail').value)) {
-                    messagesLogin.push('*Email is invalid!')
+                    if (window.location.search.includes('culture=en')) {
+                        messagesSignup.push('*Email is invalid!')
+                    } else {
+                        messagesSignup.push('*Neteisingas elektroninis paštas!')
+                    }
                 } else if (!isValidPassword(document.getElementById('logPass').value)) {
-                    messagesLogin.push('*Password must be at least 8 symbols long with at least one uppercase letter and one character or number!')
+                    if (window.location.search.includes('culture=en')) {
+                        messagesLogin.push('*Password must be at least 8 symbols long with at least one uppercase letter and one character or number!')
+                    } else {
+                        messagesSignup.push('*Slaptažodis turi būti sudarytas bent iš 8 simbolių, turėti bent vieną didžiąją raidę ir skaičių!')
+                    }
                 } else {
                     const response = await fetch('api/accounts/Auth', {
                         method: 'POST',
@@ -130,13 +162,21 @@
                         if (result === "ok") {
                             window.location.href = "/Generator";
                         } else if (result === "IncorrectValues") {
-                            messagesLogin.push('*Incorrect email or password!')
+                            if (window.location.search.includes('culture=en')) {
+                                messagesLogin.push('*Incorrect email or password!')
+                            } else {
+                                messagesSignup.push('*Neteisingas elektroninis paštas arba slaptažodis!')
+                            }
                         }
                     } else {
-                        alert("Internal server error occured!");
+                        if (window.location.search.includes('culture=en')) {
+                            alert("Internal server error occured!");
+                        } else {
+                            alert("Įvyko vidinė serverio klaida!");
+                        }
                     }
                 }
-                if (messagesLogin.values.length > 0) {
+                if (messagesLogin.length > 0) {
                     event.preventDefault();
                     errorLogin.innerText = messagesLogin.join(', ')
                 }
