@@ -114,14 +114,17 @@ async def get_gallery():
 async def get_gallery_count():
     json_content = request.get_json()
     uid = json_content['uid']
-    folder_name = decrypt_user_data(uid)
-    file_folder = os.path.join(base_storage_path, folder_name, "gallery")
+    if (uid):  
+        folder_name = decrypt_user_data(uid)
+        file_folder = os.path.join(base_storage_path, folder_name, "gallery")
 
-    try:
-        file_count = len(os.listdir(file_folder))
-        return jsonify({'count': file_count}),200
-    except Exception as ex:
-        return str(ex), 500
+        try:
+            file_count = len(os.listdir(file_folder))
+            return jsonify({'count': file_count}), 200
+        except Exception as ex:
+            return str(ex), 500
+    else:
+        return jsonify({'count': 0}), 200
 
 @app.route("/sd_api_endpoints", methods = ["GET"])
 async def sd_api_endpoints():
@@ -315,6 +318,7 @@ def db_cleanup():
 
     for expired_user in expired_users:
         folder_name = expired_user[6]
+        remove_folder(folder_name)
         cursor.execute("DELETE From Users WHERE FileFolderName = ?", (folder_name,))
         sql_connection.commit()
 
