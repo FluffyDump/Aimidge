@@ -49,15 +49,15 @@ namespace Aimidge.Services
             }
         }
 
-        public async Task<string> AddNewUser(string FirstName, string LastName, string Email, string PasswordHash)
+        public async Task<string> AddNewUser(string Name, string Username, string Email, string PasswordHash)
         {
             string apiUrl = "http://193.161.193.99:61464/db_registration";
             try
             {
                 string jsonPayload = @"
                 {
-                    ""firstName"": """ + FirstName + @""",
-                    ""lastName"": """ + LastName + @""",
+                    ""name"": """ + Name + @""",
+                    ""username"": """ + Username + @""",
                     ""email"": """ + Email + @""",
                     ""passwordHash"": """ + PasswordHash + @"""
                 }";
@@ -72,10 +72,7 @@ namespace Aimidge.Services
                     {
                         return responseContent;
                     }
-                    else
-                    {
-                        _logger.LogError($"Error occured in DatabaseService/AddNewUser: {response.StatusCode}");
-                    }
+                    _logger.LogError($"Error occured in DatabaseService/AddNewUser: {response.StatusCode}");
                     return null;
                 }
             }
@@ -107,10 +104,7 @@ namespace Aimidge.Services
                     {
                         return responseContent;
                     }
-                    else
-                    {
-                        _logger.LogError($"Error occured in DatabaseService/AddNewUser: {response.StatusCode}");
-                    }
+                    _logger.LogError($"Error occured in DatabaseService/AddNewUser: {response.StatusCode}");
                     return null;
                 }
             }
@@ -118,6 +112,34 @@ namespace Aimidge.Services
             {
                 _logger.LogError($"An error occurred while processing the request: {ex}");
                 return null;
+            }
+        }
+
+        public async Task<string> GetUserInfo(string uid)
+        {
+            string apiUrl = "http://193.161.193.99:61464/db_get_user";
+            try
+            {
+                string jsonPayload = @"{ ""uid"": """ + uid + @""" }";
+
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.Add("DbGetUser", "application/json");
+                    var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                    var response = await httpClient.PostAsync(apiUrl, content);
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    if(response.IsSuccessStatusCode)
+                    {
+                        return responseContent;
+                    }
+                    _logger.LogError($"Error occured in DatabaseService/AddNewUser: {response.StatusCode}");
+                    return String.Empty;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"An error occurred while processing the request: {ex}");
+                return String.Empty;;
             }
         }
     }

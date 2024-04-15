@@ -48,7 +48,7 @@
                     <i class='bx bxs-user-circle'></i>
                     <div class="name_job">
                         <div class="name">
-                            <a asp-area="" asp-page="/UserProfile" class="name">Vardenis</a>
+                            <a asp-area="" id="sidebarUsername" asp-page="/UserProfile" class="name">Vardenis</a>
                         </div>
                     </div>
                 </div>
@@ -58,6 +58,25 @@
     </div>
         </section>
     <script>
+        document.addEventListener("DOMContentLoaded", async function getUserInfo() {
+        try {
+            const response = await fetch('api/accounts/GetInfo', {
+                method: 'GET'
+            });
+
+        if (response.ok) {
+            const result = await response.json();;
+            if (result) {
+                document.getElementById("sidebarUsername").innerText = result.Username;
+            }
+        } else {
+            console.error("Failed to fetch user information: ", response.status);
+        }
+        } catch (error) {
+            document.getElementById("sidebarUsername").innerText = "Vardenis";
+        }
+        });
+
         let sidebar = document.querySelector(".sidebar");
         let closeBtn = document.querySelector("#btn");
         let searchBtn = document.querySelector(".bx-search");

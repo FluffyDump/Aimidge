@@ -33,7 +33,7 @@ sql_insert_unregistered = """
 """
 
 sql_insert_registration = """
-    INSERT INTO Users (FirstName, LastName, Email, PasswordHash, RegistrationDate, 
+    INSERT INTO Users (FirstName, Username, Email, PasswordHash, RegistrationDate, 
     HasUploadedFiles, FileFolderName, UserGuid, TokenExpiration)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 """
@@ -85,7 +85,11 @@ async def sd_progress():
 async def save_img():
     json_content = request.get_json()
     uid = json_content['uid']
-    folder_name = decrypt_user_data(uid)
+    cursor = sql_connection.cursor()
+    cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+    user = cursor.fetchone()
+    cursor.close();
+    folder_name = user[6]
     
     source = os.path.join(base_storage_path, folder_name, "temp")
     destination = os.path.join(base_storage_path, folder_name, "gallery")
@@ -187,8 +191,8 @@ async def db_registration():
     json_content = request.get_json()
     cursor = sql_connection.cursor()
     try:
-        first_name = json_content['firstName']
-        last_name = json_content['lastName']
+        first_name = json_content['name']
+        last_name = json_content['username']
 
         email = json_content['email']
         cursor.execute("SELECT * FROM Users WHERE Email = ?", (email,))
@@ -237,7 +241,7 @@ async def db_log_in():
                 user_guid = encrypt_user_data(existing_folder_str)
                 user_guid_str = str(user_guid)
                 token_expiration = datetime.now() + timedelta(minutes=20)
-                cursor.execute("UPDATE Users SET UserGuid = ?, TokenExpiration = ? WHERE Email =?", (user_guid_str, token_expiration, email))
+                cursor.execute("UPDATE Users SET UserGuid = ?, TokenExpiration = ? WHERE Email = ?", (user_guid_str, token_expiration, email))
                 sql_connection.commit()
                 cursor.close()
                 return user_guid_str, 200
@@ -257,8 +261,8 @@ async def db_get():
         user_list = []
         for user in users:
             user_info = {
-                'FirstName': user[0],
-                'LastName': user[1],
+                'Name': user[0],
+                'Username': user[1],
                 'Email': user[2],
                 'PasswordHash': user[3],
                 'RegistrationDate': user[4],
@@ -270,6 +274,32 @@ async def db_get():
             user_list.append(user_info)
         cursor.close()
         return jsonify({'DB Users': user_list}), 200
+    except Exception as ex:
+        return jsonify({'error': str(ex)}), 500
+    
+@app.route("/db_get_user", methods=["POST"])
+async def db_get_user():
+    try:
+        json_content = request.get_json()
+        uid = json_content.get('uid')
+
+        if not uid:
+            return jsonify({'error': 'UID parameter is missing'}), 400
+        
+        cursor = sql_connection.cursor()
+        cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+        user = cursor.fetchone()
+        cursor.close()
+        
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        user_info = {
+            'Name': user[0],
+            'Username': user[1],
+            'Email': user[2]
+        }
+        return jsonify(user_info), 200
     except Exception as ex:
         return jsonify({'error': str(ex)}), 500
   

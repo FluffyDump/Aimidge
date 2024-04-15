@@ -47,7 +47,7 @@
                     <i class='bx bxs-user-circle'></i>
                     <div class="name_job">
                         <div class="name">
-                            <a asp-area="" asp-page="/UserProfile" class="name">Vardenis</a>
+                            <a asp-area="" id="sidebarUsername" asp-page="/UserProfile" class="name">Vardenis</a>
                         </div>
                     </div>
                 </div>
@@ -55,6 +55,26 @@
             </li>
         </ul>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", async function getUserInfo() {
+        try {
+            const response = await fetch('api/accounts/GetInfo', {
+                method: 'GET'
+            });
+
+        if (response.ok) {
+            const result = await response.json();;
+            if (result) {
+                document.getElementById("sidebarUsername").innerText = result.Username;
+            }
+        } else {
+            console.error("Failed to fetch user information: ", response.status);
+        }
+        } catch (error) {
+            document.getElementById("sidebarUsername").innerText = "Vardenis";
+        }
+        });
+    </script>
     <section class="home-section">
         <div class="try-it">
             <div class="model-card">
@@ -143,6 +163,7 @@
             <script>
                 document.getElementById('saveButton').style.display = 'none'
                 document.getElementById('clearButton').style.display = 'none'
+                document.getElementById('download-model-image').style.display = 'none';
                 function getLanguage(value) {
                     var selectedLanguage = localStorage.getItem('selectedLanguage');
                     if (selectedLanguage) {

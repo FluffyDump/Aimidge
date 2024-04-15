@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Aimidge.Services;
 using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace Aimidge.Controllers
 {
@@ -90,19 +91,42 @@ namespace Aimidge.Controllers
                 return BadRequest();
             }
         }
+
         [HttpPost("Logout")]
         public IActionResult Logout()
         {
             try
             {
                 _cookieService.RemoveCookie("Cookie");
-
                 return Ok(); 
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Error occurred during logout: {ex.Message}");
                 return StatusCode(500);
+            }
+        }
+
+        [HttpGet("GetInfo")]
+        public async Task<IActionResult> GetInfo()
+        {
+            string uid = _cookieService.ParseCookieUID("Cookie");
+            if(!String.IsNullOrEmpty(uid))
+            {
+                Task<string> data = _databaseService.GetUserInfo(uid);
+                string userInfo = await data;
+                if(!String.IsNullOrEmpty(userInfo))
+                {
+                    return Ok(userInfo);
+                }
+                else
+                {
+                    return Ok("User info not found");
+                }
+            }
+            else
+            {
+                return Ok();
             }
         }
     }
