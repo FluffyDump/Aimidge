@@ -1,0 +1,10 @@
+#generatedPicturesContainer {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    width: 1000px;
+    height: 600px;
+    scrollbar-color: rgb(72, 93, 109) rgba(0, 0, 0, 0);
+}
+.title{
+    align-items: center;
+}

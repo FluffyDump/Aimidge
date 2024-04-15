@@ -13,7 +13,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="~/css/generator.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/sidebar.css" asp-append-version="true">
-    <link rel="stylesheet" href="~/css/history-loading.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/album.css" asp-append-version="true">
     <link rel='stylesheet' href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css'>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true">
 </head>
@@ -48,7 +48,7 @@
                     <i class='bx bxs-user-circle'></i>
                     <div class="name_job">
                         <div class="name">
-                            <a asp-area="" id="sidebarUsername" asp-page="/UserProfile" class="name">Vardenis</a>
+                            <a asp-area="" id="sidebarUsername" asp-page="/UserProfile" class="name"></a>
                         </div>
                     </div>
                 </div>
@@ -56,25 +56,25 @@
             </li>
         </ul>
     </div>
-        </section>
+    </section>
     <script>
         document.addEventListener("DOMContentLoaded", async function getUserInfo() {
-        try {
-            const response = await fetch('api/accounts/GetInfo', {
-                method: 'GET'
-            });
+            try {
+                const response = await fetch('api/accounts/GetInfo', {
+                    method: 'GET'
+                });
 
-        if (response.ok) {
-            const result = await response.json();;
-            if (result) {
-                document.getElementById("sidebarUsername").innerText = result.Username;
+                if (response.ok) {
+                    const result = await response.json();;
+                    if (result) {
+                        document.getElementById("sidebarUsername").innerText = result.Username;
+                    }
+                } else {
+                    console.error("Failed to fetch user information: ", response.status);
+                }
+            } catch (error) {
+                document.getElementById("sidebarUsername").innerText = " ";
             }
-        } else {
-            console.error("Failed to fetch user information: ", response.status);
-        }
-        } catch (error) {
-            document.getElementById("sidebarUsername").innerText = "Vardenis";
-        }
         });
 
         let sidebar = document.querySelector(".sidebar");
@@ -119,52 +119,53 @@
             <div class="model-card">
                 <div class="model-card-container">
                     <div class="model-card-col">
+                        <span class="title">Saved images album</span>
                         <div id="generatedPicturesContainer"></div>
                     </div>
                 </div>
             </div>
 
-<script>
-    async function fetchAndDisplayImages(index) {
-        try {
-            const response = await fetch(`/api/web/GetGallery/${index}`);
+            <script>
+                async function fetchAndDisplayImages(index) {
+                    try {
+                        const response = await fetch(`/api/web/GetGallery/${index}`);
 
-            if (response.ok) {
-                const data = await response.json();
-                const container = document.getElementById('generatedPicturesContainer');
-                const img = document.createElement('img');
-                img.src = 'data:image/jpg;base64,' + data.image;
-                img.style.margin = '20px';
-                img.width = 180;
-                img.height = 180;
-                container.appendChild(img);
-            } else {
-                console.error('Failed to fetch image:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error fetching image:', error);
-        }
-    }
-
-    async function getGalleryCountAndDisplayImages() {
-        try {
-            const countResponse = await fetch(`/api/web/GetGalleryCount`);
-            if (countResponse.ok) {
-                const countData = await countResponse.json();
-                const imageCount = parseInt(countData.count);
-                for (let i = 1; i <= imageCount; i++) {
-                    await fetchAndDisplayImages(i);
+                        if (response.ok) {
+                            const data = await response.json();
+                            const container = document.getElementById('generatedPicturesContainer');
+                            const img = document.createElement('img');
+                            img.src = 'data:image/jpg;base64,' + data.image;
+                            img.style.margin = '20px';
+                            img.width = 180;
+                            img.height = 180;
+                            container.appendChild(img);
+                        } else {
+                            console.error('Failed to fetch image:', response.statusText);
+                        }
+                    } catch (error) {
+                        console.error('Error fetching image:', error);
+                    }
                 }
-            } else {
-                console.error('Failed to fetch image count:', countResponse.statusText);
-            }
-        } catch (error) {
-            console.error('Error fetching image count:', error);
-        }
-    }
 
-    getGalleryCountAndDisplayImages();
-</script>
+                async function getGalleryCountAndDisplayImages() {
+                    try {
+                        const countResponse = await fetch(`/api/web/GetGalleryCount`);
+                        if (countResponse.ok) {
+                            const countData = await countResponse.json();
+                            const imageCount = parseInt(countData.count);
+                            for (let i = 1; i <= imageCount; i++) {
+                                await fetchAndDisplayImages(i);
+                            }
+                        } else {
+                            console.error('Failed to fetch image count:', countResponse.statusText);
+                        }
+                    } catch (error) {
+                        console.error('Error fetching image count:', error);
+                    }
+                }
+
+                getGalleryCountAndDisplayImages();
+            </script>
             <script src="~/lib/jquery/dist/jquery.min.js"></script>
             <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
             <script src="~/js/site.js" asp-append-version="true"></script>

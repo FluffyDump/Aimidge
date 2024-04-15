@@ -48,7 +48,7 @@
                     <i class='bx bxs-user-circle'></i>
                     <div class="name_job">
                         <div class="name">
-                            <a asp-area="" id="sidebarUsername" asp-page="/UserProfile" class="name">Vardenis</a>
+                            <a asp-area="" id="sidebarUsername" asp-page="/UserProfile" class="name"></a>
                         </div>
                     </div>
                 </div>
@@ -66,29 +66,29 @@
             document.getElementById("usernameInput").value = "Loading...";
             document.getElementById("nameInput").value = "Loading...";
             document.getElementById("emailInput").value = "Loading...";
-            
-        try {
-            const response = await fetch('api/accounts/GetInfo', {
-                method: 'GET'
-            });
 
-        if (response.ok) {
-            const result = await response.json();;
-            if (result) {
-                document.getElementById("usernameInput").value = result.Username;
-                document.getElementById("nameInput").value = result.Name;
-                document.getElementById("emailInput").value = result.Email;
-                document.getElementById("sidebarUsername").innerText = result.Username;
+            try {
+                const response = await fetch('api/accounts/GetInfo', {
+                    method: 'GET'
+                });
+
+                if (response.ok) {
+                    const result = await response.json();;
+                    if (result) {
+                        document.getElementById("usernameInput").value = result.Username;
+                        document.getElementById("nameInput").value = result.Name;
+                        document.getElementById("emailInput").value = result.Email;
+                        document.getElementById("sidebarUsername").innerText = result.Username;
+                    }
+                } else {
+                    console.error("Failed to fetch user information: ", response.status);
+                }
+            } catch (error) {
+                document.getElementById("usernameInput").value = " ";
+                document.getElementById("nameInput").value = " ";
+                document.getElementById("emailInput").value = " ";
+                document.getElementById("sidebarUsername").innerText = " ";
             }
-        } else {
-            console.error("Failed to fetch user information: ", response.status);
-        }
-        } catch (error) {
-            document.getElementById("usernameInput").value = "Vardenis";
-            document.getElementById("nameInput").value = "Vardenis Pavardenis";
-            document.getElementById("emailInput").value = "vardpavard@gmail.com";
-            document.getElementById("sidebarUsername").innerText = "Vardenis";
-        }
         });
     </script>
 

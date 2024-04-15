@@ -183,9 +183,9 @@
                     errorLogin.innerText = messagesLogin.join(', ')
                 }
             });
-
             function isValidEmail(email) {
-                return email.length >= 12;
+                const regex = /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                return regex.test(email);
             }
             function isValidPassword(password) {
                 return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password);
