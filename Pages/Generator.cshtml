@@ -42,7 +42,7 @@
                     <span class="links_name">Saved</span>
                 </a>
             </li>
-            <li class="profile">
+            <li class="profile" id="profileID">
                 <div class="profile-details">
                     <i class='bx bxs-user-circle'></i>
                     <div class="name_job">
@@ -69,9 +69,11 @@
                     }
                 } else {
                     console.error("Failed to fetch user information: ", response.status);
+                    document.getElementById("profileID").style.display = "none";
                 }
             } catch (error) {
                 document.getElementById("sidebarUsername").innerText = " ";
+                document.getElementById("profileID").style.display = "none";
             }
         });
     </script>
