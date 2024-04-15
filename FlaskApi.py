@@ -44,12 +44,15 @@ app = Flask(__name__)
 async def stable_diffusion():
     json_content = request.get_json()
     uid = json_content['uid']
-    file_Folder = decrypt_user_data(uid)
+    cursor = sql_connection.cursor()
+    cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+    user = cursor.fetchone()
+    file_Folder = user[6]
 
-    if not get_quota(file_Folder):
+    if not get_quota(uid):
         return jsonify({"error": "Quota exceeded!"}), 403
 
-    increaseCount = increase_images_count(file_Folder)
+    increaseCount = increase_images_count(uid)
     if increaseCount:
         response = await asyncio.to_thread(requests.post, sd_link, json=json_content)
         try:
@@ -103,7 +106,11 @@ async def get_gallery():
     json_content = request.get_json()
     uid = json_content['uid']
     index = json_content.get('index', 1)
-    folder_name = decrypt_user_data(uid)
+    cursor = sql_connection.cursor()
+    cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+    user = cursor.fetchone()
+    folder_name = user[6]
+    cursor.close()
 
     file_folder = os.path.join(base_storage_path, folder_name, "gallery")
 
@@ -122,10 +129,14 @@ async def get_gallery():
 async def get_gallery_count():
     json_content = request.get_json()
     uid = json_content['uid']
-    if (uid):  
-        folder_name = decrypt_user_data(uid)
-        file_folder = os.path.join(base_storage_path, folder_name, "gallery")
+    cursor = sql_connection.cursor()
+    cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+    user = cursor.fetchone()
+    folder_name = user[6]
+    cursor.close()
 
+    if (uid):  
+        file_folder = os.path.join(base_storage_path, folder_name, "gallery")
         try:
             file_count = len(os.listdir(file_folder))
             return jsonify({'count': file_count}), 200
@@ -149,15 +160,16 @@ async def sql_add_unregistered_user():
     json_content = request.get_json()
     cursor = sql_connection.cursor()
     try:
+        uid = json_content['UserGuid']
         user_folder = decrypt_user_data(json_content['UserGuid'])
-        cursor.execute("SELECT * FROM Users WHERE FileFolderName = ?", (user_folder,))
+        cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
         existing_user = cursor.fetchone()
         if(existing_user):
             if(json_content['HasUploadedFiles'] == True):
-                cursor.execute("UPDATE Users SET HasUploadedFiles = ?, TokenExpiration = ? WHERE UserGuid = ?", (json_content['HasUploadedFiles'], json_content['TokenExpiration'], json_content['UserGuid']))
+                cursor.execute("UPDATE Users SET HasUploadedFiles = ?, TokenExpiration = ? WHERE UserGuid = ?", (json_content['HasUploadedFiles'], json_content['TokenExpiration'], uid))
                 sql_connection.commit()
             else:
-                cursor.execute("UPDATE Users SET TokenExpiration = ? WHERE UserGuid = ?", (json_content['TokenExpiration'], json_content['UserGuid']))
+                cursor.execute("UPDATE Users SET TokenExpiration = ? WHERE UserGuid = ?", (json_content['TokenExpiration'], uid))
                 sql_connection.commit()
         else:
             cursor.execute(sql_insert_unregistered, (json_content['HasUploadedFiles'], user_folder, json_content['UserGuid'], json_content['TokenExpiration']))
@@ -228,7 +240,7 @@ async def db_log_in():
                 cursor.execute("UPDATE Users SET UserGuid = ?, TokenExpiration = ? WHERE Email =?", (user_guid_str, token_expiration, email))
                 sql_connection.commit()
                 cursor.close()
-                return jsonify(user_guid_str), 200
+                return user_guid_str, 200
             else:
                 return "BadPassword", 401
         return "NotFound", 404
@@ -261,9 +273,9 @@ async def db_get():
     except Exception as ex:
         return jsonify({'error': str(ex)}), 500
   
-def get_quota(file_Folder):
+def get_quota(uid):
     cursor = sql_connection.cursor()
-    cursor.execute("SELECT * FROM Users WHERE FileFolderName = ?", (file_Folder,))
+    cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
     user = cursor.fetchone()
     cursor.close() 
     if user:
@@ -336,13 +348,13 @@ def db_unique_file_folder(cursor):
         if not existing_folder:
             return FileFolderName
         
-def increase_images_count(file_Folder):
+def increase_images_count(uid):
     cursor = sql_connection.cursor()
-    cursor.execute("SELECT * FROM Users WHERE FileFolderName = ?", (file_Folder,))
+    cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
     user = cursor.fetchone()
     if user:
         generated_images_count = user[9] + 1
-        cursor.execute("UPDATE Users SET GeneratedImagesCount = ? WHERE FileFolderName = ?", (generated_images_count, file_Folder))
+        cursor.execute("UPDATE Users SET GeneratedImagesCount = ? WHERE UserGuid = ?", (generated_images_count, uid))
         sql_connection.commit()
         cursor.close()
         return True
