@@ -1,5 +1,6 @@
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
@@ -51,13 +52,19 @@ namespace Aimidge.Controllers
                 string width = match.Groups[1].Value;
                 string height = match.Groups[2].Value;
 
-                Task<string> base64Image = SDService.PostToAPIAsync(prompt, width, height, _cookieService.ParseCookieUID("Cookie"));
-                if (!base64Image.Equals("BadRequest"))
+                Task<string> data = SDService.PostToAPIAsync(prompt, width, height, _cookieService.ParseCookieUID("Cookie"));
+                
+                string img = await data;
+
+                if (img != String.Empty && img != "403")
                 {
-                    return Ok(new { image = base64Image.Result });
+                    return Ok(new { image = img });
                 }
-                _logger.LogInformation("Ok");
-                return Ok();
+                else if (img == "403")
+                {
+                    return StatusCode(403);
+                }
+                return BadRequest();
             }
             catch (Exception ex)
             {

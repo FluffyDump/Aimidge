@@ -44,25 +44,33 @@ app = Flask(__name__)
 async def stable_diffusion():
     json_content = request.get_json()
     uid = json_content['uid']
+    file_Folder = decrypt_user_data(uid)
 
-    response = await asyncio.to_thread(requests.post, sd_link, json=json_content)
-    try:
-        image_data_list = response.json().get('images', [])
-        if image_data_list:
-            save_directory = os.path.join(base_storage_path, decrypt_user_data(uid), "temp")
-            for image_data_base64 in image_data_list:
-                try:
-                    image_data_binary = base64.b64decode(image_data_base64)
-                    image_filename = os.path.join(save_directory, f"img.jpg")
-                    with open(image_filename, 'wb') as image_file:
-                        image_file.write(image_data_binary)
-                except Exception as e:
-                    return jsonify((f"Error saving image: {str(e)}"))
-            return jsonify(response.json())
-        else:
-            return jsonify({"error": "No image data found"}), 500
-    except Exception as e:
-        return jsonify({"error": f"Error saving images: {str(e)}"}), 500
+    if not get_quota(file_Folder):
+        return jsonify({"error": "Quota exceeded!"}), 403
+
+    increaseCount = increase_images_count(file_Folder)
+    if increaseCount:
+        response = await asyncio.to_thread(requests.post, sd_link, json=json_content)
+        try:
+            image_data_list = response.json().get('images', [])
+            if image_data_list:
+                save_directory = os.path.join(base_storage_path, file_Folder, "temp")
+                for image_data_base64 in image_data_list:
+                    try:
+                        image_data_binary = base64.b64decode(image_data_base64)
+                        image_filename = os.path.join(save_directory, f"img.jpg")
+                        with open(image_filename, 'wb') as image_file:
+                            image_file.write(image_data_binary)
+                    except Exception as ex:
+                        return jsonify((f"Error occured while saving the image!"))
+                return jsonify(response.json())
+            else:
+                return jsonify({"error": "No image data found"}), 500
+        except Exception as ex:
+            return jsonify({"error": f"Error occured while saving the image!"}), 500
+    else:
+        return jsonify({"error": "User not found!"}), 404
 
 @app.route("/sd_progress", methods = ["GET"])
 async def sd_progress():
@@ -187,12 +195,14 @@ async def db_registration():
         user_guid = encrypt_user_data(existing_folder_str)
         user_guid_str = str(user_guid)
 
+        create_folder(existing_folder_str)
+
         token_expiration = datetime.now() + timedelta(minutes=20)
 
         cursor.execute(sql_insert_registration, (first_name, last_name, email, password_hash, registration_date, 0, existing_folder_str, user_guid_str, token_expiration))
         sql_connection.commit()
         cursor.close()
-        return jsonify(user_guid_str), 200
+        return user_guid_str, 200
     except Exception as ex:
         print(str(ex))
         return jsonify({"error": str(ex)}), 500
@@ -221,7 +231,7 @@ async def db_log_in():
                 return jsonify(user_guid_str), 200
             else:
                 return "BadPassword", 401
-        return "NotFound", 200
+        return "NotFound", 404
     except Exception as ex:
         print(str(ex))
         return jsonify({"error": str(ex)}), 500
@@ -250,6 +260,21 @@ async def db_get():
         return jsonify({'DB Users': user_list}), 200
     except Exception as ex:
         return jsonify({'error': str(ex)}), 500
+  
+def get_quota(file_Folder):
+    cursor = sql_connection.cursor()
+    cursor.execute("SELECT * FROM Users WHERE FileFolderName = ?", (file_Folder,))
+    user = cursor.fetchone()
+    cursor.close() 
+    if user:
+        if user[0] is not None:
+            return True
+        else:
+            if user[9] < 3:
+                return True
+        return False
+    else:
+        return False
 
 def encrypt_user_data(uid):
     KEY = b"O1XFeDPaQFAykYcxZZeIM76y1bnTbk92"
@@ -310,6 +335,20 @@ def db_unique_file_folder(cursor):
         existing_folder = cursor.fetchone()
         if not existing_folder:
             return FileFolderName
+        
+def increase_images_count(file_Folder):
+    cursor = sql_connection.cursor()
+    cursor.execute("SELECT * FROM Users WHERE FileFolderName = ?", (file_Folder,))
+    user = cursor.fetchone()
+    if user:
+        generated_images_count = user[9] + 1
+        cursor.execute("UPDATE Users SET GeneratedImagesCount = ? WHERE FileFolderName = ?", (generated_images_count, file_Folder))
+        sql_connection.commit()
+        cursor.close()
+        return True
+    else:
+        cursor.close()
+        return False
         
 def db_cleanup():
     cursor = sql_connection.cursor()

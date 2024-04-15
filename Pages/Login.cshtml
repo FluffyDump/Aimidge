@@ -54,6 +54,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", async function () {
             document.getElementById('signUpButton').addEventListener('click', async function (event) {
+                event.preventDefault();
                 const formData = {
                     Name: document.getElementById('name').value,
                     Username: document.getElementById('username').value,
@@ -129,6 +130,7 @@
             });
 
             document.getElementById('logInButton').addEventListener('click', async function (event) {
+                event.preventDefault();
                 const formData = {
                     Email: document.getElementById('logEmail').value,
                     PasswordHash: document.getElementById('logPass').value
@@ -180,13 +182,14 @@
                     event.preventDefault();
                     errorLogin.innerText = messagesLogin.join(', ')
                 }
-                function isValidEmail(email) {
-                    return email.length >= 12;
-                }
-                function isValidPassword(password) {
-                    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password);
-                }
             });
+
+            function isValidEmail(email) {
+                return email.length >= 12;
+            }
+            function isValidPassword(password) {
+                return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password);
+            }
         });
     </script>
     <script src="~/js/script.js"></script>

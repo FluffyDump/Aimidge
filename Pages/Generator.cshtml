@@ -90,6 +90,7 @@
                     </div>
                     <div class="model-card-col">
                         <div id="promptImages"></div>
+                        <div id="quotaExceededMessage" style="display: none;">Quota exceeded!</div>
                         <div id="loadingSpinner" style="display: none;">
                             <div id="progress">
                                 <div id="loadingPercentage"></div>
@@ -177,7 +178,7 @@
 
 
                     async function processPrompt() {
-                        refreshInterval = setInterval(getBar, 700);
+                        refreshInterval = setInterval(getBar, 800);
                         const response = await fetch('api/web/GetPrompt', {
                             method: 'POST',
                             headers: {
@@ -205,12 +206,19 @@
                             document.getElementById('promptImages').appendChild(img.cloneNode(true));
                             document.getElementById('generatedPicturesContainer').appendChild(img);
                             document.getElementById('loadingSpinner').style.display = 'none';
+                        } else if(response.status === 403) {
+                            document.getElementById('quotaExceededMessage').style.display = 'block';
+                            document.getElementById('loadingSpinner').style.display = 'none';
+                            document.getElementById('download-model-image').style.display = 'none';
+                            document.getElementById('submitButton').style.display = 'none';
                         } else {
                             console.error(response.statusText);
                             document.getElementById('loadingSpinner').style.display = 'none';
+                            document.getElementById('download-model-image').style.display = 'none';
                         }
                     }
 
+                    let previousBarPercentage = 0;
                     async function getBar(percentage, progress) {
                         const response = await fetch('api/web/GetProgress', {
                             method: 'GET'
@@ -223,7 +231,7 @@
                             progress.style.width = percentage + '%';
                             loadingPercentage.textContent = percentage + '%';
 
-                            if (percentage >= 85) {
+                            if (percentage <= previousBarPercentage) {
                                 clearInterval(refreshInterval);
                                 progress.style.width = 99 + '%';
                                 loadingPercentage.textContent = 99 + '%';
@@ -231,7 +239,9 @@
                                     progress.style.width = 0 + '%';
                                     loadingPercentage.textContent = 0 + '%';
                                 }, 100000);
+                                return;
                             }
+                            previousBarPercentage = percentage;
                         }
                     }
                 });

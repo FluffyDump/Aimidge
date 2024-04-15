@@ -40,6 +40,10 @@ namespace Aimidge.Services
                     string base64Image = jsonResponse.images[0];
                     return base64Image ;
                 }
+                else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                {
+                    return "403";
+                }
             }
             return String.Empty;
         }
@@ -103,7 +107,6 @@ namespace Aimidge.Services
                 httpClient.DefaultRequestHeaders.Add("getImgCount", "application/json");
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = await httpClient.PostAsync(apiUrl, content);
-
                 if (response.IsSuccessStatusCode)
                 {
                     string responseData = await response.Content.ReadAsStringAsync();

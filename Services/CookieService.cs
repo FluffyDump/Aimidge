@@ -42,7 +42,6 @@ namespace Aimidge.Services
 		public async Task SetRegisteredCookie(string uid)
 		{
 			string key = "Cookie";
-			string value = uid;
 
 			var option = new CookieOptions();
 
@@ -53,8 +52,8 @@ namespace Aimidge.Services
 
 			try
 			{
-				await Task.Run(() => _httpContextAccessor.HttpContext.Response.Cookies.Append(key, value, option));
-				await _databaseService.AddUnregisteredUser(value);
+				await Task.Run(() => _httpContextAccessor.HttpContext.Response.Cookies.Append(key, uid, option));
+				await _databaseService.AddUnregisteredUser(uid);
 			}
 			catch (Exception ex)
 			{
