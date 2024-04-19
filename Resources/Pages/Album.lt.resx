@@ -118,33 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="about" xml:space="preserve">
-    <value>About</value>
+    <value>Apie</value>
   </data>
-  <data name="clear" xml:space="preserve">
-    <value>Clear</value>
-  </data>
-  <data name="download" xml:space="preserve">
-    <value>Download</value>
-  </data>
-  <data name="enterPrompt" xml:space="preserve">
-    <value>Enter your prompt</value>
-  </data>
-  <data name="Generator" xml:space="preserve">
-    <value>Generator</value>
-  </data>
-  <data name="promptEntering" xml:space="preserve">
-    <value>Enter your promt!</value>
-  </data>
-  <data name="resolutionSelection" xml:space="preserve">
-    <value>Select resolution:</value>
-  </data>
-  <data name="save online" xml:space="preserve">
-    <value>Save online</value>
+  <data name="generator" xml:space="preserve">
+    <value>Generatorius</value>
   </data>
   <data name="saved" xml:space="preserve">
-    <value>Saved</value>
+    <value>Išsaugoti</value>
   </data>
-  <data name="submit" xml:space="preserve">
-    <value>Submit</value>
+  <data name="saved_images_album" xml:space="preserve">
+    <value>Išsaugotų nuotraukų albumas</value>
   </data>
 </root>

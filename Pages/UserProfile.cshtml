@@ -34,13 +34,13 @@
             <li>
                 <a asp-area="" asp-page="/Generator">
                     <i class='bx bx-grid-alt'></i>
-                    <span class=" links_name">@localizer["Generator"]</span>
+                    <span class=" links_name">@localizer["generator"]</span>
                 </a>
             </li>
             <li>
                 <a asp-area="" asp-page="/Album">
                     <i class='bx bx-heart'></i>
-                    <span class="links_name">Saved</span>
+                    <span class="links_name">@localizer["saved"]</span>
                 </a>
             </li>
             <li class="profile">
@@ -97,15 +97,15 @@
             <div class="model-card">
                 <div class="card-body">
                     <div class="form-group">
-                        <label class="form-label">Username</label>
+                        <label class="form-label">@localizer["username"]</label>
                         <input type="text" id="usernameInput" class="form-control mb-1">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Name</label>
+                        <label class="form-label">@localizer["name"]</label>
                         <input type="text" id="nameInput" class="form-control">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">E-mail</label>
+                        <label class="form-label">@localizer["e-mail"]</label>
                         <input type="text" id=emailInput class="form-control mb-1">
                     </div>
                 </div>
@@ -121,6 +121,24 @@
         let sidebar = document.querySelector(".sidebar");
         let closeBtn = document.querySelector("#btn");
         let searchBtn = document.querySelector(".bx-search");
+        let logoutBtn = document.querySelector("#log_out");
+        logoutBtn.addEventListener("click", async () => {
+            try {
+                const response = await fetch('/api/accounts/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (response.ok) {
+                    window.location.href = '/Index';
+                } else {
+                    console.error('Failed to logout:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error during logout:', error);
+            }
+        });
         closeBtn.addEventListener("click", () => {
             sidebar.classList.toggle("open");
             menuBtnChange();

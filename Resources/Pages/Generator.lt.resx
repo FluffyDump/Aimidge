@@ -141,6 +141,9 @@
   <data name="save online" xml:space="preserve">
     <value>Išsaugoti internete</value>
   </data>
+  <data name="saved" xml:space="preserve">
+    <value>Išsaugoti</value>
+  </data>
   <data name="submit" xml:space="preserve">
     <value>Pateikti</value>
   </data>
