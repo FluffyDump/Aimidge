@@ -148,7 +148,7 @@
     <value>Registruotis</value>
   </data>
   <data name="username" xml:space="preserve">
-    <value>Vartotojo vardas</value>
+    <value>Slapyvardis</value>
   </data>
   <data name="welcomeTo" xml:space="preserve">
     <value>Sveiki atvykę į AIMIDGE</value>
