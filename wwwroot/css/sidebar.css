@@ -223,6 +223,12 @@
 #log_out:hover{
   cursor: pointer;
 }
+.logo_name:hover{
+  cursor: pointer;
+}
+#logo:hover{
+  cursor: pointer;
+}
 @media (max-width: 420px) {
   .sidebar li .tooltip{
     display: none;
