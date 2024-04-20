@@ -8,3 +8,16 @@
 .title{
     align-items: center;
 }
+
+#generatedPicturesContainer {
+    position: relative;
+}
+
+#generatedPicturesContainer img {
+    margin: 20px auto;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+

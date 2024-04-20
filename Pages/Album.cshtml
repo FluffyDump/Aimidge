@@ -43,7 +43,7 @@
                     <span class="links_name">@localizer["saved"]</span>
                 </a>
             </li>
-            <li class="profile">
+            <li class="profile" id="profileID">
                 <div class="profile-details">
                     <i class='bx bxs-user-circle'></i>
                     <div class="name_job">
@@ -71,9 +71,11 @@
                     }
                 } else {
                     console.error("Failed to fetch user information: ", response.status);
+                    document.getElementById("profileID").style.display = "none";
                 }
             } catch (error) {
                 document.getElementById("sidebarUsername").innerText = " ";
+                document.getElementById("profileID").style.display = "none";
             }
         });
 
@@ -126,6 +128,78 @@
             </div>
 
             <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const generatedPicturesContainer = document.getElementById('generatedPicturesContainer');
+
+                    generatedPicturesContainer.addEventListener('mouseover', function (event) {
+                        const target = event.target;
+                        if (target.tagName === 'IMG') {
+                            const downloadIcon = createDownloadIcon(target);
+                            target.parentElement.style.position = 'relative';
+                            target.parentElement.appendChild(downloadIcon);
+
+                            target.style.borderColor = '#1b6ec2';
+                            target.addEventListener('mouseover', function () {
+                                downloadIcon.style.opacity = '1';
+                                target.style.borderColor = '#1b6ec2';
+                            });
+                            downloadIcon.addEventListener('mouseover', function () {
+                                downloadIcon.style.opacity = '1';
+                                target.style.borderColor = '#1b6ec2';
+                            });
+                            downloadIcon.addEventListener('mouseout', function () {
+                                target.style.borderColor = 'transparent';
+                            });
+                            target.addEventListener('mouseout', function () {
+                                downloadIcon.style.opacity = '0';
+                                target.style.borderColor = 'transparent';
+                            });
+                        }
+                    });
+                });
+                function createDownloadIcon(imageElement) {
+
+                    const downloadIcon = document.createElement('i');
+                    downloadIcon.className = 'bx bxs-download';
+                    downloadIcon.style.position = 'absolute';
+                    downloadIcon.style.top = '50%';
+                    downloadIcon.style.left = '50%';
+                    downloadIcon.style.transform = 'translate(-50%, -50%)';
+                    downloadIcon.style.color = 'white';
+                    downloadIcon.style.fontSize = '24px';
+                    downloadIcon.style.cursor = 'pointer';
+                    downloadIcon.style.opacity = '1';
+
+                    const imageRect = imageElement.getBoundingClientRect();
+                    const containerRect = imageElement.parentElement.getBoundingClientRect();
+                    const offsetX = imageRect.left - containerRect.left;
+                    const offsetY = imageRect.top - containerRect.top;
+                    downloadIcon.style.top = `${offsetY + imageRect.height / 2}px`;
+                    downloadIcon.style.left = `${offsetX + imageRect.width / 2}px`;
+
+                    downloadIcon.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        downloadImage(imageElement);
+                    });
+
+                    return downloadIcon;
+                }
+
+                function downloadImage(imageElement) {
+                    var canvas = document.createElement("canvas");
+                    var ctx = canvas.getContext("2d");
+
+                    canvas.width = imageElement.naturalWidth;
+                    canvas.height = imageElement.naturalHeight;
+
+                    ctx.drawImage(imageElement, 0, 0);
+
+                    var anchor = document.createElement("a");
+                    anchor.href = canvas.toDataURL("image/jpeg");
+                    anchor.download = "Image.jpg";
+                    anchor.click();
+                }
+
                 async function fetchAndDisplayImages(index) {
                     try {
                         const response = await fetch(`/api/web/GetGallery/${index}`);

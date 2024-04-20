@@ -36,7 +36,7 @@
                     <span class="links_name">Saved</span>
                 </a>
             </li>
-            <li class="profile">
+            <li class="profile" id="profileID">
                 <div class="profile-details">
                     <i class='bx bxs-user-circle'></i>
                     <div class="name_job">
@@ -50,6 +50,27 @@
         </ul>
     </div>
     <script>
+        document.addEventListener("DOMContentLoaded", async function getUserInfo() {
+            try {
+                const response = await fetch('api/accounts/GetInfo', {
+                    method: 'GET'
+                });
+
+                if (response.ok) {
+                    const result = await response.json();;
+                    if (result) {
+                        document.getElementById("sidebarUsername").innerText = result.Username;
+                    }
+                } else {
+                    console.error("Failed to fetch user information: ", response.status);
+                    document.getElementById("profileID").style.display = "none";
+                }
+            } catch (error) {
+                document.getElementById("sidebarUsername").innerText = " ";
+                document.getElementById("profileID").style.display = "none";
+            }
+        });
+
         let sidebar = document.querySelector(".sidebar");
         let closeBtn = document.querySelector("#btn");
         let searchBtn = document.querySelector(".bx-search");
