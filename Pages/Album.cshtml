@@ -133,10 +133,11 @@
 
                     generatedPicturesContainer.addEventListener('mouseover', function (event) {
                         const target = event.target;
-                        if (target.tagName === 'IMG') {
+                        if (target.tagName === 'IMG' && !target.hasAttribute('data-download-added')) {
                             const downloadIcon = createDownloadIcon(target);
                             target.parentElement.style.position = 'relative';
                             target.parentElement.appendChild(downloadIcon);
+                            target.setAttribute('data-download-added', 'true');
 
                             target.style.borderColor = '#1b6ec2';
                             target.addEventListener('mouseover', function () {
@@ -172,8 +173,12 @@
 
                     const imageRect = imageElement.getBoundingClientRect();
                     const containerRect = imageElement.parentElement.getBoundingClientRect();
-                    const offsetX = imageRect.left - containerRect.left;
-                    const offsetY = imageRect.top - containerRect.top;
+                    const containerScrollTop = imageElement.parentElement.scrollTop;
+                    const containerScrollLeft = imageElement.parentElement.scrollLeft;
+
+                    const offsetX = imageRect.left - containerRect.left + containerScrollLeft;
+                    const offsetY = imageRect.top - containerRect.top + containerScrollTop;
+
                     downloadIcon.style.top = `${offsetY + imageRect.height / 2}px`;
                     downloadIcon.style.left = `${offsetX + imageRect.width / 2}px`;
 

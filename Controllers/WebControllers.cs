@@ -53,7 +53,7 @@ namespace Aimidge.Controllers
                 string height = match.Groups[2].Value;
 
                 Task<string> data = SDService.PostToAPIAsync(prompt, width, height, _cookieService.ParseCookieUID("Cookie"));
-                
+
                 string img = await data;
 
                 if (img != String.Empty && img != "403")
