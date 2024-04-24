@@ -7,7 +7,7 @@ namespace Aimidge.Controllers
 {
     [ApiController]
     [Route("/api/accounts")]
-    public class AccountController: ControllerBase
+    public class AccountController : ControllerBase
     {
         private readonly ILogger<WebControllers> _logger;
         private readonly DatabaseService _databaseService;
@@ -40,13 +40,13 @@ namespace Aimidge.Controllers
             try
             {
                 string value = await _databaseService.AddNewUser(model?.Name, model?.Username, model?.Email, model?.PasswordHash);
-                if(!value.Equals("UserExists"))
+                if (!value.Equals("UserExists"))
                 {
                     _cookieService.RemoveCookie("Cookie");
                     await _cookieService.SetRegisteredCookie(value);
                     return Ok("ok");
                 }
-                else if(value.Equals("UserExists"))
+                else if (value.Equals("UserExists"))
                 {
                     return Ok(value);
                 }
@@ -69,13 +69,13 @@ namespace Aimidge.Controllers
             try
             {
                 string value = await _databaseService.AuthenticateUser(model?.Email, model?.PasswordHash);
-                if(!value.Equals("BadPassword") && !value.Equals("NotFound"))
+                if (!value.Equals("BadPassword") && !value.Equals("NotFound"))
                 {
                     _cookieService.RemoveCookie("Cookie");
                     await _cookieService.SetRegisteredCookie(value);
                     return Ok("ok");
                 }
-                else if(value.Equals("BadPassword") || value.Equals("NotFound"))
+                else if (value.Equals("BadPassword") || value.Equals("NotFound"))
                 {
                     return Ok("IncorrectValues");
                 }
@@ -98,7 +98,7 @@ namespace Aimidge.Controllers
             try
             {
                 _cookieService.RemoveCookie("Cookie");
-                return Ok(); 
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -111,11 +111,13 @@ namespace Aimidge.Controllers
         public async Task<IActionResult> GetInfo()
         {
             string uid = _cookieService.ParseCookieUID("Cookie");
-            if(!String.IsNullOrEmpty(uid))
+            if (!String.IsNullOrEmpty(uid))
             {
                 Task<string> data = _databaseService.GetUserInfo(uid);
                 string userInfo = await data;
-                if(!String.IsNullOrEmpty(userInfo))
+                char name = userInfo.ElementAt(0);
+
+                if (!String.IsNullOrEmpty(userInfo))
                 {
                     return Ok(userInfo);
                 }
