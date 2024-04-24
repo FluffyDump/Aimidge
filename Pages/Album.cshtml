@@ -141,18 +141,30 @@
                     generatedPicturesContainer.addEventListener('mouseover', function (event) {
                         const target = event.target;
                         if (target.tagName === 'IMG' && !target.hasAttribute('data-download-added')) {
+
                             const downloadIcon = createDownloadIcon(target);
+                            const trashIcon = createTrashIcon('bx bx-x', target);
+
                             target.parentElement.style.position = 'relative';
                             target.parentElement.appendChild(downloadIcon);
+                            target.parentElement.appendChild(trashIcon);
+
                             target.setAttribute('data-download-added', 'true');
 
                             target.style.borderColor = '#1b6ec2';
                             target.addEventListener('mouseover', function () {
                                 downloadIcon.style.opacity = '1';
+                                trashIcon.style.opacity = '1';
                                 target.style.borderColor = '#1b6ec2';
                             });
                             downloadIcon.addEventListener('mouseover', function () {
                                 downloadIcon.style.opacity = '1';
+                                trashIcon.style.opacity = '1';
+                                target.style.borderColor = '#1b6ec2';
+                            });
+                            trashIcon.addEventListener('mouseover', function () {
+                                downloadIcon.style.opacity = '1';
+                                trashIcon.style.opacity = '1';
                                 target.style.borderColor = '#1b6ec2';
                             });
                             downloadIcon.addEventListener('mouseout', function () {
@@ -160,11 +172,36 @@
                             });
                             target.addEventListener('mouseout', function () {
                                 downloadIcon.style.opacity = '0';
+                                trashIcon.style.opacity = '0';
                                 target.style.borderColor = 'transparent';
                             });
                         }
                     });
                 });
+                function createTrashIcon(iconClass, imageElement) {
+                    const icon = document.createElement('i');
+                    icon.className = iconClass;
+                    icon.style.position = 'absolute';
+                    icon.style.top = '50%';
+                    icon.style.transform = 'translate(-40%, -40%)';
+                    icon.style.color = 'white';
+                    icon.style.fontSize = '24px';
+                    icon.style.cursor = 'pointer';
+                    icon.style.opacity = '1';
+
+                    const imageRect = imageElement.getBoundingClientRect();
+                    const containerRect = imageElement.parentElement.getBoundingClientRect();
+                    const containerScrollTop = imageElement.parentElement.scrollTop;
+                    const containerScrollLeft = imageElement.parentElement.scrollLeft;
+
+                    const offsetX = imageRect.left - containerRect.left + containerScrollLeft;
+                    const offsetY = imageRect.top - containerRect.top + containerScrollTop;
+
+                    icon.style.top = `${offsetY - 70 + imageRect.height / 2}px`;
+                    icon.style.left = `${offsetX + 70 + imageRect.width / 2}px`;
+
+                    return icon;
+                }
                 function createDownloadIcon(imageElement) {
 
                     const downloadIcon = document.createElement('i');
