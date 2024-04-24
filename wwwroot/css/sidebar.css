@@ -223,6 +223,11 @@
 #log_out:hover{
   cursor: pointer;
 }
+#log_out.bx.bx-log-out:hover{
+  background-color: #FFF;
+  transition: all 0.4s ease;
+  color: #365486;
+}
 .logo_name:hover{
   cursor: pointer;
 }
