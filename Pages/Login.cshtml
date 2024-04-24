@@ -22,7 +22,7 @@
                 <h1>@localizer["account"]</h1>
                 <input type="text" id="name" placeholder="@localizer["name"]">
                 <input type="text" id="username" placeholder="@localizer["username"]">
-                <input type="email" id="email" placeholder="@localizer["email"]">
+                <input type="email" id="email" placeholder="@localizer["registrationEmail"]">
                 <input type="password" id="password" placeholder="@localizer["password"]">
                 <input type="submit" value="@localizer["signup"]" id="signUpButton" class="button">
                 <div id="signup-error" style="color:red;"></div>
@@ -31,7 +31,7 @@
         <div class="form-container sign-in">
             <form method="post">
                 <h1>@localizer["signin"]</h1>
-                <input type="email" id="logEmail" placeholder="@localizer["email"]">
+                <input type="email" id="logEmail" placeholder="@localizer["loginEmail"]">
                 <input type="password" id="logPass" placeholder="@localizer["password"]">
                 <input type="submit" value="@localizer["login"]" id="logInButton" class="button">
                 <div id="login-error" style="color:red;"></div>
@@ -121,9 +121,6 @@
                     event.preventDefault();
                     errorSignup.innerText = messagesSignup.join(', ')
                 }
-                function isValidName(name) {
-                    return /^[A-Za-z]{2,}$/.test(name);
-                }
                 function isValidUsername(username) {
                     return username.length >= 4;
                 }
@@ -138,17 +135,17 @@
 
                 const errorLogin = document.getElementById('login-error')
                 let messagesLogin = []
-                if (!isValidEmail(document.getElementById('logEmail').value)) {
+                if (!isValidEmail(document.getElementById('logEmail').value) && !isValidName(document.getElementById('logEmail').value)) {
                     if (window.location.search.includes('culture=en')) {
-                        messagesSignup.push('*Email is invalid!')
+                        messagesLogin.push('*Email or username is invalid!')
                     } else {
-                        messagesSignup.push('*Neteisingas elektroninis paštas!')
+                        messagesLogin.push('*Neteisingas elektroninis paštas arba vartotojo vardas!')
                     }
                 } else if (!isValidPassword(document.getElementById('logPass').value)) {
                     if (window.location.search.includes('culture=en')) {
                         messagesLogin.push('*Password must be at least 8 symbols long with at least one uppercase letter and one character or number!')
                     } else {
-                        messagesSignup.push('*Slaptažodis turi būti sudarytas bent iš 8 simbolių, turėti bent vieną didžiąją raidę ir skaičių!')
+                        messagesLogin.push('*Slaptažodis turi būti sudarytas bent iš 8 simbolių, turėti bent vieną didžiąją raidę ir skaičių!')
                     }
                 } else {
                     const response = await fetch('api/accounts/Auth', {
@@ -167,7 +164,7 @@
                             if (window.location.search.includes('culture=en')) {
                                 messagesLogin.push('*Incorrect email or password!')
                             } else {
-                                messagesSignup.push('*Neteisingas elektroninis paštas arba slaptažodis!')
+                                messagesLogin.push('*Neteisingas elektroninis paštas arba slapyvardis!')
                             }
                         }
                     } else {
@@ -183,6 +180,9 @@
                     errorLogin.innerText = messagesLogin.join(', ')
                 }
             });
+            function isValidName(name) {
+                return /^[A-Za-z]{2,}$/.test(name);
+            }
             function isValidEmail(email) {
                 const regex = /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
                 return regex.test(email);

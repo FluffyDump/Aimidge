@@ -47,6 +47,7 @@ async def stable_diffusion():
     cursor = sql_connection.cursor()
     cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
     user = cursor.fetchone()
+    cursor.close();
     file_Folder = user[6]
 
     if not get_quota(uid):
@@ -133,13 +134,12 @@ async def get_gallery():
 async def get_gallery_count():
     json_content = request.get_json()
     uid = json_content['uid']
-    cursor = sql_connection.cursor()
-    cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
-    user = cursor.fetchone()
-    folder_name = user[6]
-    cursor.close()
-
-    if (uid):  
+    if (uid): 
+        cursor = sql_connection.cursor()
+        cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+        user = cursor.fetchone()
+        folder_name = user[6]
+        cursor.close() 
         file_folder = os.path.join(base_storage_path, folder_name, "gallery")
         try:
             file_count = len(os.listdir(file_folder))
@@ -233,6 +233,10 @@ async def db_log_in():
 
         cursor.execute("SELECT * FROM Users WHERE Email = ?", (email,))
         existing_user = cursor.fetchone()
+        if not existing_user:
+            cursor.execute("SELECT * FROM Users WHERE Username = ?", (email,))
+            existing_user = cursor.fetchone()
+
         if(existing_user):
             stored_password_hash = existing_user[3]
             if(stored_password_hash == password_hash):
@@ -241,7 +245,7 @@ async def db_log_in():
                 user_guid = encrypt_user_data(existing_folder_str)
                 user_guid_str = str(user_guid)
                 token_expiration = datetime.now() + timedelta(minutes=20)
-                cursor.execute("UPDATE Users SET UserGuid = ?, TokenExpiration = ? WHERE Email = ?", (user_guid_str, token_expiration, email))
+                cursor.execute("UPDATE Users SET UserGuid = ?, TokenExpiration = ? WHERE Email = ? OR Username = ?", (user_guid_str, token_expiration, email, email))
                 sql_connection.commit()
                 cursor.close()
                 return user_guid_str, 200
@@ -264,12 +268,13 @@ async def db_get():
                 'Name': user[0],
                 'Username': user[1],
                 'Email': user[2],
-                'PasswordHash': user[3],
+                'PasswordHash': "*",
                 'RegistrationDate': user[4],
                 'HasUploadedFiles': user[5],
                 'FileFolderName': user[6],
                 'UserGuid': user[7],
-                'TokenExpiration': user[8]
+                'TokenExpiration': user[8],
+                'GeneratedImagesCount': user[9]
             }
             user_list.append(user_info)
         cursor.close()
