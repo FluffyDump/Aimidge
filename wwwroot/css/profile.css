@@ -33,3 +33,19 @@ body {
 .btn .btn-primary{
     background:#0F1035 !important;
 }
+.profile-picture {
+    width: 100px;
+    height: 110px;
+    border-radius: 5px;
+    font-size: 14px;
+    overflow-y: auto;
+    scrollbar-color: rgb(72, 93, 109) rgba(0, 0, 0, 0);
+  }
+.avatars{
+    justify-content: center;
+    align-items: center;
+}
+.avatars img{
+    justify-content: center;
+    align-items: center;
+}

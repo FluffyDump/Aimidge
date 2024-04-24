@@ -45,7 +45,7 @@
             </li>
             <li class="profile">
                 <div class="profile-details">
-                    <i class='bx bxs-user-circle'></i>
+                    <img class="profile2" src="~/default.png">
                     <div class="name_job">
                         <div class="name">
                             <a asp-area="" id="sidebarUsername" asp-page="/UserProfile" class="name"></a>
@@ -108,16 +108,57 @@
                         <label class="form-label">@localizer["e-mail"]</label>
                         <input type="text" id=emailInput class="form-control mb-1">
                     </div>
+                    <br>
+                    <div class="avatars">
+                        <img class="profile-image1" src="~/avatar1.png" width="200px" height="200px"
+                            style="margin-bottom:20px;">
+                    </div>
+                    <div class="form-group">
+                        <select id="avatarSelect" size="5" class="profile-picture" onchange='getPicture(this)'>
+                            <option value="/avatar1.png">Avatar 1</option>
+                            <option value="/avatar2.png">Avatar 2</option>
+                            <option value="/avatar3.png">Avatar 3</option>
+                            <option value="/avatar4.png">Avatar 4</option>
+                            <option value="/avatar5.png">Avatar 5</option>
+                            <option value="/avatar6.png">Avatar 6</option>
+                            <option value="/avatar7.png">Avatar 7</option>
+                            <option value="/avatar8.png">Avatar 8</option>
+                            <option value="/avatar9.png">Avatar 9</option>
+                            <option value="/avatar10.png">Avatar 10</option>
+                            <option value="/avatar11.png">Avatar 11</option>
+                            <option value="/avatar12.png">Avatar 12</option>
+                            <option value="/avatar13.png">Avatar 13</option>
+                            <option value="/avatar14.png">Avatar 14</option>
+                            <option value="/avatar15.png">Avatar 15</option>
+                            <option value="/avatar16.png">Avatar 16</option>
+                            <option value="/avatar17.png">Avatar 17</option>
+                            <option value="/avatar18.png">Avatar 18</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
-            <script type="text/javascript">
-
-            </script>
+            <script type="text/javascript"></script>
         </div>
     </section>
     <script>
+        const imageUrl = localStorage.getItem('selectedAvatar');
+        if (imageUrl) {
+            const profileImage = document.querySelector('.profile2');
+            profileImage.src = imageUrl;
+        }
+    </script>
+    <script>
+        const profilePicture1 = document.querySelector('.profile-image1')
+        const profilePicture2 = document.querySelector('.profile2')
+        function getPicture(picture) {
+            let url = picture.value;
+            profilePicture1.src = url;
+            profilePicture2.src = url;
+            localStorage.setItem('selectedAvatar', url);
+        }
+
         let sidebar = document.querySelector(".sidebar");
         let closeBtn = document.querySelector("#btn");
         let searchBtn = document.querySelector(".bx-search");

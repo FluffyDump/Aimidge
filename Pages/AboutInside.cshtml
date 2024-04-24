@@ -38,7 +38,7 @@
             </li>
             <li class="profile" id="profileID">
                 <div class="profile-details">
-                    <i class='bx bxs-user-circle'></i>
+                    <img class="profile2" src="~/default.png">
                     <div class="name_job">
                         <div class="name">
                             <a asp-area="" asp-page="/UserProfile" class="name"></a>
@@ -49,6 +49,13 @@
             </li>
         </ul>
     </div>
+    <script>
+        const imageUrl = localStorage.getItem('selectedAvatar');
+        if (imageUrl) {
+            const profileImage = document.querySelector('.profile2');
+            profileImage.src = imageUrl;
+        }
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", async function getUserInfo() {
             try {
