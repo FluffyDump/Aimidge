@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net.Http;
 using System.Text;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Runtime.InteropServices;
@@ -33,6 +34,28 @@ namespace Aimidge.Services
                 }
                 }
             return "ok";
+        }
+
+        public async Task<bool> CheckPrompt(string prompt)
+        {
+            string apiUrl = "http://193.161.193.99:61464/check_prompt";
+
+            string json = @"{""prompt"": """ + prompt + @"""}";
+
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Add("translatePrompt", "application/json");
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await httpClient.PostAsync(apiUrl, content);
+                string responseContent = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    dynamic responseObject = JsonConvert.DeserializeObject(responseContent);
+                    bool isEnglish = responseObject.is_english;
+                    return isEnglish;
+                }
+            }
+            return false;
         }
     }
 }

@@ -21,12 +21,14 @@ namespace Aimidge.Controllers
         private readonly ILogger<WebControllers> _logger;
         private readonly CookieService _cookieService;
         private readonly TranslationService _translationService;
+        private readonly ValidationService _validationService;
 
-        public WebControllers(ILogger<WebControllers> logger, CookieService cookieService, TranslationService translationService)
+        public WebControllers(ILogger<WebControllers> logger, CookieService cookieService, TranslationService translationService, ValidationService validationService)
         {
             _logger = logger;
             _cookieService = cookieService;
             _translationService = translationService;
+            _validationService = validationService;
         }
 
         public class PromptModel
@@ -47,6 +49,13 @@ namespace Aimidge.Controllers
                 if(enPrompt != String.Empty)
                 {
                     prompt = enPrompt;
+                }
+
+                bool correctPrompt = await _validationService.CheckPrompt(prompt);
+
+                if(!correctPrompt)
+                {
+                    return StatusCode(422);
                 }
 
                 string badword = ValidationService.CheckProfanity(prompt);

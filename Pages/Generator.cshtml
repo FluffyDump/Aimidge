@@ -130,6 +130,7 @@
                     <div class="model-card-col">
                         <div id="promptImages"></div>
                         <div id="quotaExceededMessage" style="display: none;">Quota exceeded!</div>
+                        <div id="badPrompt" style="display: none;">Incorrect prompt!</div>
                         <div id="loadingSpinner" style="display: none;">
                             <div id="progress">
                                 <div id="loadingPercentage"></div>
@@ -195,6 +196,7 @@
                     const promptText = document.getElementById('prompt').value;
                     const resolution = document.getElementById('resolution').value;
 
+                    document.getElementById('badPrompt').style.display = 'none';
                     document.getElementById('loadingSpinner').style.display = 'block';
 
                     const existingCookie = await fetch('api/web/GetCookie', {
@@ -251,6 +253,10 @@
                             document.getElementById('loadingSpinner').style.display = 'none';
                             document.getElementById('download-model-image').style.display = 'none';
                             document.getElementById('submitButton').style.display = 'none';
+                        } else if (response.status === 422) {
+                            document.getElementById('badPrompt').style.display = 'block';
+                            document.getElementById('loadingSpinner').style.display = 'none';
+                            document.getElementById('download-model-image').style.display = 'none';
                         } else {
                             console.error(response.statusText);
                             document.getElementById('loadingSpinner').style.display = 'none';

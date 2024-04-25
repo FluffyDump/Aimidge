@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import requests, asyncio, base64, uuid, time, threading, os, shutil, base64, io, torch
+import requests, asyncio, base64, uuid, time, threading, os, shutil, base64, io, torch, nltk
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 import pypyodbc as odbc
 import schedule as scheduler
@@ -8,6 +8,8 @@ from Crypto.Util.Padding import pad, unpad
 from datetime import datetime, timedelta
 from PIL import Image
 from natsort import natsorted
+from nltk.tokenize import word_tokenize
+from nltk.corpus import words
 
 sd_link = 'http://127.0.0.1:7861/sdapi/v1/txt2img'
 db_cleanup_period = 3
@@ -379,6 +381,19 @@ def translate_text():
     translation = translator(input_text)[0]['translation_text']
 
     return jsonify({'prompt': translation})
+
+@app.route('/check_prompt', methods=['POST'])
+def check_prompt():
+    json_content = request.get_json()
+    input_text = json_content['prompt']
+    words = word_tokenize(input_text)
+    return {'is_english': all(is_english_word(word) for word in words)}
+
+def is_english_word(word):
+    if word.lower() in words.words():
+        return True
+    else:
+        return False
 
 def get_quota(uid):
     cursor = sql_connection.cursor()

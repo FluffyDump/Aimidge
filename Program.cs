@@ -25,6 +25,7 @@ builder.Services.AddScoped<CryptoService>();
 builder.Services.AddScoped<DatabaseService>();
 builder.Services.AddScoped<SDService>();
 builder.Services.AddScoped<TranslationService>();
+builder.Services.AddScoped<ValidationService>();
 builder.Services.AddHttpClient();
 
 var app = builder.Build();
