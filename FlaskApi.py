@@ -6,6 +6,7 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 from datetime import datetime, timedelta
 from PIL import Image
+from natsort import natsorted
 
 sd_link = 'http://127.0.0.1:7861/sdapi/v1/txt2img'
 db_cleanup_period = 3
@@ -106,11 +107,11 @@ async def save_img():
     except Exception as ex:
         return str(ex), 500
     
-@app.route("/get_gallery", methods = ["POST"])
-async def get_gallery():
+@app.route("/get_gallery_img", methods = ["POST"])
+async def get_gallery_img():
     json_content = request.get_json()
     uid = json_content['uid']
-    index = json_content.get('index', 1)
+    img_name = json_content['img_name']
     cursor = sql_connection.cursor()
     cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
     user = cursor.fetchone()
@@ -120,17 +121,18 @@ async def get_gallery():
     file_folder = os.path.join(base_storage_path, folder_name, "gallery")
 
     try:
-        img_name = f"img{index}.jpg"
         file_path = os.path.join(file_folder, img_name)
         if (os.path.exists(file_path)):
             with open(file_path, "rb") as file:
                 image_data = file.read()
                 encoded_image = base64.b64encode(image_data).decode("utf-8")
                 return jsonify(encoded_image), 200
+        else:
+            return jsonify({'error': 'Image not found'}), 404
     except Exception as ex:
-        return str(ex), 500
+        return jsonify({'error': str(ex)}), 500
     
-@app.route("/get_gallery_count", methods = ["POST"])
+@app.route("/get_gallery_names", methods = ["POST"])
 async def get_gallery_count():
     json_content = request.get_json()
     uid = json_content['uid']
@@ -142,12 +144,36 @@ async def get_gallery_count():
         cursor.close() 
         file_folder = os.path.join(base_storage_path, folder_name, "gallery")
         try:
-            file_count = len(os.listdir(file_folder))
-            return jsonify({'count': file_count}), 200
+            file_names = os.listdir(file_folder)
+            sorted_file_names = natsorted(file_names)
+            return jsonify(sorted_file_names), 200
         except Exception as ex:
             return str(ex), 500
     else:
-        return jsonify({'count': 0}), 200
+        return jsonify(""), 200
+    
+@app.route("/remove_gallery_img", methods = ["POST"])
+async def remove_gallery_img():
+    json_content = request.get_json()
+    uid = json_content['uid']
+    img_name = json_content['img_name']
+    cursor = sql_connection.cursor()
+    cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+    user = cursor.fetchone()
+    folder_name = user[6]
+    cursor.close()
+
+    file_folder = os.path.join(base_storage_path, folder_name, "gallery")
+
+    try:
+        file_path = os.path.join(file_folder, img_name)
+        if (os.path.exists(file_path)):
+            os.remove(file_path)
+            return "", 200
+        else:
+            return jsonify({'error': 'Image not found'}), 404
+    except Exception as ex:
+        return jsonify({'error': str(ex)}), 500
 
 @app.route("/sd_api_endpoints", methods = ["GET"])
 async def sd_api_endpoints():
@@ -324,7 +350,6 @@ async def db_update_user():
         cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
         user = cursor.fetchone()
         
-        print(user)
         if not user:
             return jsonify({'error': 'User not found'}), 404
         

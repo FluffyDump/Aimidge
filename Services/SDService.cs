@@ -70,13 +70,14 @@ namespace Aimidge.Services
             }
         }
 
-        public static async Task<string> GetImg(string uid, int index)
+        public static async Task<string> GetImg(string uid, string imgName)
         {
-            string apiUrl = "http://193.161.193.99:61464/get_gallery";
+            string apiUrl = "http://193.161.193.99:61464/get_gallery_img";
+
             string json = @"
-                { 
+                {
                     ""uid"": """ + uid + @""",
-                    ""index"": """ + index + @"""
+                    ""img_name"": """ + imgName + @"""
                 }";
 
             using (var httpClient = new HttpClient())
@@ -90,17 +91,16 @@ namespace Aimidge.Services
                     string responseData = await response.Content.ReadAsStringAsync();
                     var jsonResponse = JsonConvert.DeserializeObject<dynamic>(responseData);
                     string base64Image = jsonResponse;
-                    return base64Image ?? String.Empty ;
+                    return base64Image ?? String.Empty;
                 }
             }
             return String.Empty;
         }
 
-        public static async Task<string> GetImgCount(string uid)
+        public static async Task<List<string>> GetImgNames(string uid)
         {
-            string apiUrl = "http://193.161.193.99:61464/get_gallery_count";
-            string json = @"
-                { ""uid"": """ + uid + @""" }";
+            string apiUrl = "http://193.161.193.99:61464/get_gallery_names";
+            string json = @"{ ""uid"": """ + uid + @""" }";
 
             using (var httpClient = new HttpClient())
             {
@@ -111,11 +111,39 @@ namespace Aimidge.Services
                 {
                     string responseData = await response.Content.ReadAsStringAsync();
                     var jsonResponse = JsonConvert.DeserializeObject<dynamic>(responseData);
-                    string count = jsonResponse.count;
-                    return count;
+                    var imgNames = new List<string>();
+                    foreach (var imgName in jsonResponse)
+                    {
+                        imgNames.Add(imgName.ToString());
+                    }
+                    return imgNames;
                 }
             }
-            return String.Empty;
+            return new List<string>();
+        }
+
+        public async Task<bool> RemoveImg(string uid, string imgName)
+        {
+            string apiUrl = "http://193.161.193.99:61464/remove_gallery_img";
+
+            string json = @"
+                {
+                    ""uid"": """ + uid + @""",
+                    ""img_name"": """ + imgName + @"""
+                }";
+
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Add("getImg", "application/json");
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await httpClient.PostAsync(apiUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

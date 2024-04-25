@@ -200,8 +200,15 @@
                     icon.style.top = `${offsetY - 70 + imageRect.height / 2}px`;
                     icon.style.left = `${offsetX + 70 + imageRect.width / 2}px`;
 
+                    const imageName = imageElement.getAttribute('data-image-name');
+
+                    icon.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        removeImage(imageName);
+                    });
                     return icon;
                 }
+
                 function createDownloadIcon(imageElement) {
 
                     const downloadIcon = document.createElement('i');
@@ -249,14 +256,31 @@
                     anchor.click();
                 }
 
-                async function fetchAndDisplayImages(index) {
+                async function removeImage(imageElement) {
+                    const response = await fetch('Album?handler=RemoveImg', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(imageElement)
+                    }).then(async resp => {
+                        if(resp.ok){
+                            const generatedPicturesContainer = document.getElementById('generatedPicturesContainer');
+                            generatedPicturesContainer.innerHTML = '';
+                            await getGalleryCountAndDisplayImages();
+                        }
+                    })
+                }
+
+                async function fetchAndDisplayImage(imgName) {
                     try {
-                        const response = await fetch(`/api/web/GetGallery/${index}`);
+                        const response = await fetch(`/api/web/GetGallery/${imgName}`);
 
                         if (response.ok) {
                             const data = await response.json();
                             const container = document.getElementById('generatedPicturesContainer');
                             const img = document.createElement('img');
+                            img.setAttribute('data-image-name', imgName);
                             img.src = 'data:image/jpg;base64,' + data.image;
                             img.style.margin = '20px';
                             img.width = 180;
@@ -272,18 +296,17 @@
 
                 async function getGalleryCountAndDisplayImages() {
                     try {
-                        const countResponse = await fetch(`/api/web/GetGalleryCount`);
-                        if (countResponse.ok) {
-                            const countData = await countResponse.json();
-                            const imageCount = parseInt(countData.count);
-                            for (let i = 1; i <= imageCount; i++) {
-                                await fetchAndDisplayImages(i);
+                        const namesResponse = await fetch(`/api/web/GetGalleryNames`);
+                        if (namesResponse.ok) {
+                            const imageNames = await namesResponse.json();
+                            for (let imageName of imageNames) {
+                                await fetchAndDisplayImage(imageName);
                             }
                         } else {
-                            console.error('Failed to fetch image count:', countResponse.statusText);
+                            console.error('Failed to fetch image names:', namesResponse.statusText);
                         }
                     } catch (error) {
-                        console.error('Error fetching image count:', error);
+                        console.error('Error fetching image names:', error);
                     }
                 }
 
@@ -295,5 +318,4 @@
         </div>
     </section>
 </body>
-
 </html>

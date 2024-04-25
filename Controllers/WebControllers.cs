@@ -73,12 +73,12 @@ namespace Aimidge.Controllers
             }
         }
 
-        [HttpGet("GetGallery/{index}")]
-        public async Task<IActionResult> GetGallery(int index)
+        [HttpGet("GetGallery/{imgName}")]
+        public async Task<IActionResult> GetGallery(string imgName)
         {
             try
             {
-                string base64Image = await SDService.GetImg(_cookieService.ParseCookieUID("Cookie"), index);
+                string base64Image = await SDService.GetImg(_cookieService.ParseCookieUID("Cookie"), imgName);
                 if (!string.IsNullOrEmpty(base64Image))
                 {
                     return Ok(new { image = base64Image });
@@ -92,18 +92,17 @@ namespace Aimidge.Controllers
             }
         }
 
-        [HttpGet("GetGalleryCount")]
-        public async Task<IActionResult> GetGalleryCount()
+        [HttpGet("GetGalleryNames")]
+        public async Task<IActionResult> GetGalleryNames()
         {
             try
             {
-                string count = await SDService.GetImgCount(_cookieService.ParseCookieUID("Cookie"));
-                int imgCount = int.Parse(count);
-                return Ok(new { count = imgCount });
+                List<string> imgNames = await SDService.GetImgNames(_cookieService.ParseCookieUID("Cookie"));
+                return Ok(imgNames);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Get gallery count error: {ex.Message}");
+                _logger.LogError($"Get gallery names error: {ex.Message}");
                 return StatusCode(500, ex.Message);
             }
         }
