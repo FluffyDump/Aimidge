@@ -18,12 +18,6 @@
 </head>
 
 <body>
-    @* <footer class="footer">
-    <div>
-    &copy; 2024 - Aimidge - <a asp-area="" asp-page="/AboutInside">About</a>
-    </div>
-    </footer> *@
-
     <div class="sidebar">
         <div class="logo-details">
             <img src="~/Logo1white.png" alt="Description of the image" width="50" height="50">
@@ -79,6 +73,10 @@
                         document.getElementById("nameInput").value = result.Name;
                         document.getElementById("emailInput").value = result.Email;
                         document.getElementById("sidebarUsername").innerText = result.Username;
+
+                        localStorage.setItem('usernameOld', result.Username);
+                        localStorage.setItem('nameOld', result.Name);
+                        localStorage.setItem('emailOld', result.Email);
                     }
                 } else {
                     console.error("Failed to fetch user information: ", response.status);
@@ -109,7 +107,7 @@
                         <input type="text" id=emailInput class="form-control mb-1">
                     </div>
                     <button id="submitInfo" type="button" class="buttons">@localizer["submit"]</button>
-                    <span id="updateMessage"></span>
+                    <div id="updateMessage" style="font-size:20px;"></div>
                     <br>
                     <br>
                     <div class="icons">
@@ -155,6 +153,17 @@
         }
     </script>
     <script>
+        function isValidName(name) {
+            return name.length >= 3;
+        }
+        function isValidEmail(email) {
+            const regex = /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return regex.test(email);
+        }
+        function isValidUsername(username) {
+            return username.length >= 4;
+        }
+
         document.getElementById('submitInfo').addEventListener('click', async function (event) {
             event.preventDefault();
             const formData = {
@@ -162,14 +171,62 @@
                 Name: document.getElementById('nameInput').value,
                 Email: document.getElementById('emailInput').value
             }
+            const oldN = localStorage.getItem('nameOld');
+            const oldU = localStorage.getItem('usernameOld');
+            const oldE = localStorage.getItem('emailOld');
 
-            const response = await fetch('/UserProfile?handler=UpdateData', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
+            if (formData.Name == oldN && formData.Username == oldU && formData.Email == oldE) {
+                document.getElementById("updateMessage").style.color = "blue";
+                document.getElementById("updateMessage").innerText = "No changes were made.";
+                return;
+            }
+            const errorMessages = [];
+            if (!isValidName(formData.Name)) {
+                if (window.location.search.includes('culture=en')) {
+                    errorMessages.push('*Name should be at least 3 symbols long!')
+                } else {
+                    errorMessages.push('*Vardas turi būti sudarytas bent iš 3 simbolių!')
+                }
+            }
+
+            if (!isValidUsername(formData.Username)) {
+                if (window.location.search.includes('culture=en')) {
+                    errorMessages.push('*Username must be at least 4 symbols long!')
+                } else {
+                    errorMessages.push('*Slaptyvardis turi būti sudarytas bent iš 4 simbolių!')
+                }
+            }
+
+            if (!isValidEmail(formData.Email)) {
+                if (window.location.search.includes('culture=en')) {
+                    errorMessages.push('*Email is invalid!')
+                } else {
+                    errorMessages.push('*Neteisingas elektroninis paštas!')
+                }
+            }
+
+            if (errorMessages.length > 0) {
+                document.getElementById("updateMessage").style.color = "red";
+                const errorMessageElement = document.getElementById("updateMessage");
+                errorMessageElement.innerText = errorMessages.join(', ');
+                return;
+            }
+            else {
+                localStorage.setItem('usernameOld', formData.Username);
+                localStorage.setItem('nameOld', formData.Name);
+                localStorage.setItem('emailOld', formData.Email);
+                document.getElementById("updateMessage").style.color = "green";
+                document.getElementById("updateMessage").innerText = "Changes were made successfully!";
+                const response = await fetch('/UserProfile?handler=UpdateData', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                const data = await response.json(); // Assuming the server returns JSON
+            }
+
         });
 
         const profilePicture1 = document.querySelector('.profile-image1')
