@@ -20,11 +20,13 @@ namespace Aimidge.Controllers
     {
         private readonly ILogger<WebControllers> _logger;
         private readonly CookieService _cookieService;
+        private readonly TranslationService _translationService;
 
-        public WebControllers(ILogger<WebControllers> logger, CookieService cookieService)
+        public WebControllers(ILogger<WebControllers> logger, CookieService cookieService, TranslationService translationService)
         {
             _logger = logger;
             _cookieService = cookieService;
+            _translationService = translationService;
         }
 
         public class PromptModel
@@ -39,6 +41,13 @@ namespace Aimidge.Controllers
             try
             {
                 string prompt = userPrompt?.Prompt;
+
+                string enPrompt = await _translationService.TranslatePrompt(prompt);
+
+                if(enPrompt != String.Empty)
+                {
+                    prompt = enPrompt;
+                }
 
                 string badword = ValidationService.CheckProfanity(prompt);
                 if (!badword.Equals("ok"))

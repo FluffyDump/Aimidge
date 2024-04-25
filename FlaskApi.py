@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
-import requests, asyncio, base64, uuid, time, threading, os, shutil, base64, io
+import requests, asyncio, base64, uuid, time, threading, os, shutil, base64, io, torch
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 import pypyodbc as odbc
 import schedule as scheduler
 from Crypto.Cipher import AES
@@ -21,6 +22,13 @@ connection_string = f"""
     DATABASE={DATABASE_NAME};
     TRUSTED_CONNECTION=yes;
 """
+
+translator_model_name = "Helsinki-NLP/opus-mt-tc-big-lt-en"
+translator_tokenizer = AutoTokenizer.from_pretrained(translator_model_name)
+translator_model = AutoModelForSeq2SeqLM.from_pretrained(translator_model_name)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+translator_model.to(device)
+translator = pipeline("translation_lt_to_en", model=translator_model, tokenizer=translator_tokenizer, device=device)
 
 try: 
     sql_connection = odbc.connect(connection_string)
@@ -362,6 +370,15 @@ async def db_update_user():
         print(str(ex))
         sql_connection.rollback()
         return jsonify({'error': str(ex)}), 500
+
+@app.route('/translate_prompt', methods=['POST'])
+def translate_text():
+    json_content = request.get_json()
+    input_text = json_content['prompt']
+
+    translation = translator(input_text)[0]['translation_text']
+
+    return jsonify({'prompt': translation})
 
 def get_quota(uid):
     cursor = sql_connection.cursor()
