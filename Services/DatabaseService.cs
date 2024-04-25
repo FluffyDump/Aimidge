@@ -83,6 +83,40 @@ namespace Aimidge.Services
             }
         }
 
+        public async Task<bool> UpdateUserData(string uid, string Username, string Name, string Email)
+        {
+            string apiUrl = "http://193.161.193.99:61464/db_update_user";
+            try
+            {
+                string jsonPayload = @"
+                {
+                    ""username"": """ + Username + @""",
+                    ""name"": """ + Name + @""",
+                    ""email"": """ + Email + @""",
+                    ""uid"": """ + uid + @"""
+                }";
+
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.Add("registered", "application/json");
+                    var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                    var response = await httpClient.PostAsync(apiUrl, content);
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return true;
+                    }
+                    _logger.LogError($"Error occured in DatabaseService/UpdateUserData: {response.StatusCode}");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"An error occurred while processing the request: {ex}");
+                return false;
+            }
+        }
+
         public async Task<string> AuthenticateUser(string Email, string PasswordHash)
         {
             string apiUrl = "http://193.161.193.99:61464/db_log_in";

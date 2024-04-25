@@ -155,6 +155,23 @@
         }
     </script>
     <script>
+        document.getElementById('submitInfo').addEventListener('click', async function (event) {
+            event.preventDefault();
+            const formData = {
+                Username: document.getElementById('usernameInput').value,
+                Name: document.getElementById('nameInput').value,
+                Email: document.getElementById('emailInput').value
+            }
+
+            const response = await fetch('/UserProfile?handler=UpdateData', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+        });
+
         const profilePicture1 = document.querySelector('.profile-image1')
         const profilePicture2 = document.querySelector('.profile2')
         function getPicture(picture) {

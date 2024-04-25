@@ -307,7 +307,37 @@ async def db_get_user():
         return jsonify(user_info), 200
     except Exception as ex:
         return jsonify({'error': str(ex)}), 500
-  
+    
+@app.route("/db_update_user", methods=["POST"])
+async def db_update_user():
+    try:
+        json_content = request.get_json()
+        username = json_content["username"]
+        name = json_content["name"]
+        email = json_content["email"]
+        uid = json_content.get('uid')
+
+        if not uid:
+            return jsonify({'error': 'UID parameter is missing'}), 400
+        
+        cursor = sql_connection.cursor()
+        cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+        user = cursor.fetchone()
+        
+        print(user)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        cursor.execute("UPDATE Users SET Username = ?, FirstName = ?, Email = ? WHERE UserGuid = ?", (username, name, email, uid,))
+        sql_connection.commit()
+        cursor.close()
+
+        return jsonify("ok"), 200
+    except Exception as ex:
+        print(str(ex))
+        sql_connection.rollback()
+        return jsonify({'error': str(ex)}), 500
+
 def get_quota(uid):
     cursor = sql_connection.cursor()
     cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
