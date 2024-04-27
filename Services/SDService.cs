@@ -5,6 +5,10 @@ namespace Aimidge.Services
 {
     public class SDService
     {
+        /*private static string GetPrompt(string prompt, string width, string height, string uid)
+        {
+            return prompt;
+        }*/
 
         private static string GetJsonPayLoad(string prompt, string width, string height, string uid)
         {

@@ -199,20 +199,14 @@
                     document.getElementById('badPrompt').style.display = 'none';
                     document.getElementById('loadingSpinner').style.display = 'block';
 
-                    const existingCookie = await fetch('api/web/GetCookie', {
+                    const existingCookie = await fetch('/Generator?handler=GetCookie', {
                         method: 'POST'
                     }).then(async resp => {
-                        const respText = await resp.text();
-                        if (respText === '404') {
-                            await fetch('api/web/SetCookie', {
-                                method: 'POST'
-                            }).then(async setResp => {
-                                if (setResp.ok) {
-                                    processPrompt();
-                                }
-                            })
-                        } else if (respText === 'ok') {
+                        console.log(await resp.status);
+                        if (resp.ok) {
+                        {
                             processPrompt();
+                        }
                         } else {
                             alert("Unable to check cookies!");
                         }
@@ -220,8 +214,9 @@
 
 
                     async function processPrompt() {
+
                         refreshInterval = setInterval(getBar, 800);
-                        const response = await fetch('api/web/GetPrompt', {
+                        const response = await fetch('/Generator?handler=GetPrompt', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -326,12 +321,8 @@
                 });
 
                 document.getElementById('saveButton').addEventListener('click', async function () {
-
-                    const response = await fetch('api/web/SaveImage', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
+                    const response = await fetch('/Generator?handler=SaveImage', {
+                        method: 'POST'
                     });
                     if (response.ok) {
                         document.getElementById('saveButton').style.display = 'none'

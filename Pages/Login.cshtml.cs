@@ -14,7 +14,6 @@ namespace Aimidge.Pages
 
         public void OnGet()
         {
-
         }
     }
 }

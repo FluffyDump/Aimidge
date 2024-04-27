@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualBasic;
 using Aimidge.Services;
 using System.Web;
+using System.Diagnostics;
 
 namespace Aimidge.Services
 {
@@ -95,5 +96,36 @@ namespace Aimidge.Services
 		{
 			_httpContextAccessor.HttpContext.Response.Cookies.Delete(key);
 		}
-	}
+
+        public async Task<bool> SetCookies()
+		{
+			try
+			{
+				await SetCookie();
+				return true;
+			} catch (Exception ex)
+			{
+				return false;
+			}
+		}
+
+        public async Task<bool> GetCookies()
+        {
+            try
+            {
+                var cookie = await ParseCookie("Cookie");
+				if (!string.IsNullOrEmpty(cookie))
+				{
+					UpdateCookie(cookie);
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+    }
 }
