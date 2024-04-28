@@ -126,7 +126,7 @@
                             <button id="saveButton" type="button" class="buttons">@localizer["save online"]</button>
                         </div>
                         <div id="generatedPicturesContainer"></div>
-                    </div>
+                    </div>                  
                     <div class="model-card-col">
                         <div id="promptImages"></div>
                         <div id="quotaExceededMessage" style="display: none;">Quota exceeded!</div>
@@ -195,7 +195,11 @@
                 document.getElementById('submitButton').addEventListener('click', async function () {
                     const promptText = document.getElementById('prompt').value;
                     const resolution = document.getElementById('resolution').value;
-
+                   
+                    if (promptText.length < 2 || promptText.length > 150) {
+                        document.getElementById('badPrompt').style.display = 'block';
+                        return; 
+                    }
                     document.getElementById('badPrompt').style.display = 'none';
                     document.getElementById('loadingSpinner').style.display = 'block';
 
