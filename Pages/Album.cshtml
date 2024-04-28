@@ -274,7 +274,7 @@
 
                 async function fetchAndDisplayImage(imgName) {
                     try {
-                        const response = await fetch(`/api/web/GetGallery/${imgName}`);
+                        const response = await fetch(`/Album?handler=GetGallery&imgName=${imgName}`);
 
                         if (response.ok) {
                             const data = await response.json();
@@ -296,7 +296,7 @@
 
                 async function getGalleryCountAndDisplayImages() {
                     try {
-                        const namesResponse = await fetch(`/api/web/GetGalleryNames`);
+                        const namesResponse = await fetch(`/Album?handler=GetGalleryNames`);
                         if (namesResponse.ok) {
                             const imageNames = await namesResponse.json();
                             for (let imageName of imageNames) {

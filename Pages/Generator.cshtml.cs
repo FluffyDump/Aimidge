@@ -14,7 +14,6 @@ namespace Aimidge.Pages
         private readonly ILogger<GeneratorModel> _logger;
         private readonly IStringLocalizer<GeneratorModel> _localizer;
         private readonly CookieService _cookieService;
-        private readonly SDService _sdService;
         private readonly TranslationService _translationService;
         private readonly ValidationService _validationService;
 
@@ -22,7 +21,6 @@ namespace Aimidge.Pages
             ILogger<GeneratorModel> logger,
             IStringLocalizer<GeneratorModel> localizer,
             CookieService cookieService,
-            SDService sdService,
             TranslationService translationService,
             ValidationService validationService
 
@@ -31,7 +29,6 @@ namespace Aimidge.Pages
             _logger = logger;
             _localizer = localizer;
             _cookieService = cookieService;
-            _sdService = sdService;
             _translationService = translationService;
             _validationService = validationService;
         }
