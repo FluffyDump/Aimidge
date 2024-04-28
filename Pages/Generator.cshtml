@@ -265,7 +265,7 @@
 
                     let previousBarPercentage = 0;
                     async function getBar(percentage, progress) {
-                        const response = await fetch('api/web/GetProgress', {
+                        const response = await fetch('/Generator?handler=GetProgress', {
                             method: 'GET'
                         });
 

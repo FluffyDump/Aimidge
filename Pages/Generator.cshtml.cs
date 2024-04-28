@@ -99,7 +99,33 @@ namespace Aimidge.Pages
 			}
 		}
 
-		public async Task<IActionResult> OnPostSaveImageAsync()
+        public async Task<IActionResult> OnGetGetProgressAsync()
+        {
+            try
+            {
+                string apiUrl = "http://193.161.193.99:61464/sd_progress";
+
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.DefaultRequestHeaders.Add("progress", "application/json");
+                    var response = await httpClient.GetAsync(apiUrl);
+
+                    return new ContentResult
+                    {
+                        Content = await response.Content.ReadAsStringAsync(),
+                        ContentType = "text/plain",
+                        StatusCode = 200
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Get progress error: {ex.Message}");
+                return NotFound();
+            }
+        }
+
+        public async Task<IActionResult> OnPostSaveImageAsync()
         {
             try
             {
