@@ -67,7 +67,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", async function getUserInfo() {
             try {
-                const response = await fetch('api/accounts/GetInfo', {
+                const response = await fetch('/Generator?handler=GetInfo', {
                     method: 'GET'
                 });
 
@@ -92,7 +92,7 @@
         let logoutBtn = document.querySelector("#log_out");
         logoutBtn.addEventListener("click", async () => {
             try {
-                const response = await fetch('/api/accounts/logout', {
+                const response = await fetch('/Generator?handler=logout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -257,7 +257,7 @@
                 }
 
                 async function removeImage(imageElement) {
-                    const response = await fetch('Album?handler=RemoveImg', {
+                    const response = await fetch('/Album?handler=RemoveImg', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

@@ -1,9 +1,14 @@
+using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace Aimidge.Services
 {
+    [IgnoreAntiforgeryToken]
+    //[Route("/api/acc")]
+
     public class CryptoService
     {
         private const string Key = "O1XFeDPaQFAykYcxZZeIM76y1bnTbk92";

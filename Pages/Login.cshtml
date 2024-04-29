@@ -55,6 +55,14 @@
         document.addEventListener("DOMContentLoaded", async function () {
             document.getElementById('signUpButton').addEventListener('click', async function (event) {
                 event.preventDefault();
+
+                // const response = await fetch('api/acc/Encrypt', {
+                //     method: 'GET',
+                //     data: JSON.stringify({ plainText: document.getElementById('password').value }),
+                // });
+                // if (response.ok) {
+                //     const result = await response.json();
+
                 const formData = {
                     Name: document.getElementById('name').value,
                     Username: document.getElementById('username').value,

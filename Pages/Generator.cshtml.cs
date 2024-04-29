@@ -16,13 +16,16 @@ namespace Aimidge.Pages
         private readonly CookieService _cookieService;
         private readonly TranslationService _translationService;
         private readonly ValidationService _validationService;
+        private readonly DatabaseService _databaseService;
+
 
         public GeneratorModel(
             ILogger<GeneratorModel> logger,
             IStringLocalizer<GeneratorModel> localizer,
             CookieService cookieService,
             TranslationService translationService,
-            ValidationService validationService
+            ValidationService validationService,
+            DatabaseService databaseService
 
         )
         {
@@ -31,6 +34,7 @@ namespace Aimidge.Pages
             _cookieService = cookieService;
             _translationService = translationService;
             _validationService = validationService;
+            _databaseService = databaseService;
         }
 
         public void OnGet()
@@ -38,7 +42,45 @@ namespace Aimidge.Pages
             ViewData["Home"] = _localizer["Home"];
         }
 
-		public class PromptModel
+        public async Task<IActionResult> OnGetGetInfoAsync()
+        {
+            string uid = _cookieService.ParseCookieUID("Cookie");
+            if (!String.IsNullOrEmpty(uid))
+            {
+                Task<string> data = _databaseService.GetUserInfo(uid);
+                string userInfo = await data;
+                char name = userInfo.ElementAt(0);
+
+                if (!String.IsNullOrEmpty(userInfo))
+                {
+                    return new JsonResult(userInfo);
+                }
+                else
+                {
+                    return new JsonResult("User info not found");
+                }
+            }
+            else
+            {
+                return StatusCode(403);
+            }
+        }
+
+        public IActionResult OnPostLogout()
+        {
+            try
+            {
+                _cookieService.RemoveCookie("Cookie");
+                return StatusCode(200);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occurred during logout: {ex.Message}");
+                return StatusCode(500);
+            }
+        }
+
+        public class PromptModel
 		{
 			public string Prompt { get; set; }
 			public string Resolution { get; set; }

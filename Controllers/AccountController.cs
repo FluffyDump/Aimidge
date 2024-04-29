@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Aimidge.Services;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using System.Diagnostics;
 
 namespace Aimidge.Controllers
 {
@@ -37,9 +38,11 @@ namespace Aimidge.Controllers
         [HttpPost("Add")]
         public async Task<IActionResult> Add([FromBody] UserRegistrationModel model)
         {
+            string password = CryptoService.Encrypt(model.PasswordHash);
+
             try
             {
-                string value = await _databaseService.AddNewUser(model?.Name, model?.Username, model?.Email, model?.PasswordHash);
+                string value = await _databaseService.AddNewUser(model?.Name, model?.Username, model?.Email, password);
                 if (!value.Equals("UserExists"))
                 {
                     _cookieService.RemoveCookie("Cookie");
@@ -66,9 +69,12 @@ namespace Aimidge.Controllers
         [HttpPost("Auth")]
         public async Task<IActionResult> Auth([FromBody] UserLogInModel model)
         {
+
+            string password = CryptoService.Encrypt(model.PasswordHash);
+
             try
             {
-                string value = await _databaseService.AuthenticateUser(model?.Email, model?.PasswordHash);
+                string value = await _databaseService.AuthenticateUser(model?.Email, password);
                 if (!value.Equals("BadPassword") && !value.Equals("NotFound"))
                 {
                     _cookieService.RemoveCookie("Cookie");
