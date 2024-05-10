@@ -135,4 +135,7 @@
     <data name="submit" xml:space="preserve">
     <value>Pateikti</value>
   </data>
+      <data name="profilepicture" xml:space="preserve">
+    <value>Pasikeiskite savo profilio nuotrauką:</value>
+  </data>
 </root>
