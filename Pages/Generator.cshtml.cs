@@ -42,44 +42,6 @@ namespace Aimidge.Pages
             ViewData["Home"] = _localizer["Home"];
         }
 
-        public async Task<IActionResult> OnGetGetInfoAsync()
-        {
-            string uid = _cookieService.ParseCookieUID("Cookie");
-            if (!String.IsNullOrEmpty(uid))
-            {
-                Task<string> data = _databaseService.GetUserInfo(uid);
-                string userInfo = await data;
-                char name = userInfo.ElementAt(0);
-
-                if (!String.IsNullOrEmpty(userInfo))
-                {
-                    return new JsonResult(userInfo);
-                }
-                else
-                {
-                    return new JsonResult("User info not found");
-                }
-            }
-            else
-            {
-                return StatusCode(403);
-            }
-        }
-
-        public IActionResult OnPostLogout()
-        {
-            try
-            {
-                _cookieService.RemoveCookie("Cookie");
-                return StatusCode(200);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error occurred during logout: {ex.Message}");
-                return StatusCode(500);
-            }
-        }
-
         public class PromptModel
 		{
 			public string Prompt { get; set; }

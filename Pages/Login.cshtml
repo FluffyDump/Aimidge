@@ -56,13 +56,6 @@
             document.getElementById('signUpButton').addEventListener('click', async function (event) {
                 event.preventDefault();
 
-                // const response = await fetch('api/acc/Encrypt', {
-                //     method: 'GET',
-                //     data: JSON.stringify({ plainText: document.getElementById('password').value }),
-                // });
-                // if (response.ok) {
-                //     const result = await response.json();
-
                 const formData = {
                     Name: document.getElementById('name').value,
                     Username: document.getElementById('username').value,
@@ -97,7 +90,7 @@
                         messagesSignup.push('*Slaptažodis turi būti sudarytas bent iš 8 simbolių, turėti bent vieną didžiąją raidę ir skaičių!')
                     }
                 } else {
-                    const response = await fetch('api/accounts/Add', {
+                    const response = await fetch('/Login?handler=Add', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -156,7 +149,7 @@
                         messagesLogin.push('*Slaptažodis turi būti sudarytas bent iš 8 simbolių, turėti bent vieną didžiąją raidę ir skaičių!')
                     }
                 } else {
-                    const response = await fetch('api/accounts/Auth', {
+                    const response = await fetch('/Login?handler=Auth', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -165,7 +158,7 @@
                     });
 
                     if (response.ok) {
-                        const result = await response.text();
+                        const result = await response.text();         
                         if (result === "ok") {
                             window.location.href = "/Generator";
                         } else if (result === "IncorrectValues") {

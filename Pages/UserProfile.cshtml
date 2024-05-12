@@ -62,7 +62,7 @@
             document.getElementById("emailInput").value = "Loading...";
 
             try {
-                const response = await fetch('api/accounts/GetInfo', {
+                const response = await fetch('/AboutInside?handler=GetInfo', {
                     method: 'GET'
                 });
 
@@ -244,7 +244,7 @@
         let logoutBtn = document.querySelector("#log_out");
         logoutBtn.addEventListener("click", async () => {
             try {
-                const response = await fetch('/api/accounts/logout', {
+                const response = await fetch('/AboutInside?handler=logout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

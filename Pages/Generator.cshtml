@@ -76,7 +76,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", async function getUserInfo() {
             try {
-                const response = await fetch('/Generator?handler=GetInfo', {
+                const response = await fetch('/DatabaseService?handler=GetInfo', {
                     method: 'GET'
                 });
                 if (response.ok) {
@@ -149,7 +149,7 @@
                 let logoutBtn = document.querySelector("#log_out");
                 logoutBtn.addEventListener("click", async () => {
                     try {
-                        const response = await fetch('/Generator?handler=logout', {
+                        const response = await fetch('/AboutInside?handler=logout', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'

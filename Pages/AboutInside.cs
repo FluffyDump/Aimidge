@@ -32,17 +32,12 @@ namespace Aimidge.Pages
 
         public async Task<IActionResult> OnGetGetInfoAsync()
         {
-            Debug.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABABABABABABABA");
-            Debug.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABABABABABABABA");
-            Debug.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABABABABABABABA");
-            Debug.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABABABABABABABA");
-            Debug.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABABABABABABABA");
             string uid = _cookieService.ParseCookieUID("Cookie");
             if (!String.IsNullOrEmpty(uid))
             {
                 Task<string> data = _databaseService.GetUserInfo(uid);
                 string userInfo = await data;
-                char name = userInfo.ElementAt(0);
+                Debug.WriteLine(userInfo);
 
                 if (!String.IsNullOrEmpty(userInfo))
                 {
@@ -63,11 +58,6 @@ namespace Aimidge.Pages
 
         public IActionResult OnPostLogout()
         {
-            Debug.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABABABABABABABA");
-            Debug.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABABABABABABABA");
-            Debug.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABABABABABABABA");
-            Debug.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABABABABABABABA");
-            Debug.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABABABABABABABA");
             try
             {
                 _cookieService.RemoveCookie("Cookie");
