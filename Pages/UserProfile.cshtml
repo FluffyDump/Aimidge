@@ -94,22 +94,8 @@
         <div class="try-it">
             <div class="model-card">
                 <div class="card-body">
-                    <div class="form-group">
-                        <label class="form-label">@localizer["username"]</label>
-                        <input type="text" id="usernameInput" class="form-control mb-1">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">@localizer["name"]</label>
-                        <input type="text" id="nameInput" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">@localizer["e-mail"]</label>
-                        <input type="text" id=emailInput class="form-control mb-1">
-                    </div>
-                    <button id="submitInfo" type="button" class="buttons">@localizer["submit"]</button>
-                    <div id="updateMessage" style="font-size:20px;"></div>
-                    <br>
-                    <br>
+                    <label style="font-size: 20px; color: #0F1035; font-weight: bold;"
+                        class="form-label">@localizer["profilepicture"]</label>
                     <div class="icons">
                         <div class="avatars">
                             <img class="profile-image1" src="~/avatar1.png" width="200px" height="200px"
@@ -138,6 +124,22 @@
                             </select>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">@localizer["username"]</label>
+                        <input type="text" id="usernameInput" class="form-control mb-1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">@localizer["name"]</label>
+                        <input type="text" id="nameInput" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">@localizer["e-mail"]</label>
+                        <input type="text" id=emailInput class="form-control mb-1">
+                    </div>
+                    <button id="submitInfo" type="button" class="buttons">@localizer["submit"]</button>
+                    <div id="updateMessage" style="font-size:20px;"></div>
+                    <br>
+                    <br>
                 </div>
             </div>
             <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>

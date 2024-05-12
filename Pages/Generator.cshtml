@@ -125,8 +125,9 @@
                             <button id="clearButton" type="button" class="buttons">@localizer["clear"]</button>
                             <button id="saveButton" type="button" class="buttons">@localizer["save online"]</button>
                         </div>
-                        <div id="generatedPicturesContainer"></div>
-                    </div>                  
+                        <div id="generatedPicturesContainer">
+                        </div>
+                    </div>
                     <div class="model-card-col">
                         <div id="promptImages"></div>
                         <div id="quotaExceededMessage" style="display: none;">Quota exceeded!</div>
@@ -195,10 +196,10 @@
                 document.getElementById('submitButton').addEventListener('click', async function () {
                     const promptText = document.getElementById('prompt').value;
                     const resolution = document.getElementById('resolution').value;
-                   
+
                     if (promptText.length < 2 || promptText.length > 150) {
                         document.getElementById('badPrompt').style.display = 'block';
-                        return; 
+                        return;
                     }
                     document.getElementById('badPrompt').style.display = 'none';
                     document.getElementById('loadingSpinner').style.display = 'block';
@@ -208,9 +209,9 @@
                     }).then(async resp => {
                         console.log(await resp.status);
                         if (resp.ok) {
-                        {
-                            processPrompt();
-                        }
+                            {
+                                processPrompt();
+                            }
                         } else {
                             alert("Unable to check cookies!");
                         }
@@ -245,6 +246,9 @@
                             document.getElementById('clearButton').style.display = 'block'
 
                             document.getElementById('promptImages').appendChild(img.cloneNode(true));
+                            img.style.margin = '15px';
+                            img.width = 120;
+                            img.height = 120;
                             document.getElementById('generatedPicturesContainer').appendChild(img);
                             document.getElementById('loadingSpinner').style.display = 'none';
                         } else if (response.status === 403) {

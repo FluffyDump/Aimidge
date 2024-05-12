@@ -135,4 +135,7 @@
     <data name="submit" xml:space="preserve">
     <value>Submit</value>
   </data>
+    <data name="profilepicture" xml:space="preserve">
+    <value>Change your profile picture:</value>
+  </data>
 </root>

@@ -22,10 +22,14 @@
     transition: width 0.2s ease-in-out;
   }
   #generatedPicturesContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
     overflow-x: hidden;
     overflow-y: scroll;
     max-width: 40vw;
-    max-height: 25vh;
+    max-height: 40vh;
     scrollbar-color: rgb(72, 93, 109) rgba(0, 0, 0, 0);
 }
 #promptImages {
