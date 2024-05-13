@@ -30,8 +30,8 @@
                 	});
 				}
 
-				const existingCookie = await fetch('api/web/GetCookie', {
-					method: 'POST'
+				const existingCookie = await fetch('?handler=GetCookie', {
+					method: 'GET'
 				});
 			} catch (error) {
 				alert("Internal server error occurred: " + error.message);

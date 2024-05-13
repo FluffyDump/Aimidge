@@ -10,11 +10,11 @@ namespace Aimidge.Controllers
     [Route("/api/accounts")]
     public class AccountController : ControllerBase
     {
-        private readonly ILogger<WebControllers> _logger;
+        private readonly ILogger<AccountController> _logger;
         private readonly DatabaseService _databaseService;
         private readonly CookieService _cookieService;
 
-        public AccountController(ILogger<WebControllers> logger, DatabaseService databaseService, CookieService cookieService)
+        public AccountController(ILogger<AccountController> logger, DatabaseService databaseService, CookieService cookieService)
         {
             _logger = logger;
             _databaseService = databaseService;

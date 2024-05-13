@@ -43,7 +43,7 @@
                     <span class="links_name">@localizer["saved"]</span>
                 </a>
             </li>
-            <li class="profile" id="profileID">
+            <li class="profile" id="profileID" style="display: none;">
                 <div class="profile-details">
                     <img class="profile2" src="~/default.png">
                     <div class="name_job">
@@ -56,7 +56,6 @@
             </li>
         </ul>
     </div>
-    </section>
     <script>
         const imageUrl = localStorage.getItem('selectedAvatar');
         if (imageUrl) {
@@ -67,18 +66,16 @@
     <script>
         document.addEventListener("DOMContentLoaded", async function getUserInfo() {
             try {
-                const response = await fetch('/AboutInside?handler=GetInfo', {
+                const response = await fetch('?handler=GetInfo', {
                     method: 'GET'
                 });
 
                 if (response.ok) {
-                    const result = await response.json();;
-                    if (result) {
+                    const result = await response.json();
+                    if (result.Username != null) {
                         document.getElementById("sidebarUsername").innerText = result.Username;
+                        document.getElementById("profileID").style.display = "block";
                     }
-                } else {
-                    console.error("Failed to fetch user information: ", response.status);
-                    document.getElementById("profileID").style.display = "none";
                 }
             } catch (error) {
                 document.getElementById("sidebarUsername").innerText = " ";
@@ -111,10 +108,10 @@
             sidebar.classList.toggle("open");
             menuBtnChange();
         });
-        searchBtn.addEventListener("click", () => {
+        /*searchBtn.addEventListener("click", () => {
             sidebar.classList.toggle("open");
             menuBtnChange();
-        });
+        }); */
         function menuBtnChange() {
             if (sidebar.classList.contains("open")) {
                 closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
@@ -286,8 +283,6 @@
                             img.width = 180;
                             img.height = 180;
                             container.appendChild(img);
-                        } else {
-                            console.error('Failed to fetch image:', response.statusText);
                         }
                     } catch (error) {
                         console.error('Error fetching image:', error);
@@ -302,8 +297,6 @@
                             for (let imageName of imageNames) {
                                 await fetchAndDisplayImage(imageName);
                             }
-                        } else {
-                            console.error('Failed to fetch image names:', namesResponse.statusText);
                         }
                     } catch (error) {
                         console.error('Error fetching image names:', error);

@@ -10,6 +10,7 @@ from PIL import Image
 from natsort import natsorted
 from nltk.tokenize import word_tokenize
 from nltk.corpus import words
+from threading import Lock
 
 sd_link = 'http://127.0.0.1:7861/sdapi/v1/txt2img'
 db_cleanup_period = 3
@@ -49,43 +50,54 @@ sql_insert_registration = """
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 """
 
+cursor_lock = Lock()
+
 app = Flask(__name__)
 
 @app.route("/stable_diffusion", methods=["POST"])
 async def stable_diffusion():
-    json_content = request.get_json()
-    uid = json_content['uid']
-    cursor = sql_connection.cursor()
-    cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
-    user = cursor.fetchone()
-    cursor.close();
-    file_Folder = user[6]
+    try:
+        json_content = request.get_json()
+        uid = json_content['uid']
 
-    if not get_quota(uid):
-        return jsonify({"error": "Quota exceeded!"}), 403
+        with cursor_lock:
+            cursor = sql_connection.cursor()
+            cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+            user = cursor.fetchone()
+            cursor.close()
 
-    increaseCount = increase_images_count(uid)
-    if increaseCount:
-        response = await asyncio.to_thread(requests.post, sd_link, json=json_content)
-        try:
-            image_data_list = response.json().get('images', [])
-            if image_data_list:
-                save_directory = os.path.join(base_storage_path, file_Folder, "temp")
-                for image_data_base64 in image_data_list:
-                    try:
-                        image_data_binary = base64.b64decode(image_data_base64)
-                        image_filename = os.path.join(save_directory, f"img.jpg")
-                        with open(image_filename, 'wb') as image_file:
-                            image_file.write(image_data_binary)
-                    except Exception as ex:
-                        return jsonify((f"Error occured while saving the image!"))
-                return jsonify(response.json())
-            else:
-                return jsonify({"error": "No image data found"}), 500
-        except Exception as ex:
-            return jsonify({"error": f"Error occured while saving the image!"}), 500
-    else:
-        return jsonify({"error": "User not found!"}), 404
+        if not user:
+            return jsonify({"error": "User not found!"}), 404
+
+        file_Folder = user[6]
+
+        if not get_quota(uid):
+            return jsonify({"error": "Quota exceeded!"}), 403
+
+        increaseCount = increase_images_count(uid)
+        if increaseCount:
+            response = await asyncio.to_thread(requests.post, sd_link, json=json_content)
+            try:
+                image_data_list = response.json().get('images', [])
+                if image_data_list:
+                    save_directory = os.path.join(base_storage_path, file_Folder, "temp")
+                    for image_data_base64 in image_data_list:
+                        try:
+                            image_data_binary = base64.b64decode(image_data_base64)
+                            image_filename = os.path.join(save_directory, f"img.jpg")
+                            with open(image_filename, 'wb') as image_file:
+                                image_file.write(image_data_binary)
+                        except Exception as ex:
+                            return jsonify((f"Error occurred while saving the image!"))
+                    return jsonify(response.json())
+                else:
+                    return jsonify({"error": "No image data found"}), 500
+            except Exception as ex:
+                return jsonify({"error": f"Error occurred while saving the image!"}), 500
+        else:
+            return jsonify({"error": "User not found!"}), 404
+    except KeyError as ke:
+        return jsonify({"error": f"KeyError: {str(ke)}"}), 400
 
 @app.route("/sd_progress", methods = ["GET"])
 async def sd_progress():
@@ -93,91 +105,113 @@ async def sd_progress():
     percentage = result.json()['progress'] * 100
     return jsonify(percentage)
 
-@app.route("/save_img", methods = ["POST"])
+@app.route("/save_img", methods=["POST"])
 async def save_img():
-    json_content = request.get_json()
-    uid = json_content['uid']
-    cursor = sql_connection.cursor()
-    cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
-    user = cursor.fetchone()
-    cursor.close();
-    folder_name = user[6]
-    
-    source = os.path.join(base_storage_path, folder_name, "temp")
-    destination = os.path.join(base_storage_path, folder_name, "gallery")
-
-    source_file = os.path.join(source, "img.jpg")
-
-    file_count = len(os.listdir(destination))
-    destination_file = os.path.join(destination, f"img{file_count + 1}.jpg")
-
     try:
-        shutil.move(source_file, destination_file)
-        return "", 200
-    except Exception as ex:
-        return str(ex), 500
-    
-@app.route("/get_gallery_img", methods = ["POST"])
-async def get_gallery_img():
-    json_content = request.get_json()
-    uid = json_content['uid']
-    img_name = json_content['img_name']
-    cursor = sql_connection.cursor()
-    cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
-    user = cursor.fetchone()
-    folder_name = user[6]
-    cursor.close()
+        json_content = request.get_json()
+        uid = json_content['uid']
 
-    file_folder = os.path.join(base_storage_path, folder_name, "gallery")
+        with cursor_lock:
+            cursor = sql_connection.cursor()
+            cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+            user = cursor.fetchone()
+            cursor.close()
 
-    try:
-        file_path = os.path.join(file_folder, img_name)
-        if (os.path.exists(file_path)):
-            with open(file_path, "rb") as file:
-                image_data = file.read()
-                encoded_image = base64.b64encode(image_data).decode("utf-8")
-                return jsonify(encoded_image), 200
-        else:
-            return jsonify({'error': 'Image not found'}), 404
-    except Exception as ex:
-        return jsonify({'error': str(ex)}), 500
-    
-@app.route("/get_gallery_names", methods = ["POST"])
-async def get_gallery_count():
-    json_content = request.get_json()
-    uid = json_content['uid']
-    if (uid): 
-        cursor = sql_connection.cursor()
-        cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
-        user = cursor.fetchone()
+        if not user:
+            return jsonify({"error": "User not found!"}), 404
+
         folder_name = user[6]
-        cursor.close() 
-        file_folder = os.path.join(base_storage_path, folder_name, "gallery")
+        
+        source = os.path.join(base_storage_path, folder_name, "temp")
+        destination = os.path.join(base_storage_path, folder_name, "gallery")
+
+        source_file = os.path.join(source, "img.jpg")
+
+        file_count = len(os.listdir(destination))
+        destination_file = os.path.join(destination, f"img{file_count + 1}.jpg")
+
         try:
-            file_names = os.listdir(file_folder)
-            sorted_file_names = natsorted(file_names)
-            return jsonify(sorted_file_names), 200
+            with cursor_lock:
+                shutil.move(source_file, destination_file)
+            return "", 200
         except Exception as ex:
             return str(ex), 500
-    else:
-        return jsonify(""), 200
+    except KeyError as ke:
+        return jsonify({"error": f"KeyError: {str(ke)}"}), 400
+
     
-@app.route("/remove_gallery_img", methods = ["POST"])
-async def remove_gallery_img():
-    json_content = request.get_json()
-    uid = json_content['uid']
-    img_name = json_content['img_name']
-    cursor = sql_connection.cursor()
-    cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
-    user = cursor.fetchone()
-    folder_name = user[6]
-    cursor.close()
-
-    file_folder = os.path.join(base_storage_path, folder_name, "gallery")
-
+@app.route("/get_gallery_img", methods=["POST"])
+async def get_gallery_img():
     try:
+        json_content = request.get_json()
+        uid = json_content['uid']
+        img_name = json_content['img_name']
+
+        with cursor_lock:
+            cursor = sql_connection.cursor()
+            cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+            user = cursor.fetchone()
+            folder_name = user[6]
+            cursor.close()
+
+        file_folder = os.path.join(base_storage_path, folder_name, "gallery")
+
+        try:
+            file_path = os.path.join(file_folder, img_name)
+            if os.path.exists(file_path):
+                with open(file_path, "rb") as file:
+                    image_data = file.read()
+                    encoded_image = base64.b64encode(image_data).decode("utf-8")
+                    return jsonify(encoded_image), 200
+            else:
+                return jsonify({'error': 'Image not found'}), 404
+        except Exception as ex:
+            return jsonify({'error': str(ex)}), 500
+    except KeyError as ke:
+        return jsonify({"error": f"KeyError: {str(ke)}"}), 400
+    
+@app.route("/get_gallery_names", methods=["POST"])
+async def get_gallery_count():
+    try:
+        json_content = request.get_json()
+        uid = json_content['uid']
+        if uid:
+            with cursor_lock:
+                cursor = sql_connection.cursor()
+                cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+                user = cursor.fetchone()
+                folder_name = user[6]
+                cursor.close()
+
+            file_folder = os.path.join(base_storage_path, folder_name, "gallery")
+            try:
+                file_names = os.listdir(file_folder)
+                sorted_file_names = natsorted(file_names)
+                return jsonify(sorted_file_names), 200
+            except Exception as ex:
+                return jsonify({"error": str(ex)}), 500
+        else:
+            return jsonify([]), 200
+    except KeyError as ke:
+        return jsonify({"error": f"KeyError: {str(ke)}"}), 400
+    
+@app.route("/remove_gallery_img", methods=["POST"])
+async def remove_gallery_img():
+    try:
+        json_content = request.get_json()
+        uid = json_content['uid']
+        img_name = json_content['img_name']
+        with cursor_lock:
+            cursor = sql_connection.cursor()
+            cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+            user = cursor.fetchone()
+            folder_name = user[6]
+            cursor.close()
+
+        file_folder = os.path.join(base_storage_path, folder_name, "gallery")
+
         file_path = os.path.join(file_folder, img_name)
-        if (os.path.exists(file_path)):
+        if os.path.exists(file_path):
             os.remove(file_path)
             return "", 200
         else:
@@ -185,138 +219,116 @@ async def remove_gallery_img():
     except Exception as ex:
         return jsonify({'error': str(ex)}), 500
 
-@app.route("/sd_api_endpoints", methods = ["GET"])
-async def sd_api_endpoints():
-    response = requests.get(f"http://127.0.0.1:7861/docs#/")
-    return response.content
 
-@app.route("/openapi.json", methods = ["GET"])
-async def openApi():
-    response = requests.get(f"http://127.0.0.1:7861/openapi.json")
-    return response.content
-
-@app.route("/db_post_unregistered", methods = ["POST"])
+@app.route("/db_post_unregistered", methods=["POST"])
 async def sql_add_unregistered_user():
     json_content = request.get_json()
-    cursor = sql_connection.cursor()
     try:
         uid = json_content['UserGuid']
         user_folder = decrypt_user_data(json_content['UserGuid'])
-        cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
-        existing_user = cursor.fetchone()
-        if(existing_user):
-            if(json_content['HasUploadedFiles'] == True):
-                cursor.execute("UPDATE Users SET HasUploadedFiles = ?, TokenExpiration = ? WHERE UserGuid = ?", (json_content['HasUploadedFiles'], json_content['TokenExpiration'], uid))
-                sql_connection.commit()
-            else:
-                cursor.execute("UPDATE Users SET TokenExpiration = ? WHERE UserGuid = ?", (json_content['TokenExpiration'], uid))
-                sql_connection.commit()
-        else:
-            cursor.execute(sql_insert_unregistered, (json_content['HasUploadedFiles'], user_folder, json_content['UserGuid'], json_content['TokenExpiration']))
-            sql_connection.commit()
-            create_folder(user_folder)
-    except Exception as ex:
-        sql_connection.rollback()
-        return jsonify({"error": str(ex)}), 500
-    finally:
-        cursor.close()
+        
+        with cursor_lock:
+            cursor = sql_connection.cursor()
+            try:
+                cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+                existing_user = cursor.fetchone()
+                
+                if existing_user:
+                    if json_content['HasUploadedFiles']:
+                        cursor.execute("UPDATE Users SET HasUploadedFiles = ?, TokenExpiration = ? WHERE UserGuid = ?", 
+                                       (json_content['HasUploadedFiles'], json_content['TokenExpiration'], uid))
+                        sql_connection.commit()
+                    else:
+                        cursor.execute("UPDATE Users SET TokenExpiration = ? WHERE UserGuid = ?", 
+                                       (json_content['TokenExpiration'], uid))
+                        sql_connection.commit()
+                else:
+                    cursor.execute(sql_insert_unregistered, 
+                                   (json_content['HasUploadedFiles'], user_folder, json_content['UserGuid'], json_content['TokenExpiration']))
+                    sql_connection.commit()
+                    create_folder(user_folder)
+            except Exception as ex:
+                sql_connection.rollback()
+                return jsonify({"error": str(ex)}), 500
+            finally:
+                cursor.close()
+    except KeyError:
+        return jsonify({"error": "UserGuid or other required parameter is missing"}), 400
+    
     return jsonify({"message": "User added successfully"}), 200
 
-@app.route("/db_registration", methods = ["POST"])
+@app.route("/db_registration", methods=["POST"])
 async def db_registration():
-    json_content = request.get_json()
-    cursor = sql_connection.cursor()
     try:
-        first_name = json_content['name']
-        last_name = json_content['username']
+        json_content = request.get_json()
+        with cursor_lock:
+            cursor = sql_connection.cursor()
+            first_name = json_content['name']
+            last_name = json_content['username']
 
-        email = json_content['email']
-        cursor.execute("SELECT * FROM Users WHERE Email = ?", (email,))
-        existing_email = cursor.fetchone()
-        if(existing_email):
-            return "UserExists", 200
-        
-        password_hash = json_content['passwordHash']
-        registration_year = datetime.now().year
-        registration_month = datetime.now().month
-        registration_day = datetime.now().day
-        registration_date = f"{registration_year}-{registration_month:02d}-{registration_day:02d}"
+            email = json_content['email']
+            cursor.execute("SELECT * FROM Users WHERE Email = ?", (email,))
+            existing_email = cursor.fetchone()
+            if existing_email:
+                return "UserExists", 200
+            
+            password_hash = json_content['passwordHash']
+            registration_year = datetime.now().year
+            registration_month = datetime.now().month
+            registration_day = datetime.now().day
+            registration_date = f"{registration_year}-{registration_month:02d}-{registration_day:02d}"
 
-        existing_folder = db_unique_file_folder(cursor)
-        existing_folder_str = str(existing_folder)
-        user_guid = encrypt_user_data(existing_folder_str)
-        user_guid_str = str(user_guid)
+            existing_folder = db_unique_file_folder(cursor)
+            existing_folder_str = str(existing_folder)
+            user_guid = encrypt_user_data(existing_folder_str)
+            user_guid_str = str(user_guid)
 
-        create_folder(existing_folder_str)
+            create_folder(existing_folder_str)
 
-        token_expiration = datetime.now() + timedelta(minutes=20)
+            token_expiration = datetime.now() + timedelta(minutes=20)
 
-        cursor.execute(sql_insert_registration, (first_name, last_name, email, password_hash, registration_date, 0, existing_folder_str, user_guid_str, token_expiration))
-        sql_connection.commit()
-        cursor.close()
-        return user_guid_str, 200
+            cursor.execute(sql_insert_registration, (first_name, last_name, email, password_hash, registration_date, 0, existing_folder_str, user_guid_str, token_expiration))
+            sql_connection.commit()
+            cursor.close()
+            return user_guid_str, 200
     except Exception as ex:
         print(str(ex))
         return jsonify({"error": str(ex)}), 500
     
-@app.route("/db_log_in", methods = ["POST"])
+@app.route("/db_log_in", methods=["POST"])
 async def db_log_in():
-    json_content = request.get_json()
-    cursor = sql_connection.cursor()
     try:
-        email = json_content['email']
-        password_hash = json_content['passwordHash']
+        json_content = request.get_json()
+        with cursor_lock:
+            cursor = sql_connection.cursor()
+            email = json_content['email']
+            password_hash = json_content['passwordHash']
 
-        cursor.execute("SELECT * FROM Users WHERE Email = ?", (email,))
-        existing_user = cursor.fetchone()
-        if not existing_user:
-            cursor.execute("SELECT * FROM Users WHERE Username = ?", (email,))
+            cursor.execute("SELECT * FROM Users WHERE Email = ?", (email,))
             existing_user = cursor.fetchone()
+            if not existing_user:
+                cursor.execute("SELECT * FROM Users WHERE Username = ?", (email,))
+                existing_user = cursor.fetchone()
 
-        if(existing_user):
-            stored_password_hash = existing_user[3]
-            if(stored_password_hash == password_hash):
-                existing_folder = db_unique_file_folder(cursor)
-                existing_folder_str = str(existing_folder)
-                user_guid = encrypt_user_data(existing_folder_str)
-                user_guid_str = str(user_guid)
-                token_expiration = datetime.now() + timedelta(minutes=20)
-                cursor.execute("UPDATE Users SET UserGuid = ?, TokenExpiration = ? WHERE Email = ? OR Username = ?", (user_guid_str, token_expiration, email, email))
-                sql_connection.commit()
-                cursor.close()
-                return user_guid_str, 200
-            else:
-                return "BadPassword", 401
-        return "NotFound", 404
+            if existing_user:
+                stored_password_hash = existing_user[3]
+                if stored_password_hash == password_hash:
+                    existing_folder = db_unique_file_folder(cursor)
+                    existing_folder_str = str(existing_folder)
+                    user_guid = encrypt_user_data(existing_folder_str)
+                    user_guid_str = str(user_guid)
+                    token_expiration = datetime.now() + timedelta(minutes=20)
+                    cursor.execute("UPDATE Users SET UserGuid = ?, TokenExpiration = ? WHERE Email = ? OR Username = ?", (user_guid_str, token_expiration, email, email))
+                    sql_connection.commit()
+                    cursor.close()
+                    return user_guid_str, 200
+                else:
+                    return "NotFound", 404
+            return "NotFound", 404
     except Exception as ex:
         print(str(ex))
         return jsonify({"error": str(ex)}), 500
 
-@app.route("/db_get", methods = ["GET"])
-async def db_get():
-    try:
-        cursor = sql_connection.cursor()
-        cursor.execute("SELECT * FROM Users")
-        users = cursor.fetchall()
-        user_list = []
-        for user in users:
-            user_info = {
-                'Name': user[0],
-                'Username': user[1],
-                'Email': user[2],
-                'PasswordHash': "*",
-                'RegistrationDate': user[4],
-                'HasUploadedFiles': user[5],
-                'FileFolderName': user[6],
-                'UserGuid': user[7],
-                'TokenExpiration': user[8],
-                'GeneratedImagesCount': user[9]
-            }
-            user_list.append(user_info)
-        cursor.close()
-        return jsonify({'DB Users': user_list}), 200
-    except Exception as ex:
-        return jsonify({'error': str(ex)}), 500
     
 @app.route("/db_get_user", methods=["POST"])
 async def db_get_user():
@@ -327,10 +339,11 @@ async def db_get_user():
         if not uid:
             return jsonify({'error': 'UID parameter is missing'}), 400
         
-        cursor = sql_connection.cursor()
-        cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
-        user = cursor.fetchone()
-        cursor.close()
+        with cursor_lock:
+            cursor = sql_connection.cursor()
+            cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+            user = cursor.fetchone()
+            cursor.close()
         
         if not user:
             return jsonify({'error': 'User not found'}), 404
@@ -342,6 +355,7 @@ async def db_get_user():
         }
         return jsonify(user_info), 200
     except Exception as ex:
+        print(str(ex))
         return jsonify({'error': str(ex)}), 500
     
 @app.route("/db_update_user", methods=["POST"])
@@ -356,22 +370,34 @@ async def db_update_user():
         if not uid:
             return jsonify({'error': 'UID parameter is missing'}), 400
         
-        cursor = sql_connection.cursor()
-        cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
-        user = cursor.fetchone()
-        
-        if not user:
-            return jsonify({'error': 'User not found'}), 404
-        
-        cursor.execute("UPDATE Users SET Username = ?, FirstName = ?, Email = ? WHERE UserGuid = ?", (username, name, email, uid,))
-        sql_connection.commit()
-        cursor.close()
+        with cursor_lock:
+            cursor = sql_connection.cursor()
+            cursor.execute("SELECT * FROM Users WHERE UserGuid = ?", (uid,))
+            user = cursor.fetchone()
+            
+            if not user:
+                return jsonify({'error': 'User not found'}), 404
+            
+            cursor.execute("SELECT * FROM Users WHERE Username = ?", (username,))
+            existingUsername = cursor.fetchone()
+            if existingUsername and user[1] != existingUsername[1]:
+                    return "", 409
+            
+            cursor.execute("SELECT * FROM Users WHERE Email = ?", (email,))
+            existingEmail = cursor.fetchone()
+            if existingEmail and user[2] != existingEmail[2]:
+                    return "", 409
+            
+            cursor.execute("UPDATE Users SET Username = ?, FirstName = ?, Email = ? WHERE UserGuid = ?", (username, name, email, uid,))
+            sql_connection.commit()
+            cursor.close()
 
         return jsonify("ok"), 200
     except Exception as ex:
         print(str(ex))
         sql_connection.rollback()
         return jsonify({'error': str(ex)}), 500
+
 
 @app.route('/translate_prompt', methods=['POST'])
 def translate_text():

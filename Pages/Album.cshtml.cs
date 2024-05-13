@@ -15,14 +15,16 @@ namespace Aimidge.Pages
         private readonly IStringLocalizer<AlbumModel> _localizer;
         private readonly CookieService _cookieService;
         private readonly SDService _sdService;
+        private readonly DatabaseService _databaseService;
 
-        public AlbumModel(ILogger<AlbumModel> logger, IStringLocalizer<AlbumModel> localizer, IHttpClientFactory httpClientFactory, CookieService cookieService, SDService sdService)
+        public AlbumModel(ILogger<AlbumModel> logger, IStringLocalizer<AlbumModel> localizer, IHttpClientFactory httpClientFactory, CookieService cookieService, SDService sdService, DatabaseService databaseService)
         {
             _logger = logger;
             _localizer = localizer;
             _httpClient = httpClientFactory.CreateClient();
             _cookieService = cookieService;
             _sdService = sdService;
+            _databaseService = databaseService;
         }
 
         public void OnGet()
@@ -80,5 +82,36 @@ namespace Aimidge.Pages
                 return StatusCode(500);
             }
         }
-    }
+
+		public async Task<IActionResult> OnGetGetInfoAsync()
+		{
+			string uid = _cookieService.ParseCookieUID("Cookie");
+			if (!string.IsNullOrEmpty(uid))
+			{
+				Task<string> data = _databaseService.GetUserInfo(uid);
+				string userInfo = await data;
+				if (!string.IsNullOrEmpty(userInfo))
+				{
+					return StatusCode(200, userInfo);
+				}
+				else
+				{
+					return StatusCode(404);
+				}
+			}
+			else
+			{
+				await _cookieService.SetCookie();
+				uid = _cookieService.ParseCookieUID("Cookie");
+				if (!string.IsNullOrEmpty(uid))
+                {
+                    return await OnGetGetInfoAsync();
+                }
+                else
+                {
+                    return StatusCode(404);
+                }
+			}
+		}
+	}
 }

@@ -6,6 +6,7 @@ using static Aimidge.Controllers.AccountController;
 
 namespace Aimidge.Pages
 {
+    [IgnoreAntiforgeryToken]
     public class LoginModel : PageModel
     {
         private readonly ILogger<LoginModel> _logger;
@@ -13,9 +14,11 @@ namespace Aimidge.Pages
         private readonly CookieService _cookieService;
 
 
-        public LoginModel(ILogger<LoginModel> logger)
+        public LoginModel(ILogger<LoginModel> logger, DatabaseService databaseService, CookieService cookieService)
         {
             _logger = logger;
+            _databaseService = databaseService;
+            _cookieService = cookieService;
         }
 
         public void OnGet()
@@ -38,21 +41,19 @@ namespace Aimidge.Pages
 
         public async Task<IActionResult> OnPostAddAsync([FromBody] UserRegistrationModel model)
         {
-            Debug.WriteLine("Authenticates");
-            string password = CryptoService.Encrypt(model.PasswordHash);
-
             try
             {
-                string value = await _databaseService.AddNewUser(model?.Name, model?.Username, model?.Email, password);
+                string password = CryptoService.Encrypt(model.PasswordHash);
+                string value = await _databaseService.AddNewUser(model.Name, model.Username, model.Email, password);
                 if (!value.Equals("UserExists"))
                 {
                     _cookieService.RemoveCookie("Cookie");
                     await _cookieService.SetRegisteredCookie(value);
-                    return new JsonResult("ok");
+                    return StatusCode(200);
                 }
                 else if (value.Equals("UserExists"))
                 {
-                    return new JsonResult(value);
+                    return StatusCode(409);
                 }
                 else
                 {
@@ -67,24 +68,22 @@ namespace Aimidge.Pages
             }
         }
 
-
-        public async Task<IActionResult> OnPostAuthAsyn([FromBody] UserLogInModel model)
+        public async Task<IActionResult> OnPostAuthAsync([FromBody] UserLogInModel model)
         {
-            Debug.WriteLine("Authenticates");
-            string password = CryptoService.Encrypt(model.PasswordHash);
-
             try
             {
-                string value = await _databaseService.AuthenticateUser(model?.Email, password);
-                if (!value.Equals("BadPassword") && !value.Equals("NotFound"))
+                string password = CryptoService.Encrypt(model.PasswordHash);
+                string value = await _databaseService.AuthenticateUser(model.Email, password);
+                Console.WriteLine(value);
+                if (!value.Equals("NotFound"))
                 {
                     _cookieService.RemoveCookie("Cookie");
                     await _cookieService.SetRegisteredCookie(value);
-                    return new JsonResult("ok");
+                    return StatusCode(200);
                 }
-                else if (value.Equals("BadPassword") || value.Equals("NotFound"))
+                else if (value.Equals("NotFound"))
                 {
-                    return new JsonResult("IncorrectValues");
+                    return StatusCode(404);
                 }
                 else
                 {
@@ -98,7 +97,5 @@ namespace Aimidge.Pages
                 return BadRequest();
             }
         }
-
-
     }
 }

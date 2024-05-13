@@ -30,32 +30,6 @@ namespace Aimidge.Pages
             ViewData["Home"] = _localizer["Home"];
         }
 
-        public async Task<IActionResult> OnGetGetInfoAsync()
-        {
-            string uid = _cookieService.ParseCookieUID("Cookie");
-            if (!String.IsNullOrEmpty(uid))
-            {
-                Task<string> data = _databaseService.GetUserInfo(uid);
-                string userInfo = await data;
-                Debug.WriteLine(userInfo);
-
-                if (!String.IsNullOrEmpty(userInfo))
-                {
-                    return new JsonResult(userInfo);
-                }
-                else
-                {
-                    return new JsonResult("User info not found");
-                }
-            }
-            else
-            {
-                return StatusCode(403);
-            }
-        }
-
-
-
         public IActionResult OnPostLogout()
         {
             try
@@ -70,5 +44,4 @@ namespace Aimidge.Pages
             }
         }
     }
-
 }

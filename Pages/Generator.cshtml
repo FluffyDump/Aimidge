@@ -42,7 +42,7 @@
                     <span class="links_name">@localizer["saved"]</span>
                 </a>
             </li>
-            <li class="profile" id="profileID">
+            <li class="profile" id="profileID" style="display: none;">
                 <div class="profile-details">
                     <img class="profile2" src="~/default.png">
                     <div class="name_job">
@@ -76,17 +76,16 @@
     <script>
         document.addEventListener("DOMContentLoaded", async function getUserInfo() {
             try {
-                const response = await fetch('/DatabaseService?handler=GetInfo', {
+                const response = await fetch('?handler=GetInfo', {
                     method: 'GET'
                 });
+
                 if (response.ok) {
                     const result = await response.json();
-                    if (result) {
+                    if (result.Username != null) {
                         document.getElementById("sidebarUsername").innerText = result.Username;
+                        document.getElementById("profileID").style.display = "block";
                     }
-                } else {
-                    console.error("Failed to fetch user information: ", response.status);
-                    document.getElementById("profileID").style.display = "none";
                 }
             } catch (error) {
                 document.getElementById("sidebarUsername").innerText = " ";
@@ -169,10 +168,10 @@
                     sidebar.classList.toggle("open");
                     menuBtnChange();
                 });
-                searchBtn.addEventListener("click", () => {
+                /*searchBtn.addEventListener("click", () => {
                     sidebar.classList.toggle("open");
                     menuBtnChange();
-                });
+                });*/
                 function menuBtnChange() {
                     if (sidebar.classList.contains("open")) {
                         closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");
@@ -204,24 +203,21 @@
                     document.getElementById('badPrompt').style.display = 'none';
                     document.getElementById('loadingSpinner').style.display = 'block';
 
-                    const existingCookie = await fetch('/Generator?handler=GetCookie', {
-                        method: 'POST'
+                    const existingCookie = await fetch('/?handler=GetCookie', {
+                        method: 'GET'
                     }).then(async resp => {
-                        console.log(await resp.status);
+                        const respText = await resp.text();
                         if (resp.ok) {
-                            {
-                                processPrompt();
-                            }
+                            processPrompt();
                         } else {
                             alert("Unable to check cookies!");
                         }
                     });
 
-
                     async function processPrompt() {
 
                         refreshInterval = setInterval(getBar, 800);
-                        const response = await fetch('/Generator?handler=GetPrompt', {
+                        const response = await fetch('?handler=GetPrompt', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -269,7 +265,7 @@
 
                     let previousBarPercentage = 0;
                     async function getBar(percentage, progress) {
-                        const response = await fetch('/Generator?handler=GetProgress', {
+                        const response = await fetch('?handler=GetProgress', {
                             method: 'GET'
                         });
 
@@ -329,7 +325,7 @@
                 });
 
                 document.getElementById('saveButton').addEventListener('click', async function () {
-                    const response = await fetch('/Generator?handler=SaveImage', {
+                    const response = await fetch('?handler=SaveImage', {
                         method: 'POST'
                     });
                     if (response.ok) {

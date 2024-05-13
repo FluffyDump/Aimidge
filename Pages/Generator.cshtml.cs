@@ -5,6 +5,7 @@ using Microsoft.Extensions.Localization;
 using System.Diagnostics;
 using System.Net.Mime;
 using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Aimidge.Pages
 {
@@ -43,68 +44,68 @@ namespace Aimidge.Pages
         }
 
         public class PromptModel
-		{
-			public string Prompt { get; set; }
-			public string Resolution { get; set; }
-		}
-		public async Task<IActionResult> OnPostGetPromptAsync([FromBody] PromptModel userPrompt)
-		{
-			try
-			{
+        {
+            public string Prompt { get; set; }
+            public string Resolution { get; set; }
+        }
+        public async Task<IActionResult> OnPostGetPromptAsync([FromBody] PromptModel userPrompt)
+        {
+            try
+            {
                 string prompt = userPrompt?.Prompt;
 
-				string enPrompt = await _translationService.TranslatePrompt(prompt);
+                string enPrompt = await _translationService.TranslatePrompt(prompt);
 
-				if (enPrompt != String.Empty)
-				{
-					prompt = enPrompt;
-				}
+                if (enPrompt != string.Empty)
+                {
+                    prompt = enPrompt;
+                }
 
-                bool correctPrompt = await _validationService.CheckPrompt(prompt);  //Ckecks if prompt is in english?
+                bool correctPrompt = await _validationService.CheckPrompt(prompt);
 
-                if (!correctPrompt) 
-				{
-					return StatusCode(422); //it is not in english
-				}
+                if (!correctPrompt)
+                {
+                    return StatusCode(422);
+                }
 
                 string badword = ValidationService.CheckProfanity(prompt);
-				if (!badword.Equals("ok"))
-				{
-					_logger.LogInformation("Aptiktas netinkamas zodis: " + badword);
-					return BadRequest("Aptiktas netinkamas zodis");
-				}
+                if (!badword.Equals("ok"))
+                {
+                    _logger.LogInformation("Aptiktas netinkamas zodis: " + badword);
+                    return BadRequest("Aptiktas netinkamas zodis");
+                }
 
                 string resolution = userPrompt?.Resolution;
-				Match match = Regex.Match(resolution, @"(\d+)x(\d+)");
-				string width = match.Groups[1].Value;
-				string height = match.Groups[2].Value;
+                Match match = Regex.Match(resolution, @"(\d+)x(\d+)");
+                string width = match.Groups[1].Value;
+                string height = match.Groups[2].Value;
 
-				Task<string> data = SDService.PostToAPIAsync(prompt, width, height, _cookieService.ParseCookieUID("Cookie"));
+                Task<string> data = SDService.PostToAPIAsync(prompt, width, height, _cookieService.ParseCookieUID("Cookie"));
 
-				string img = await data;
+                string img = await data;
 
-                if (img != String.Empty && img != "403")
-				{
+                if (img != string.Empty && img != "403")
+                {
                     return new JsonResult(new { image = img });
                 }
-				else if (img == "403")
-				{
-					return StatusCode(403);
-				}
-				return BadRequest();
-			}
-			catch (Exception ex)
-			{
-				_logger.LogInformation(ex.ToString());
-				return BadRequest(ex.Message);
-			}
-		}
+                else if (img == "403")
+                {
+                    return StatusCode(403);
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.ToString());
+                return BadRequest(ex.Message);
+            }
+        }
 
         public async Task<IActionResult> OnGetGetProgressAsync()
         {
             try
             {
-                string apiUrl = "http://193.161.193.99:61464/sd_progress";
+                string apiUrl = "http://127.0.0.1:5000/sd_progress";
 
                 using (var httpClient = new HttpClient())
                 {
@@ -141,7 +142,8 @@ namespace Aimidge.Pages
                     if (response)
                     {
                         return StatusCode(200);
-                    } else
+                    }
+                    else
                     {
                         return BadRequest();
                     }
@@ -152,5 +154,64 @@ namespace Aimidge.Pages
                 return StatusCode(500, "Error occured in OnPostSaveImageAsync method: \n" + ex.Message);
             }
         }
-    }
+
+        public async Task<IActionResult> OnGetGetInfoAsync()
+        {
+            try
+            {
+                string uid = _cookieService.ParseCookieUID("Cookie");
+                if (!string.IsNullOrEmpty(uid))
+                {
+                    Task<string> data = _databaseService.GetUserInfo(uid);
+                    string userInfo = await data;
+
+                    if (!string.IsNullOrEmpty(userInfo))
+                    {
+                        return StatusCode(200, userInfo);
+                    }
+                    else
+                    {
+                        return StatusCode(404);
+                    }
+                }
+                else
+                {
+                    return StatusCode(404);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error occured in OnGetGetInfoAsync method, ex: {ex}");
+                return StatusCode(500);
+            }
+        }
+
+		public async Task<IActionResult> OnGetGetCookieAsync()
+		{
+			try
+			{
+				var cookie = await _cookieService.ParseCookie("Cookie");
+				if (!string.IsNullOrEmpty(cookie))
+				{
+					await _cookieService.UpdateCookie(cookie);
+					return StatusCode(200);
+				}
+                else
+                {
+                    await _cookieService.SetCookie();
+					cookie = await _cookieService.ParseCookie("Cookie");
+                    if (!string.IsNullOrEmpty(cookie))
+                    {
+                        return StatusCode(200);
+                    }
+				}
+				return StatusCode(500);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError($"Error occured in OnGetGetCookieAsync method, ex: {ex}");
+				return StatusCode(500);
+			}
+		}
+	}
 }

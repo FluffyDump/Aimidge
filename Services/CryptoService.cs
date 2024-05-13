@@ -7,7 +7,6 @@ using System.Text;
 namespace Aimidge.Services
 {
     [IgnoreAntiforgeryToken]
-    //[Route("/api/acc")]
 
     public class CryptoService
     {
@@ -40,28 +39,6 @@ namespace Aimidge.Services
                 {
                     Console.WriteLine("Ecryption error: " + ex.Message);
                     return null;
-                }
-            }
-        }
-
-        public static string Decrypt(string cipherText)
-        {
-            using (Aes aesAlg = Aes.Create())
-            {
-                aesAlg.Key = Encoding.UTF8.GetBytes(Key);
-                aesAlg.IV = Encoding.UTF8.GetBytes(InitVector);
-
-                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-
-                using (MemoryStream msDecrypt = new MemoryStream(Convert.FromBase64String(cipherText)))
-                {
-                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
-                    {
-                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
-                        {
-                            return srDecrypt.ReadToEnd();
-                        }
-                    }
                 }
             }
         }

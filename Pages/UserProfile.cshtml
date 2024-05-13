@@ -62,7 +62,7 @@
             document.getElementById("emailInput").value = "Loading...";
 
             try {
-                const response = await fetch('/AboutInside?handler=GetInfo', {
+                const response = await fetch('?handler=GetInfo', {
                     method: 'GET'
                 });
 
@@ -214,11 +214,6 @@
                 return;
             }
             else {
-                localStorage.setItem('usernameOld', formData.Username);
-                localStorage.setItem('nameOld', formData.Name);
-                localStorage.setItem('emailOld', formData.Email);
-                document.getElementById("updateMessage").style.color = "green";
-                document.getElementById("updateMessage").innerText = "Changes were made successfully!";
                 const response = await fetch('/UserProfile?handler=UpdateData', {
                     method: 'POST',
                     headers: {
@@ -226,9 +221,18 @@
                     },
                     body: JSON.stringify(formData)
                 });
-                const data = await response.json(); // Assuming the server returns JSON
-            }
 
+                if (response.ok) { 
+                    localStorage.setItem('usernameOld', formData.Username);
+                    localStorage.setItem('nameOld', formData.Name);
+                    localStorage.setItem('emailOld', formData.Email);
+                    document.getElementById("updateMessage").style.color = "green";
+                    document.getElementById("updateMessage").innerText = "Changes were made successfully!";
+                } else {
+                    document.getElementById("updateMessage").style.color = "red";
+                    document.getElementById("updateMessage").innerText = "Something went wrong!";
+                }
+            }
         });
 
         const profilePicture1 = document.querySelector('.profile-image1')
@@ -246,7 +250,7 @@
         let logoutBtn = document.querySelector("#log_out");
         logoutBtn.addEventListener("click", async () => {
             try {
-                const response = await fetch('/AboutInside?handler=logout', {
+                const response = await fetch('?handler=logout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -265,10 +269,10 @@
             sidebar.classList.toggle("open");
             menuBtnChange();
         });
-        searchBtn.addEventListener("click", () => {
+        /*searchBtn.addEventListener("click", () => {
             sidebar.classList.toggle("open");
             menuBtnChange();
-        });
+        }); */
         function menuBtnChange() {
             if (sidebar.classList.contains("open")) {
                 closeBtn.classList.replace("bx-menu", "bx-menu-alt-right");

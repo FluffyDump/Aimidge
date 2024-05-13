@@ -38,7 +38,7 @@ namespace Aimidge.Services
 
         public async Task<bool> CheckPrompt(string prompt)
         {
-            string apiUrl = "http://193.161.193.99:61464/check_prompt";
+            string apiUrl = "http://127.0.0.1:5000/check_prompt";
 
             string json = @"{""prompt"": """ + prompt + @"""}";
 

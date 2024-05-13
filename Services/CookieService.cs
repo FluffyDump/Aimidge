@@ -116,7 +116,7 @@ namespace Aimidge.Services
                 var cookie = await ParseCookie("Cookie");
 				if (!string.IsNullOrEmpty(cookie))
 				{
-					UpdateCookie(cookie);
+					await UpdateCookie(cookie);
                     return true;
                 }
                 return false;
@@ -126,6 +126,5 @@ namespace Aimidge.Services
                 return false;
             }
         }
-
     }
 }
