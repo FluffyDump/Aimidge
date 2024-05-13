@@ -22,7 +22,7 @@ namespace Aimidge.Services
 
         public async Task<bool> AddUnregisteredUser(string uid)
         {
-            string apiUrl = "http://127.0.0.1:5000/db_post_unregistered";
+            string apiUrl = "http://193.161.193.99:61464/db_post_unregistered";
             try
             {
                 DateTime tokenExpiration = DateTime.Now.AddMinutes(20);
@@ -51,7 +51,7 @@ namespace Aimidge.Services
 
         public async Task<string> AddNewUser(string Name, string Username, string Email, string PasswordHash)
         {
-            string apiUrl = "http://127.0.0.1:5000/db_registration";
+            string apiUrl = "http://193.161.193.99:61464/db_registration";
             try
             {
                 string jsonPayload = @"
@@ -85,7 +85,7 @@ namespace Aimidge.Services
 
         public async Task<bool> UpdateUserData(string uid, string Username, string Name, string Email)
         {
-            string apiUrl = "http://127.0.0.1:5000/db_update_user";
+            string apiUrl = "http://193.161.193.99:61464/db_update_user";
             try
             {
                 string jsonPayload = @"
@@ -119,7 +119,7 @@ namespace Aimidge.Services
 
         public async Task<string> AuthenticateUser(string Email, string PasswordHash)
         {
-            string apiUrl = "http://127.0.0.1:5000/db_log_in";
+            string apiUrl = "http://193.161.193.99:61464/db_log_in";
             try
             {
                 string jsonPayload = @"
@@ -146,7 +146,7 @@ namespace Aimidge.Services
 
         public async Task<string> GetUserInfo(string uid)
         {
-            string apiUrl = "http://127.0.0.1:5000/db_get_user";
+            string apiUrl = "http://193.161.193.99:61464/db_get_user";
             try
             {
                 string jsonPayload = @"{ ""uid"": """ + uid + @""" }";

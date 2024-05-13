@@ -105,7 +105,7 @@ namespace Aimidge.Pages
         {
             try
             {
-                string apiUrl = "http://127.0.0.1:5000/sd_progress";
+                string apiUrl = "http://193.161.193.99:61464/sd_progress";
 
                 using (var httpClient = new HttpClient())
                 {

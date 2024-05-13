@@ -7,7 +7,7 @@ namespace Aimidge.Services
     {
         public async Task<string> TranslatePrompt(string prompt)
         {
-            string apiUrl = "http://127.0.0.1:5000/translate_prompt";
+            string apiUrl = "http://193.161.193.99:61464/translate_prompt";
 
             string json = @"{""prompt"": """ + prompt + @"""}";
 

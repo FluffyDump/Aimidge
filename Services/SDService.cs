@@ -22,7 +22,7 @@ namespace Aimidge.Services
 
         public static async Task<string> PostToAPIAsync(string prompt, string width, string height, string uid)
         {
-            string apiUrl = "http://127.0.0.1:5000/stable_diffusion";
+            string apiUrl = "http://193.161.193.99:61464/stable_diffusion";
 
             string json = GetJsonPayLoad(prompt, width, height, uid);
 
@@ -49,7 +49,7 @@ namespace Aimidge.Services
 
         public static async Task<bool> SaveImg(string uid)
         {
-            string apiUrl = "http://127.0.0.1:5000/save_img";
+            string apiUrl = "http://193.161.193.99:61464/save_img";
 
             string json = @"{ ""uid"": """ + uid + @""" }";
 
@@ -71,7 +71,7 @@ namespace Aimidge.Services
 
         public static async Task<string> GetImg(string uid, string imgName)
         {
-            string apiUrl = "http://127.0.0.1:5000/get_gallery_img";
+            string apiUrl = "http://193.161.193.99:61464/get_gallery_img";
 
             string json = @"
                 {
@@ -98,7 +98,7 @@ namespace Aimidge.Services
 
         public static async Task<List<string>> GetImgNames(string uid)
         {
-            string apiUrl = "http://127.0.0.1:5000/get_gallery_names";
+            string apiUrl = "http://193.161.193.99:61464/get_gallery_names";
             string json = @"{ ""uid"": """ + uid + @""" }";
 
             using (var httpClient = new HttpClient())
@@ -123,7 +123,7 @@ namespace Aimidge.Services
 
         public async Task<bool> RemoveImg(string uid, string imgName)
         {
-            string apiUrl = "http://127.0.0.1:5000/remove_gallery_img";
+            string apiUrl = "http://193.161.193.99:61464/remove_gallery_img";
 
             string json = @"
                 {
