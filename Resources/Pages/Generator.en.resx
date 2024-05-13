@@ -132,6 +132,9 @@
   <data name="Generator" xml:space="preserve">
     <value>Generator</value>
   </data>
+  <data name="incorrect prompt" xml:space="preserve">
+    <value>Incorrect prompt!</value>
+  </data>
   <data name="promptEntering" xml:space="preserve">
     <value>Enter your promt!</value>
   </data>

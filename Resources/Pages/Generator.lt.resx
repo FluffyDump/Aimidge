@@ -132,6 +132,9 @@
   <data name="Generator" xml:space="preserve">
     <value>Generatorius</value>
   </data>
+  <data name="incorrect prompt" xml:space="preserve">
+    <value>Netinkamas aprašymas!</value>
+  </data>
   <data name="promptEntering" xml:space="preserve">
     <value>Įveskite savo aprašymą</value>
   </data>
