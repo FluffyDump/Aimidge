@@ -2,6 +2,7 @@
 - [Project description](#aimidge)
 - [Project main functions](#main-functions)
 - [Used technologies](#used-technologies)
+- [Architecture](#architecture)
 - [Instructions](#instructions-on-how-to-use-the-project)
 - [Authors](#authors)
 
@@ -28,6 +29,10 @@ The project idea is a webpage designed for users to generate unique images using
 - Communication tool: Discord
 - Programs used to implement the project: Visual Studio Code, SQL Express
 - Code storage tool: Github
+
+## Architecture
+![image](https://github.com/FluffyDump/Aimidge/assets/113236180/1c90f1c0-29f8-4a5b-8741-0a49a9f9d05d)
+
 ## Instructions on how to use the project
 <strong>1.</strong> Users are welcomed on the introduction page (Figure 1), on which they can "Continue as Guest" or "Login". At the top right corner users can change the language of the website (Figure 2).
 <p align="center"><img src="https://github.com/FluffyDump/Aimidge/assets/113236180/63329cc8-050e-4830-8f2d-e4cc4a25ce8a"></p>
