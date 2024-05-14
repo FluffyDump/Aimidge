@@ -20,7 +20,7 @@
 <body>
     <div class="sidebar">
         <div class="logo-details">
-            <img src="~/Logo1white.png" alt="Description of the image" width="50" height="50">
+            <img src="~/Logo1white.png" alt="Description of the image" width="50" height="50" id="logo">
             <div class="logo_name">AIMIDGE</div>
             <i class='bx bx-menu' id="btn"></i>
         </div>
@@ -50,6 +50,18 @@
             </li>
         </ul>
     </div>
+
+    <script>
+        const image = document.getElementById('logo');
+        image.addEventListener('click', function () {
+            window.location.href = '/Index';
+        });
+
+        const text = document.querySelector('.logo_name');
+        text.addEventListener('click', function () {
+            window.location.href = '/Index';
+        });
+    </script>
 
     <script>
         let usernameInput;
